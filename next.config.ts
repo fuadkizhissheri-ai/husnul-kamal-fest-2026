@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ── Enable static HTML export for Capacitor Mobile App ──
-  output: 'export',
-
   // ── Image optimization ──
   images: {
     unoptimized: true,

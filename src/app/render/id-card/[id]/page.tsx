@@ -3,9 +3,7 @@ import { prisma } from '@/lib/prisma';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { notFound } from 'next/navigation';
 
-export async function generateStaticParams() {
-  return [{ id: 'preview' }];
-}
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -14,15 +12,7 @@ interface PageProps {
 
 export default async function RenderIDCardPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  let side: string | undefined = 'front';
-  if (process.env.NEXT_PHASE !== 'phase-production-build') {
-    try {
-      const sp = await searchParams;
-      side = sp?.side;
-    } catch (e) {
-      side = 'front';
-    }
-  }
+  const { side } = await searchParams;
 
   const participant = await prisma.participant.findFirst({
     where: {
@@ -40,6 +30,10 @@ export default async function RenderIDCardPage({ params, searchParams }: PagePro
       },
     },
   });
+
+  if (!participant) {
+    notFound();
+  }
 
   const formattedParticipant = participant ? {
     registrationId: participant.registrationId,
