@@ -126,7 +126,7 @@ export default function HomePage() {
       <div className="space-y-16 sm:space-y-24 pb-20 selection:bg-[#C8A86B] selection:text-[#0B0B0B]">
 
         {/* ================= HERO SECTION ================= */}
-        <section className="relative min-h-[85vh] flex items-center justify-center pt-10 sm:pt-12 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <section className="relative min-h-[80vh] flex items-center justify-center pt-4 sm:pt-6 pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
           
           {/* Background Ambient Glow & Mesh */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -157,14 +157,14 @@ export default function HomePage() {
           {cms.hero_arabic_bg_enabled !== 'false' && <ArabicCalligraphyCanvas />}
 
           {/* Center Hero Content Container */}
-          <div className="max-w-5xl mx-auto text-center relative z-10 space-y-4 sm:space-y-5 pt-0">
+          <div className="max-w-5xl mx-auto text-center relative z-10 space-y-3 pt-0">
             
             {/* HERO FEST LOGO / CALLIGRAPHY EMBLEM (ANCHORED ABOVE BADGE PILL) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex justify-center mx-auto my-4 sm:my-6 mb-4 sm:mb-6"
+              className="flex justify-center mx-auto mt-1 sm:mt-2 mb-2 sm:mb-3"
             >
               <div className="relative group cursor-pointer">
                 {/* Soft Radial Ambient Gold Glow behind Logo */}
@@ -189,7 +189,7 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full luxury-glass border border-[#9E741D]/30 dark:border-[#C8A86B]/40 text-[#7A5600] dark:text-[#C8A86B] text-xs font-semibold tracking-wide shadow-luxury relative overflow-hidden group"
+              className="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full luxury-glass border border-[#9E741D]/30 dark:border-[#C8A86B]/40 text-[#7A5600] dark:text-[#C8A86B] text-xs font-semibold tracking-wide shadow-luxury relative overflow-hidden group mb-1 sm:mb-2"
             >
               <Sparkles className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B] animate-pulse" />
               <span>{cms.fest_subtitle || 'Mifthahul Uloom Madrasa, Ullisherikkunnu • Grand Meelad 2026'}</span>
