@@ -123,10 +123,10 @@ export default function HomePage() {
 
   return (
     <SmoothScroll>
-      <div className="space-y-16 sm:space-y-24 pb-20 selection:bg-[#C8A86B] selection:text-[#0B0B0B]">
+      <div className="space-y-8 sm:space-y-12 pb-20 selection:bg-[#C8A86B] selection:text-[#0B0B0B]">
 
         {/* ================= HERO SECTION ================= */}
-        <section className="relative min-h-[80vh] flex items-center justify-center pt-4 sm:pt-6 pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <section className="relative min-h-[75vh] flex items-center justify-center pt-2 sm:pt-4 pb-4 px-4 sm:px-6 lg:px-8 overflow-hidden">
           
           {/* Background Ambient Glow & Mesh */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -315,7 +315,7 @@ export default function HomePage() {
             </motion.div>
 
             {/* Clickable Bounce Scroll-down Indicator */}
-            <div className="pt-6 flex justify-center">
+            <div className="pt-2 flex justify-center">
               <button
                 onClick={scrollToNextSection}
                 title="Scroll down to announcements & stages"
@@ -330,7 +330,7 @@ export default function HomePage() {
 
 
         {/* ================= MARQUEE TICKER STRIP ================= */}
-        <section id="ticker-marquee" className="w-full bg-[#18181B] dark:bg-[#0B0B0B] border-y border-[#9E741D]/25 dark:border-[#C8A86B]/20 py-2.5 sm:py-3.5 overflow-hidden shadow-md relative flex flex-col sm:flex-row items-stretch sm:items-center">
+        <section id="ticker-marquee" className="w-full bg-[#18181B] dark:bg-[#0B0B0B] border-y border-[#9E741D]/25 dark:border-[#C8A86B]/20 py-2 sm:py-2.5 overflow-hidden shadow-md relative flex flex-col sm:flex-row items-stretch sm:items-center my-2 sm:my-3">
           
           {/* FIXED LIVE BADGE (Above on mobile, Left on desktop) */}
           <div className="shrink-0 px-4 sm:px-6 z-20 bg-[#18181B] dark:bg-[#0B0B0B] flex items-center justify-between sm:justify-start space-x-2.5 border-b sm:border-b-0 sm:border-r border-slate-700 dark:border-white/10 shadow-lg py-1.5 sm:py-0.5">
@@ -385,7 +385,7 @@ export default function HomePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 space-y-10 py-6"
+          className="max-w-7xl mx-auto px-6 sm:px-8 space-y-8 py-2 sm:py-4"
         >
           {/* Section Header */}
           <div className="text-center space-y-3">
