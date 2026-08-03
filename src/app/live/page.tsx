@@ -386,13 +386,13 @@ export default function LiveDisplayPage() {
       </header>
 
       {/* SIMULTANEOUS 4-STAGE LIVE BROADCAST TICKER BAR */}
-      <div className="relative z-10 w-full bg-white/90 dark:bg-black/70 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 sm:px-8 py-2.5 flex items-center justify-between overflow-x-auto text-[11px] sm:text-xs">
-        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0">
+      <div className="relative z-10 w-full bg-white/95 dark:bg-black/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-8 py-2.5 flex items-center overflow-x-auto text-[11px] sm:text-xs">
+        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0 sticky left-0 bg-white/95 dark:bg-black/90 z-10 py-1 shadow-sm">
           <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
           <span>4-STAGE MONITOR:</span>
         </div>
 
-        <div className="flex items-center space-x-3 sm:space-x-4 overflow-x-auto py-1 pl-3 no-scrollbar shrink-0">
+        <div className="flex items-center space-x-3 sm:space-x-4 py-1 pl-3 shrink-0">
           {[
             { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40' },
             { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40' },
@@ -420,14 +420,14 @@ export default function LiveDisplayPage() {
       </div>
 
       {/* MAIN CAROUSEL SLIDES */}
-      <main className="relative z-10 flex-1 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full">
+      <main className="relative z-10 flex-1 px-3 sm:px-8 py-4 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full">
         
         {loading ? (
           <div className="text-center text-slate-500 dark:text-neutral-400 font-mono">Connecting to live score feed...</div>
         ) : isStoppedRemotely ? (
-          <div className="text-center space-y-4 luxury-glass p-10 rounded-[36px] border border-rose-500/40">
+          <div className="text-center space-y-4 luxury-glass p-8 sm:p-10 rounded-[36px] border border-rose-500/40">
             <AlertCircle className="w-12 h-12 text-rose-400 mx-auto animate-bounce" />
-            <h2 className="text-3xl font-heading font-bold text-slate-900 dark:text-white">Live Screen-Casting Stopped</h2>
+            <h2 className="text-2xl sm:text-3xl font-heading font-bold text-slate-900 dark:text-white">Live Screen-Casting Stopped</h2>
             <p className="text-xs text-slate-500 dark:text-neutral-400">The live broadcast session was remotely stopped by Admin Desk. Redirecting to home...</p>
           </div>
         ) : (
@@ -441,29 +441,29 @@ export default function LiveDisplayPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.6 }}
-                className="w-full max-w-6xl space-y-6 sm:space-y-10 text-center"
+                className="w-full max-w-6xl space-y-5 sm:space-y-10 text-center"
               >
                 <div className="space-y-1 sm:space-y-2">
                   <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 1 of 4 • Overall House Standing</span>
-                  <h2 className="text-2xl sm:text-5xl lg:text-6xl font-heading font-black text-slate-900 dark:text-white">
+                  <h2 className="text-xl sm:text-5xl lg:text-6xl font-heading font-black text-slate-900 dark:text-white">
                     HOUSE CHAMPIONSHIP SCOREBOARD
                   </h2>
                 </div>
 
-                <div className="flex flex-col md:grid md:grid-cols-2 gap-4 sm:gap-8">
-                  <div className="luxury-glass p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] border-2 border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-[#9E741D]/10 via-[#9E741D]/5 to-transparent dark:from-[#C8A86B]/15 dark:to-transparent">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 w-full">
+                  <div className="w-full luxury-glass p-5 sm:p-8 lg:p-10 rounded-[24px] sm:rounded-[36px] border-2 border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-[#9E741D]/10 via-[#9E741D]/5 to-transparent dark:from-[#C8A86B]/15 dark:to-transparent flex flex-col items-center justify-center">
                     <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-[#9E741D] dark:text-[#C8A86B] tracking-widest">House Group 1</div>
-                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">MAVADDA</h3>
-                    <div className="text-5xl sm:text-8xl font-heading font-black text-[#9E741D] dark:text-[#C8A86B]">
+                    <h3 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white tracking-tight uppercase truncate max-w-full px-2">MAVADDA</h3>
+                    <div className="text-4xl sm:text-7xl lg:text-8xl font-heading font-black text-[#9E741D] dark:text-[#C8A86B]">
                       {groupScores.MAVADDA}
                     </div>
                     <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Total Cumulative Points</p>
                   </div>
 
-                  <div className="luxury-glass p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] border-2 border-slate-300 dark:border-white/20 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-black/5 to-transparent dark:from-white/10 dark:to-transparent">
+                  <div className="w-full luxury-glass p-5 sm:p-8 lg:p-10 rounded-[24px] sm:rounded-[36px] border-2 border-slate-300 dark:border-white/20 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-black/5 to-transparent dark:from-white/10 dark:to-transparent flex flex-col items-center justify-center">
                     <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-slate-500 dark:text-neutral-400 tracking-widest">House Group 2</div>
-                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">MAHABBA</h3>
-                    <div className="text-5xl sm:text-8xl font-heading font-black text-slate-900 dark:text-white">
+                    <h3 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white tracking-tight uppercase truncate max-w-full px-2">MAHABBA</h3>
+                    <div className="text-4xl sm:text-7xl lg:text-8xl font-heading font-black text-slate-900 dark:text-white">
                       {groupScores.MAHABBA}
                     </div>
                     <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Total Cumulative Points</p>
