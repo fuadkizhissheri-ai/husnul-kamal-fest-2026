@@ -422,12 +422,30 @@ export default function LiveDisplayPage() {
 
             <button
               onClick={toggleFullscreen}
-              className="p-1.5 sm:p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center cursor-pointer"
               title="Toggle Fullscreen"
             >
               <Maximize className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
+
+            <button
+              onClick={handleManualStopCast}
+              className="p-1.5 sm:p-2 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-600 dark:text-rose-400 border border-rose-500/40 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center transition-all cursor-pointer"
+              title="Stop Live Cast / Exit Player"
+            >
+              <Power className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
           </div>
+
+          {/* STOP LIVE CAST / CLOSE PLAYER BUTTON */}
+          <button
+            onClick={handleManualStopCast}
+            className="btn-pill-luxury bg-rose-600 hover:bg-rose-700 text-white font-bebas tracking-wider text-xs sm:text-sm uppercase px-3 sm:px-4 py-1.5 shadow-md transition-all duration-300 flex items-center justify-center gap-1.5 shrink-0 leading-none cursor-pointer"
+            title="Stop Live Cast & Exit Player"
+          >
+            <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span className="leading-none translate-y-[1px]">Stop Cast</span>
+          </button>
         </div>
       </header>
 
