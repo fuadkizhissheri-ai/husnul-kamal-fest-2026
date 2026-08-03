@@ -54,6 +54,7 @@ export default function AdminDashboardPage() {
   const handleToggleRemoteCast = async (newStatus: 'active' | 'stopped') => {
     setUpdatingCast(true);
     try {
+      // 1. Post to API which updates DB & broadcasts SSE
       await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -62,6 +63,22 @@ export default function AdminDashboardPage() {
           value: newStatus,
         }),
       });
+
+      // 2. Direct BroadcastChannel signal for <5ms cross-tab response
+      if ('BroadcastChannel' in window) {
+        try {
+          const bc = new BroadcastChannel('cast_control');
+          bc.postMessage({ status: newStatus, timestamp: Date.now() });
+          bc.close();
+        } catch (e) {}
+      }
+
+      // 3. LocalStorage signal fallback for storage listener
+      try {
+        localStorage.setItem('hk_live_cast_status', newStatus);
+        localStorage.setItem('hk_live_cast_signal', String(Date.now()));
+      } catch (e) {}
+
       setCastStatus(newStatus);
     } catch (err) {
       alert('Error updating live cast status');

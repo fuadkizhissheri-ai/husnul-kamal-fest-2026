@@ -243,8 +243,54 @@ export default function LiveDisplayPage() {
     };
   }, []);
 
-  // Near-instant real-time listener across browser tabs & SSE stream
-  useRealtimeSync(() => {
+  // 1. Instant Signal Listener (BroadcastChannel & LocalStorage)
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    if ('BroadcastChannel' in window) {
+      try {
+        bc = new BroadcastChannel('cast_control');
+        bc.onmessage = (event) => {
+          if (event.data?.status === 'stopped') {
+            setIsStoppedRemotely(true);
+            cleanUpAndExit();
+          } else if (event.data?.status === 'active') {
+            setIsStoppedRemotely(false);
+            fetchLiveData();
+          }
+        };
+      } catch (e) {}
+    }
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'hk_live_cast_status' && e.newValue === 'stopped') {
+        setIsStoppedRemotely(true);
+        cleanUpAndExit();
+      } else if (e.key === 'hk_live_cast_status' && e.newValue === 'active') {
+        setIsStoppedRemotely(false);
+        fetchLiveData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      if (bc) bc.close();
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // 2. Near-instant real-time listener across browser tabs & SSE stream
+  useRealtimeSync((data) => {
+    if (data?.key === 'live_cast_status' || data?.live_cast_status) {
+      const status = data.value || data.live_cast_status;
+      if (status === 'stopped') {
+        setIsStoppedRemotely(true);
+        cleanUpAndExit();
+        return;
+      } else if (status === 'active') {
+        setIsStoppedRemotely(false);
+      }
+    }
     fetchLiveData();
   });
 
