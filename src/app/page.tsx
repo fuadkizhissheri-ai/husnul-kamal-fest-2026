@@ -207,14 +207,14 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[180px] bg-[#9E741D]/10 dark:bg-[#C8A86B]/15 blur-[90px] rounded-full pointer-events-none" />
 
               <h1
-                className="text-3xl sm:text-6xl lg:text-7xl font-heading font-black tracking-wider uppercase leading-[1.1] relative z-10 text-center space-y-1 sm:space-y-2"
+                className="text-3xl sm:text-6xl lg:text-7xl font-serif font-black tracking-widest uppercase leading-[1.15] relative z-10 text-center space-y-2 sm:space-y-3"
                 suppressHydrationWarning
               >
-                <span className="block bg-gradient-to-r from-slate-950 via-[#7A5600] to-[#9E741D] dark:from-white dark:via-[#F5E6C4] dark:to-[#C8A86B] bg-clip-text text-transparent filter drop-shadow-[0_4px_16px_rgba(158,116,29,0.35)]">
+                <span className="block bg-gradient-to-r from-slate-950 via-[#7A5600] to-[#9E741D] dark:from-white dark:via-[#F5E6C4] dark:to-[#C8A86B] bg-clip-text text-transparent filter drop-shadow-[0_4px_20px_rgba(158,116,29,0.35)]">
                   HUSNUL KAMAL
                 </span>
-                <span className="block text-2xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-[#9E741D] via-[#7A5600] to-slate-900 dark:from-[#C8A86B] dark:via-[#F5E6C4] dark:to-white bg-clip-text text-transparent filter drop-shadow-[0_4px_16px_rgba(158,116,29,0.3)]">
-                  — MEELAD FEST 2026
+                <span className="block text-xl sm:text-4xl lg:text-5xl font-mono font-bold tracking-[0.25em] bg-gradient-to-r from-[#9E741D] via-[#7A5600] to-slate-900 dark:from-[#C8A86B] dark:via-[#F5E6C4] dark:to-white bg-clip-text text-transparent filter drop-shadow-[0_4px_16px_rgba(158,116,29,0.3)]">
+                  MEELAD FEST 2026
                 </span>
               </h1>
 
