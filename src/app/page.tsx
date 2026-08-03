@@ -329,29 +329,33 @@ export default function HomePage() {
 
 
         {/* ================= MARQUEE TICKER STRIP ================= */}
-        <section id="ticker-marquee" className="w-full bg-[#18181B] dark:bg-[#0B0B0B] border-y border-[#9E741D]/25 dark:border-[#C8A86B]/20 py-3.5 overflow-hidden shadow-md relative flex items-center">
+        <section id="ticker-marquee" className="w-full bg-[#18181B] dark:bg-[#0B0B0B] border-y border-[#9E741D]/25 dark:border-[#C8A86B]/20 py-2.5 sm:py-3.5 overflow-hidden shadow-md relative flex flex-col sm:flex-row items-stretch sm:items-center">
           
-          {/* FIXED LEFT LIVE BADGE (Non-scrolling) */}
-          <div className="shrink-0 px-4 sm:px-6 z-20 bg-[#18181B] dark:bg-[#0B0B0B] flex items-center space-x-2.5 border-r border-slate-700 dark:border-white/10 shadow-lg py-0.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0" />
-            <span className="font-bold font-mono text-[11px] sm:text-xs uppercase tracking-widest text-[#F5E6C4] dark:text-white shrink-0">
-              LIVE FEST ANNOUNCEMENT:
-            </span>
+          {/* FIXED LIVE BADGE (Above on mobile, Left on desktop) */}
+          <div className="shrink-0 px-4 sm:px-6 z-20 bg-[#18181B] dark:bg-[#0B0B0B] flex items-center justify-between sm:justify-start space-x-2.5 border-b sm:border-b-0 sm:border-r border-slate-700 dark:border-white/10 shadow-lg py-1.5 sm:py-0.5">
+            <div className="flex items-center space-x-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0" />
+              <span className="font-bold font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#F5E6C4] dark:text-white shrink-0">
+                <span className="hidden sm:inline">LIVE FEST ANNOUNCEMENT:</span>
+                <span className="sm:hidden">ANNOUNCEMENT:</span>
+              </span>
+            </div>
+            <span className="text-[9px] font-mono text-emerald-400 font-bold sm:hidden uppercase tracking-widest">LIVE TICKER</span>
           </div>
 
           {/* CONTINUOUSLY SCROLLING MARQUEE CONTAINER */}
-          <div className="overflow-hidden flex-1 relative">
+          <div className="overflow-hidden flex-1 relative w-full py-1.5 sm:py-0">
             <div className="animate-marquee hover:[animation-play-state:paused] flex items-center text-xs font-mono whitespace-nowrap">
               
               {/* SEQUENCE COPY 1 */}
               <div className="flex items-center space-x-6 px-4 shrink-0">
                 <span className="text-[#F5E6C4] dark:text-[#C8A86B] font-bold">DELEGATE REGISTRATION OPEN FOR MAVADDA &amp; MAHABBA HOUSES</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold">4 STAGES OPERATING SIMULTANEOUSLY: AURA · LEGACY · LUMINA · ZENITH</span>
+                <span className="text-emerald-400 font-bold">4 STAGES OPERATING SIMULTANEOUSLY: AURA · LEGACY · LUMINA · ZENITH</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-amber-800 dark:text-amber-300 font-bold">100+ COMPETITION ITEMS CATALOGUE PUBLISHED</span>
+                <span className="text-amber-300 font-bold">100+ COMPETITION ITEMS CATALOGUE PUBLISHED</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold">MIFTHAHUL ULOOM MADRASA, ULLISHERIKKUNNU</span>
+                <span className="text-slate-300 font-bold">MIFTHAHUL ULOOM MADRASA, ULLISHERIKKUNNU</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
               </div>
 
@@ -359,11 +363,11 @@ export default function HomePage() {
               <div className="flex items-center space-x-6 px-4 shrink-0">
                 <span className="text-[#F5E6C4] dark:text-[#C8A86B] font-bold">DELEGATE REGISTRATION OPEN FOR MAVADDA &amp; MAHABBA HOUSES</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold">4 STAGES OPERATING SIMULTANEOUSLY: AURA · LEGACY · LUMINA · ZENITH</span>
+                <span className="text-emerald-400 font-bold">4 STAGES OPERATING SIMULTANEOUSLY: AURA · LEGACY · LUMINA · ZENITH</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-amber-800 dark:text-amber-300 font-bold">100+ COMPETITION ITEMS CATALOGUE PUBLISHED</span>
+                <span className="text-amber-300 font-bold">100+ COMPETITION ITEMS CATALOGUE PUBLISHED</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
-                <span className="text-slate-700 dark:text-slate-300 font-bold">MIFTHAHUL ULOOM MADRASA, ULLISHERIKKUNNU</span>
+                <span className="text-slate-300 font-bold">MIFTHAHUL ULOOM MADRASA, ULLISHERIKKUNNU</span>
                 <span className="text-slate-400 dark:text-white/40 font-bold">•</span>
               </div>
 
