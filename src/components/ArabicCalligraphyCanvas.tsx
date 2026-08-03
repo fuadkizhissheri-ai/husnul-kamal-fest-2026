@@ -34,6 +34,7 @@ interface SparkleParticle {
   alpha: number;
   life: number;
   maxLife: number;
+  colorType: 'gold' | 'green' | 'gold-green';
 }
 
 interface ClickRipple {
@@ -160,18 +161,25 @@ export default function ArabicCalligraphyCanvas() {
       mouse.y = e.clientY - rect.top;
       mouse.active = true;
 
-      // Spawn subtle golden sparkles on movement
-      if (!prefersReducedMotion && Math.random() < 0.3) {
-        sparkles.push({
-          x: mouse.x + (Math.random() - 0.5) * 16,
-          y: mouse.y + (Math.random() - 0.5) * 16,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: (Math.random() - 0.5) * 0.8 - 0.3,
-          size: Math.random() * 2.5 + 1,
-          alpha: 0.7,
-          life: 0,
-          maxLife: Math.random() * 20 + 15,
-        });
+      // Spawn playful golden and emerald green dots following the mouse cursor
+      if (!prefersReducedMotion) {
+        for (let k = 0; k < 2; k++) {
+          const colorRand = Math.random();
+          const colorType: 'gold' | 'green' | 'gold-green' =
+            colorRand < 0.4 ? 'gold' : colorRand < 0.75 ? 'green' : 'gold-green';
+
+          sparkles.push({
+            x: mouse.x + (Math.random() - 0.5) * 20,
+            y: mouse.y + (Math.random() - 0.5) * 20,
+            vx: (Math.random() - 0.5) * 1.4,
+            vy: (Math.random() - 0.5) * 1.4 - 0.2,
+            size: Math.random() * 3.5 + 1.5,
+            alpha: 0.85,
+            life: 0,
+            maxLife: Math.random() * 25 + 15,
+            colorType,
+          });
+        }
       }
     };
 
@@ -239,20 +247,27 @@ export default function ArabicCalligraphyCanvas() {
         smoothMouse.y += (-1000 - smoothMouse.y) * 0.05;
       }
 
-      // ── 1. RENDER CURSOR SPOTLIGHT ORB ──
+      // ── 1. RENDER CURSOR SPOTLIGHT ORB (GOLD & GREEN TINT) ──
       if (smoothMouse.x > -500 && !prefersReducedMotion) {
         ctx.save();
+        const isDark = document.documentElement.classList.contains('dark');
         const spotlightGrad = ctx.createRadialGradient(
           smoothMouse.x, smoothMouse.y, 0,
-          smoothMouse.x, smoothMouse.y, 240
+          smoothMouse.x, smoothMouse.y, 220
         );
-        spotlightGrad.addColorStop(0, 'rgba(200, 168, 107, 0.16)');
-        spotlightGrad.addColorStop(0.5, 'rgba(200, 168, 107, 0.05)');
-        spotlightGrad.addColorStop(1, 'rgba(200, 168, 107, 0)');
+        if (isDark) {
+          spotlightGrad.addColorStop(0, 'rgba(200, 168, 107, 0.14)');
+          spotlightGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.07)');
+          spotlightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+          spotlightGrad.addColorStop(0, 'rgba(158, 116, 29, 0.12)');
+          spotlightGrad.addColorStop(0.5, 'rgba(6, 95, 70, 0.06)');
+          spotlightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        }
 
         ctx.fillStyle = spotlightGrad;
         ctx.beginPath();
-        ctx.arc(smoothMouse.x, smoothMouse.y, 240, 0, Math.PI * 2);
+        ctx.arc(smoothMouse.x, smoothMouse.y, 220, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
@@ -280,13 +295,14 @@ export default function ArabicCalligraphyCanvas() {
         ctx.restore();
       }
 
-      // ── 3. RENDER SPARKLES ──
+      // ── 3. RENDER PLAYFUL GOLD & GREEN PARTICLES ──
+      const isDark = document.documentElement.classList.contains('dark');
       for (let i = sparkles.length - 1; i >= 0; i--) {
         const sp = sparkles[i];
         sp.x += sp.vx;
         sp.y += sp.vy;
         sp.life++;
-        sp.alpha = (1 - sp.life / sp.maxLife) * 0.7 * globalFade;
+        sp.alpha = (1 - sp.life / sp.maxLife) * 0.85 * globalFade;
 
         if (sp.life >= sp.maxLife) {
           sparkles.splice(i, 1);
@@ -296,10 +312,25 @@ export default function ArabicCalligraphyCanvas() {
         ctx.save();
         ctx.beginPath();
         ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
-        ctx.fillStyle = '#C8A86B';
+
+        let dotGrad = ctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, sp.size);
+        if (sp.colorType === 'green') {
+          dotGrad.addColorStop(0, isDark ? '#34D399' : '#059669');
+          dotGrad.addColorStop(1, isDark ? '#059669' : '#065F46');
+          ctx.shadowColor = isDark ? '#34D399' : '#059669';
+        } else if (sp.colorType === 'gold-green') {
+          dotGrad.addColorStop(0, isDark ? '#F5E6C4' : '#C8A86B');
+          dotGrad.addColorStop(1, isDark ? '#10B981' : '#065F46');
+          ctx.shadowColor = isDark ? '#C8A86B' : '#9E741D';
+        } else {
+          dotGrad.addColorStop(0, isDark ? '#FDE68A' : '#C8A86B');
+          dotGrad.addColorStop(1, isDark ? '#C8A86B' : '#7A5600');
+          ctx.shadowColor = isDark ? '#FDE68A' : '#9E741D';
+        }
+
+        ctx.fillStyle = dotGrad;
         ctx.globalAlpha = sp.alpha;
-        ctx.shadowColor = '#C8A86B';
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 8;
         ctx.fill();
         ctx.restore();
       }

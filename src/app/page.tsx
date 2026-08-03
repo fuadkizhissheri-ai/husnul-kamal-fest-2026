@@ -196,16 +196,13 @@ export default function HomePage() {
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-[#C8A86B]/20 to-transparent pointer-events-none" />
             </motion.div>
 
-            {/* Headline with Soft Radial Gold Glow Background */}
+            {/* Headline with Interactive Dynamic Calligraphy Background */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="space-y-4 relative"
             >
-              {/* Soft Radial Ambient Gold Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[180px] bg-[#9E741D]/10 dark:bg-[#C8A86B]/15 blur-[90px] rounded-full pointer-events-none" />
-
               <h1
                 className="font-bebas font-black uppercase text-center relative z-10 space-y-2 sm:space-y-3 py-2 leading-none"
                 suppressHydrationWarning
