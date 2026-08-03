@@ -207,13 +207,13 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[180px] bg-[#9E741D]/10 dark:bg-[#C8A86B]/15 blur-[90px] rounded-full pointer-events-none" />
 
               <h1
-                className="font-bebas text-center relative z-10 space-y-3 leading-snug py-2"
+                className="font-bebas font-black uppercase text-center relative z-10 space-y-2 sm:space-y-3 py-2 leading-none"
                 suppressHydrationWarning
               >
-                <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wide leading-tight uppercase bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 dark:from-white dark:via-[#F5E6C4] dark:to-amber-300 bg-clip-text text-transparent filter drop-shadow-[0_4px_20px_rgba(217,119,6,0.3)]">
+                <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[115px] font-black tracking-wide leading-none bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 dark:from-[#FFE8B2] dark:via-[#E5C158] dark:to-[#B8860B] bg-clip-text text-transparent filter drop-shadow-[0_6px_24px_rgba(217,119,6,0.35)]">
                   HUSNUL KAMAL
                 </span>
-                <span className="block text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-widest leading-tight uppercase text-amber-600/90 dark:text-amber-400/90 mt-2 filter drop-shadow-[0_2px_12px_rgba(217,119,6,0.2)]">
+                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[88px] font-black tracking-wider leading-none uppercase bg-gradient-to-r from-amber-700 via-amber-500 to-amber-400 dark:from-[#E5C158] dark:via-[#FFE8B2] dark:to-[#B8860B] bg-clip-text text-transparent filter drop-shadow-[0_4px_18px_rgba(217,119,6,0.3)]">
                   MEELAD FEST 2026
                 </span>
               </h1>
