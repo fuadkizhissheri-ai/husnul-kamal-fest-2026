@@ -95,30 +95,45 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* LIVE SCREEN-CASTING REMOTE CONTROL CARD */}
-      <div className="luxury-glass p-6 rounded-2xl border border-[#9E741D]/30 dark:border-[#C8A86B]/40 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#9E741D]/15 dark:bg-[#C8A86B]/20 border border-[#9E741D] dark:border-[#C8A86B] text-[#9E741D] dark:text-[#C8A86B] flex items-center justify-center">
-            <Tv className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <h3 className="text-lg font-bold font-serif text-slate-900 dark:text-white">Live Screen-Casting TV Control Desk</h3>
-              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono ${
-                castStatus === 'active' ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/40'
-              }`}>
-                {castStatus === 'active' ? '● BROADCAST ACTIVE' : '■ CAST STOPPED'}
-              </span>
+      <div className="bg-neutral-900 border border-amber-500/20 rounded-2xl p-6 shadow-xl relative overflow-hidden space-y-4">
+        {/* Subtle Ambient Gold Backlight Glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div className="flex items-start sm:items-center space-x-3.5">
+            {/* TV Icon Capsule */}
+            <div className="bg-amber-500/10 text-amber-400 border border-amber-500/30 p-3 rounded-2xl shrink-0 flex items-center justify-center">
+              <Tv className="w-6 h-6" />
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Control live score screens, remote stop signal, and cast launcher.</p>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-bold text-lg md:text-xl text-white font-serif tracking-tight">
+                  Live Screen-Casting TV Control Desk
+                </h3>
+                {/* Broadcast Pill Badge */}
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 border ${
+                  castStatus === 'active'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                    : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${castStatus === 'active' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
+                  <span>{castStatus === 'active' ? 'BROADCAST ACTIVE' : 'CAST STOPPED'}</span>
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 font-sans">
+                Control live score screens, remote stop signal, and cast launcher across all 4 stages.
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 w-full md:w-auto">
+        {/* 2-COLUMN ACTION BUTTONS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 pt-3 border-t border-neutral-800 relative z-10">
           <a
             href="/live"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 md:flex-none btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] text-xs px-4 py-2.5 font-bold flex items-center justify-center space-x-1.5 shadow-lg hover:bg-[#9E741D] dark:hover:bg-[#B8943A]"
+            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-all shadow-md text-xs sm:text-sm"
           >
             <ExternalLink className="w-4 h-4" />
             <span>Launch TV Screen</span>
@@ -128,19 +143,19 @@ export default function AdminDashboardPage() {
             <button
               onClick={() => handleToggleRemoteCast('stopped')}
               disabled={updatingCast}
-              className="flex-1 md:flex-none btn-pill-luxury bg-rose-600 hover:bg-rose-500 text-white text-xs px-4 py-2.5 font-bold flex items-center justify-center space-x-1.5 shadow-lg disabled:opacity-50"
+              className="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800/50 font-medium rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-all text-xs sm:text-sm disabled:opacity-50"
             >
               <Power className="w-4 h-4" />
-              <span>Remote Stop All Casts</span>
+              <span>{updatingCast ? 'Updating Signal...' : 'Remote Stop All Casts'}</span>
             </button>
           ) : (
             <button
               onClick={() => handleToggleRemoteCast('active')}
               disabled={updatingCast}
-              className="flex-1 md:flex-none btn-pill-luxury bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 font-bold flex items-center justify-center space-x-1.5 shadow-lg disabled:opacity-50"
+              className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800/50 font-medium rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-all text-xs sm:text-sm disabled:opacity-50"
             >
               <Radio className="w-4 h-4" />
-              <span>Resume Broadcast</span>
+              <span>{updatingCast ? 'Updating Signal...' : 'Resume Broadcast'}</span>
             </button>
           )}
         </div>
