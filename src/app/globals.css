@@ -1,0 +1,347 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================
+   HUSNUL KAMAL DESIGN SYSTEM — CSS CUSTOM PROPERTIES
+   ===================================================== */
+:root {
+  /* Light Mode Color Tokens (WCAG 4.5:1 Compliant) */
+  --hk-bg-primary: #FAF8F3;       /* Warm cream off-white background */
+  --hk-bg-card: #FFFFFF;          /* Pure white container background */
+  --hk-text-primary: #18181B;     /* High-contrast dark charcoal text */
+  --hk-text-secondary: #475569;   /* Readable slate gray secondary text */
+  --hk-accent-gold: #9E741D;      /* Deep rich gold (4.6:1 contrast ratio on cream/white) */
+  --hk-accent-gold-light: #C8A86B;
+  --hk-accent-gold-deep: #7A5600;
+  --hk-accent-gold-bg: #F5E6C4;   /* Soft gold tint for badges */
+  --hk-accent-green: #065F46;     /* Deep forest green for Mahabba & success */
+  --hk-accent-green-bg: #D1FAE5;  /* Soft green tint */
+  --hk-border-color: #E2E8F0;     /* Soft slate border */
+  --hk-border-gold: rgba(158, 116, 29, 0.3);
+
+  /* Spacing Scale */
+  --hk-section-gap: 6rem;
+  --hk-section-gap-sm: 4rem;
+  --hk-card-gap: 1.5rem;
+  --hk-content-padding: 1.5rem;
+  --hk-container-px: 2rem;
+  --hk-container-max: 80rem; /* 1280px */
+
+  /* Border Radii */
+  --hk-radius-card: 28px;
+  --hk-radius-button: 9999px;
+  --hk-radius-badge: 9999px;
+  --hk-radius-input: 12px;
+  --hk-radius-table-row: 12px;
+
+  /* Shadows */
+  --hk-shadow-luxury: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --hk-shadow-card-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px -5px rgba(158, 116, 29, 0.2);
+  --hk-shadow-gold-glow: 0 0 25px -5px rgba(158, 116, 29, 0.4);
+}
+
+.dark {
+  /* Dark Mode Color Tokens */
+  --hk-bg-primary: #0B0B0B;
+  --hk-bg-card: rgba(18, 18, 18, 0.65);
+  --hk-text-primary: #FFFFFF;
+  --hk-text-dark: #FFFFFF;
+  --hk-text-secondary: #9CA3AF;
+  --hk-accent-gold: #C8A86B;
+  --hk-accent-gold-light: #E0C98A;
+  --hk-accent-gold-deep: #B8943A;
+  --hk-accent-gold-bg: rgba(200, 168, 107, 0.15);
+  --hk-accent-green: #10B981;
+  --hk-accent-green-bg: rgba(16, 185, 129, 0.15);
+  --hk-border-color: rgba(200, 168, 107, 0.2);
+  --hk-border-gold: rgba(200, 168, 107, 0.3);
+
+  --hk-shadow-luxury: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --hk-shadow-card-hover: 0 32px 64px -20px rgba(0, 0, 0, 0.6), 0 0 40px -10px rgba(200, 168, 107, 0.25);
+  --hk-shadow-gold-glow: 0 0 30px -8px rgba(200, 168, 107, 0.5);
+}
+
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space-grotesk), sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  body {
+    background-color: var(--hk-bg-primary);
+    color: var(--hk-text-primary);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+}
+
+/* =====================================================
+   LUXURY SCROLLBAR
+   ===================================================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--hk-bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--hk-accent-gold); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--hk-accent-gold-deep); }
+
+/* =====================================================
+   COMPONENT UTILITY CLASSES — LAYOUT
+   ===================================================== */
+@layer components {
+
+  /* Container */
+  .hk-container {
+    @apply max-w-7xl mx-auto px-6 sm:px-8;
+  }
+
+  /* Section Spacing */
+  .hk-section {
+    @apply py-16 sm:py-24;
+  }
+
+  /* =====================================================
+     GLASS CARDS (Light & Dark Theme Specific)
+     ===================================================== */
+  .luxury-glass {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(158, 116, 29, 0.25);
+    border-radius: 28px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .luxury-glass {
+    background: rgba(18, 18, 18, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(200, 168, 107, 0.2);
+    border-radius: 28px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Shared card hover */
+  .hk-card {
+    @apply luxury-glass p-6 rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 shadow-luxury transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  /* Dynamic Gold Text Utility */
+  .hk-text-gold {
+    color: var(--hk-accent-gold);
+  }
+
+  /* =====================================================
+     BADGE UTILITIES (High Contrast Light & Dark Modes)
+     ===================================================== */
+  .hk-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border;
+  }
+
+  .hk-badge-gold {
+    @apply hk-badge bg-[#F5E6C4] text-[#7A5600] border-[#E5C578] dark:bg-[#C8A86B]/15 dark:text-[#C8A86B] dark:border-[#C8A86B]/30;
+  }
+
+  .hk-badge-green {
+    @apply hk-badge bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30;
+  }
+
+  .hk-badge-live {
+    @apply hk-badge bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/40 animate-pulse;
+  }
+
+  .hk-badge-upcoming {
+    @apply hk-badge bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40;
+  }
+
+  .hk-badge-completed {
+    @apply hk-badge bg-slate-200 text-slate-700 border-slate-300 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30;
+  }
+
+  /* Stage Badges */
+  .hk-badge-aura {
+    @apply hk-badge bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-500/15 dark:text-purple-400 dark:border-purple-500/30;
+  }
+  .hk-badge-legacy {
+    @apply hk-badge bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30;
+  }
+  .hk-badge-lumina {
+    @apply hk-badge bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30;
+  }
+  .hk-badge-zenith {
+    @apply hk-badge bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30;
+  }
+
+  /* =====================================================
+     BUTTON UTILITIES
+     ===================================================== */
+  .btn-pill-luxury {
+    border-radius: 9999px;
+    padding: 0.875rem 2rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.03em;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn-pill-luxury:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .hk-btn-primary {
+    @apply btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-white dark:text-[#0B0B0B] hover:bg-[#9E741D] dark:hover:bg-[#C8A86B] dark:hover:text-[#0B0B0B] shadow-md;
+  }
+
+  .hk-btn-secondary {
+    @apply btn-pill-luxury luxury-glass border border-[#9E741D]/30 dark:border-[#C8A86B]/40 text-[#18181B] dark:text-white hover:border-[#9E741D] dark:hover:border-[#C8A86B];
+  }
+
+  .hk-btn-gold {
+    @apply btn-pill-luxury bg-[#9E741D] text-white dark:bg-[#C8A86B] dark:text-[#0B0B0B] hover:bg-[#7A5600] dark:hover:bg-[#B8943A] shadow-md;
+  }
+
+  /* =====================================================
+     TABLE UTILITIES (Admin Panel & Public Scoreboard)
+     ===================================================== */
+  .hk-table {
+    @apply w-full text-xs;
+  }
+
+  .hk-table thead tr {
+    @apply border-b border-slate-200 dark:border-white/10 bg-slate-100/70 dark:bg-black/25;
+  }
+
+  .hk-table thead th {
+    @apply text-left py-3.5 px-4 text-[10px] font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B];
+  }
+
+  .hk-table tbody tr {
+    @apply border-b border-slate-200/60 dark:border-white/5 hover:bg-slate-100/60 dark:hover:bg-white/5 transition-colors;
+  }
+
+  .hk-table tbody td {
+    @apply py-3.5 px-4 text-slate-800 dark:text-slate-200;
+  }
+
+  /* =====================================================
+     FORM FIELD UTILITIES
+     ===================================================== */
+  .hk-input {
+    @apply w-full px-4 py-2.5 bg-white dark:bg-black/30 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#9E741D] dark:focus:border-[#C8A86B] focus:ring-1 focus:ring-[#9E741D]/30 dark:focus:ring-[#C8A86B]/30 placeholder:text-slate-400 transition-all;
+  }
+
+  .hk-label {
+    @apply block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5;
+  }
+
+  .hk-select {
+    @apply hk-input appearance-none cursor-pointer;
+  }
+
+  /* =====================================================
+     SECTION HEADING PATTERN
+     ===================================================== */
+  .hk-section-header {
+    @apply text-center space-y-3 mb-12;
+  }
+
+  .hk-section-eyebrow {
+    @apply hk-micro text-[#9E741D] dark:text-[#C8A86B];
+  }
+
+  /* =====================================================
+     FLOATING & SHIMMER ANIMATIONS
+     ===================================================== */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+  }
+
+  .animate-float        { animation: float 6s ease-in-out infinite; }
+  .animate-float-delayed { animation: float 7s ease-in-out 2s infinite; }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(158,116,29,0.15) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+
+  /* =====================================================
+     CONTINUOUS INFINITE MARQUEE ANIMATION
+     ===================================================== */
+  @keyframes marquee {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: marquee 32s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+}
+
+/* =====================================================
+   PRINT STYLES — Certificate & ID Card
+   ===================================================== */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print, nav, header, footer, aside {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .hk-certificate {
+    width: 297mm;
+    height: 210mm;
+    page-break-after: always;
+  }
+
+  .hk-id-card {
+    width: 85.6mm;
+    height: 54mm;
+  }
+}

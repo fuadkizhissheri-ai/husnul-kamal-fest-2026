@@ -1,0 +1,248 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { verifyAdminSession } from '@/lib/auth';
+import { broadcastRealtimeChange } from '@/lib/realtime';
+import { getStageInfo } from '@/lib/stages';
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    const stage = searchParams.get('stage');
+    const status = searchParams.get('status');
+    const query = searchParams.get('q');
+
+    // 1. Fetch explicit Schedule records
+    const explicitSchedules = await prisma.schedule.findMany({
+      include: {
+        programme: true,
+      },
+    });
+
+    const scheduledProgIds = new Set(explicitSchedules.map((s) => s.programmeId));
+
+    // 2. Fetch all active Programmes not yet in Schedule table
+    const unscheduledProgrammes = await prisma.programme.findMany({
+      where: {
+        isActive: true,
+        id: { notIn: Array.from(scheduledProgIds) },
+      },
+    });
+
+    // 3. Create virtual schedule items for programmes that have timing/stage set
+    const virtualSchedules = unscheduledProgrammes.map((p) => ({
+      id: `virtual-${p.id}`,
+      programmeId: p.id,
+      stage: p.stage || 'Aura Stage',
+      date: p.date || '2026-09-15',
+      startTime: p.startTime || '09:00 AM',
+      endTime: p.endTime || '11:00 AM',
+      status: 'UPCOMING',
+      programme: p,
+      isVirtual: true,
+      createdAt: p.createdAt,
+    }));
+
+    // 4. Merge all schedules
+    let allSchedules = [...explicitSchedules, ...virtualSchedules];
+
+    console.log(`[Schedule API] Fetched ${explicitSchedules.length} explicit schedules + ${virtualSchedules.length} programme schedules = ${allSchedules.length} total items`);
+
+    // 5. Apply filters
+    if (stage && stage !== 'ALL') {
+      const targetStageId = getStageInfo(stage).id.toLowerCase();
+      allSchedules = allSchedules.filter((s) => {
+        const sStageId = getStageInfo(s.stage).id.toLowerCase();
+        return sStageId === targetStageId || (s.stage && s.stage.toLowerCase().includes(targetStageId));
+      });
+    }
+
+    if (status && status !== 'ALL') {
+      allSchedules = allSchedules.filter((s) => s.status === status);
+    }
+
+    if (category && category !== 'ALL') {
+      allSchedules = allSchedules.filter((s) => s.programme?.category === category);
+    }
+
+    if (query) {
+      const q = query.toLowerCase();
+      allSchedules = allSchedules.filter(
+        (s) =>
+          (s.stage && s.stage.toLowerCase().includes(q)) ||
+          (s.programme?.name && s.programme.name.toLowerCase().includes(q))
+      );
+    }
+
+    // 6. Sort by Date -> Start Time -> Stage
+    allSchedules.sort((a, b) => {
+      const dateA = a.date || '';
+      const dateB = b.date || '';
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+
+      const timeA = a.startTime || '';
+      const timeB = b.startTime || '';
+      if (timeA !== timeB) return timeA.localeCompare(timeB);
+
+      return (a.stage || '').localeCompare(b.stage || '');
+    });
+
+    console.log(`[Schedule API] Returning ${allSchedules.length} filtered schedule items`);
+
+    return NextResponse.json(
+      { schedules: allSchedules },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=15',
+        },
+      }
+    );
+  } catch (error: any) {
+    console.error('[Schedule API Error]', error);
+    return NextResponse.json({ error: error.message || 'Failed to fetch schedule' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const session = await verifyAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { programmeId, stage, date, startTime, endTime, status } = body;
+
+    if (!programmeId || !stage || !date) {
+      return NextResponse.json({ error: 'Programme, Stage, and Date are required.' }, { status: 400 });
+    }
+
+    const scheduleItem = await prisma.schedule.create({
+      data: {
+        programmeId,
+        stage: stage || 'Aura Stage',
+        date: date || '2026-09-15',
+        startTime: startTime || '09:00 AM',
+        endTime: endTime || '11:00 AM',
+        status: status || 'UPCOMING',
+      },
+      include: {
+        programme: true,
+      },
+    });
+
+    // Also update Programme model stage & timing
+    await prisma.programme.update({
+      where: { id: programmeId },
+      data: {
+        stage: scheduleItem.stage,
+        date: scheduleItem.date,
+        startTime: scheduleItem.startTime,
+        endTime: scheduleItem.endTime,
+      },
+    });
+
+    broadcastRealtimeChange('SCHEDULE_UPDATED', scheduleItem);
+
+    return NextResponse.json({ success: true, schedule: scheduleItem });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to add schedule item' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await verifyAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { id, stage, date, startTime, endTime, status, programmeId } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Schedule ID is required.' }, { status: 400 });
+    }
+
+    // Handle virtual schedule items (id starts with virtual-)
+    let updated;
+    if (id.startsWith('virtual-')) {
+      const realProgId = programmeId || id.replace('virtual-', '');
+      updated = await prisma.schedule.create({
+        data: {
+          programmeId: realProgId,
+          stage,
+          date,
+          startTime,
+          endTime,
+          status,
+        },
+        include: {
+          programme: true,
+        },
+      });
+    } else {
+      updated = await prisma.schedule.update({
+        where: { id },
+        data: {
+          stage,
+          date,
+          startTime,
+          endTime,
+          status,
+          programmeId,
+        },
+        include: {
+          programme: true,
+        },
+      });
+    }
+
+    // Update programme timing
+    if (updated.programmeId) {
+      await prisma.programme.update({
+        where: { id: updated.programmeId },
+        data: {
+          stage: updated.stage,
+          date: updated.date,
+          startTime: updated.startTime,
+          endTime: updated.endTime,
+        },
+      });
+    }
+
+    broadcastRealtimeChange('SCHEDULE_UPDATED', updated);
+
+    return NextResponse.json({ success: true, schedule: updated });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to update schedule item' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await verifyAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Schedule ID is required.' }, { status: 400 });
+    }
+
+    if (!id.startsWith('virtual-')) {
+      await prisma.schedule.delete({
+        where: { id },
+      });
+    }
+
+    broadcastRealtimeChange('SCHEDULE_UPDATED', { deletedId: id });
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to delete schedule item' }, { status: 500 });
+  }
+}

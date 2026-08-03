@@ -1,0 +1,152 @@
+// Prisma Schema for Husnul Kamal — Meelad Fest 2026
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+}
+
+model Participant {
+  id             String         @id @default(uuid())
+  registrationId String         @unique // e.g. HK2026-0001
+  chestNumber    String         @unique // e.g. SJ-045
+  fullName       String
+  group          String         // MAVADDA or MAHABBA
+  category       String         // Sub Junior, Junior, Senior, Super Senior
+  gender         String         // Male / Female
+  dob            String
+  whatsapp       String
+  madrasa        String         @default("Mifthahul Uloom Madrasa")
+  photoUrl       String?
+  createdAt      DateTime       @default(now())
+  registrations  Registration[]
+  results        Result[]
+
+  @@index([group])
+  @@index([category])
+  @@index([chestNumber])
+}
+
+model Programme {
+  id               String         @id @default(uuid())
+  name             String
+  category         String         // Sub Junior, Junior, Senior, Super Senior, General
+  stage            String         // Stage 1 (Imam Bukhari), Stage 2 (Imam Shafi), etc.
+  date             String         // YYYY-MM-DD or readable
+  startTime        String         // e.g. 09:00 AM
+  endTime          String         // e.g. 11:00 AM
+  participantLimit Int            @default(10)
+  isGroup          Boolean        @default(false) // Single-item (false) vs Group-item (true)
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  registrations    Registration[]
+  results          Result[]
+  schedules        Schedule[]
+
+  @@index([category])
+  @@index([stage])
+}
+
+model Registration {
+  id            String      @id @default(uuid())
+  participantId String
+  programmeId   String
+  createdAt     DateTime    @default(now())
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  programme     Programme   @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, programmeId])
+  @@index([participantId])
+  @@index([programmeId])
+}
+
+model Result {
+  id                   String      @id @default(uuid())
+  programmeId          String
+  participantId        String
+  position             String      // 1st, 2nd, 3rd, Grade A, Grade B
+  points               Int         @default(0)
+  certificateGenerated Boolean     @default(true)
+  createdAt            DateTime    @default(now())
+  programme            Programme   @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  participant          Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([programmeId])
+  @@index([participantId])
+}
+
+model Announcement {
+  id                      String   @id @default(uuid())
+  title                   String
+  body                    String
+  categoryBadge           String   @default("General") // Fest News, Schedule Update, Rules, Results
+  refNumber               String?
+  coordinatorName         String?
+  coordinatorDesignation  String?
+  coordinator1Name        String?  @default("FUAD JALALI")
+  coordinator1Designation  String?  @default("Programme Coordinator")
+  coordinator2Name        String?  @default("MIDLAJ ROSHAN KAMALI")
+  coordinator2Designation  String?  @default("Programme Coordinator")
+  signatoryOption         String?  @default("BOTH") // BOTH, COORD1, COORD2
+  signatureUrl            String?
+  pdfUrl                  String?
+  publishedAt             DateTime @default(now())
+}
+
+model Schedule {
+  id          String    @id @default(uuid())
+  programmeId String
+  stage       String
+  date        String
+  startTime   String
+  endTime     String
+  status      String    @default("UPCOMING") // UPCOMING, LIVE, COMPLETED
+  createdAt   DateTime  @default(now())
+  programme   Programme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+
+  @@index([stage])
+  @@index([status])
+}
+
+model GalleryAlbum {
+  id         String         @id @default(uuid())
+  title      String
+  coverImage String
+  createdAt  DateTime       @default(now())
+  photos     GalleryPhoto[]
+}
+
+model GalleryPhoto {
+  id        String       @id @default(uuid())
+  albumId   String
+  imageUrl  String
+  createdAt DateTime     @default(now())
+  album     GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model AboutContent {
+  id         String   @id @default(uuid())
+  sectionKey String?  @unique
+  title      String?
+  body       String?
+  extraJson  String?
+  updatedAt  DateTime @default(now()) @updatedAt
+}
