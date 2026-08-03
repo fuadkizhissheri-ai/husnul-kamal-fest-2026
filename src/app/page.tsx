@@ -467,21 +467,21 @@ export default function HomePage() {
             {/* Stage 1: Aura */}
             <div className="luxury-glass p-6 rounded-[28px] border border-purple-500/30 hover:border-purple-500/70 hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)] hover:-translate-y-1 transition-all duration-300 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/40">
                   Main Stage
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-bold text-white">Aura Stage</h3>
-                <p className="text-xs text-purple-300/80 font-mono mt-0.5">
+                <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">Aura Stage</h3>
+                <p className="text-xs text-purple-700 dark:text-purple-300 font-mono mt-0.5 font-bold">
                   {cms.stage_aura_note || 'Main Stage • Recitation & Oratory'}
                 </p>
               </div>
-              <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-neutral-300 font-sans leading-relaxed">
                 Hosts Qirat, Quranic Memorization, Arabic Oratory, and Grand Inauguration items.
               </p>
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-purple-400">
+              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-purple-700 dark:text-purple-400 font-bold">
                 <span>Imam Bukhari Campus</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -490,21 +490,21 @@ export default function HomePage() {
             {/* Stage 2: Legacy */}
             <div className="luxury-glass p-6 rounded-[28px] border border-blue-500/30 hover:border-blue-500/70 hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)] hover:-translate-y-1 transition-all duration-300 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/40">
                   Stage 2
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-bold text-white">Legacy Stage</h3>
-                <p className="text-xs text-blue-300/80 font-mono mt-0.5">
+                <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">Legacy Stage</h3>
+                <p className="text-xs text-blue-700 dark:text-blue-300 font-mono mt-0.5 font-bold">
                   {cms.stage_legacy_note || 'Stage 2 • Group Choral & Songs'}
                 </p>
               </div>
-              <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-neutral-300 font-sans leading-relaxed">
                 Hosts Group Madf, Naat Recitations, and Group Choral Performances.
               </p>
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-blue-400">
+              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-blue-700 dark:text-blue-400 font-bold">
                 <span>Imam Shafi Campus</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -519,15 +519,15 @@ export default function HomePage() {
                 <span className="w-2.5 h-2.5 rounded-full bg-[#9E741D] dark:bg-[#C8A86B]" />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-bold text-[#0B0B0B] dark:text-white">Lumina Stage</h3>
-                <p className="text-xs text-[#9E741D] dark:text-[#C8A86B] font-mono mt-0.5">
+                <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">Lumina Stage</h3>
+                <p className="text-xs text-[#7A5600] dark:text-[#C8A86B] font-mono mt-0.5 font-bold">
                   {cms.stage_lumina_note || 'Stage 3 • Calligraphy & Arts'}
                 </p>
               </div>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 font-sans leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-neutral-300 font-sans leading-relaxed">
                 Hosts Arabic Calligraphy, Islamic Art Exhibitions, and Creative Design items.
               </p>
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-[#9E741D] dark:text-[#C8A86B]">
+              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-[#7A5600] dark:text-[#C8A86B] font-bold">
                 <span>Art Studio Wing</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -536,21 +536,21 @@ export default function HomePage() {
             {/* Stage 4: Zenith */}
             <div className="luxury-glass p-6 rounded-[28px] border border-emerald-500/30 hover:border-emerald-500/70 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)] hover:-translate-y-1 transition-all duration-300 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40">
                   Stage 4
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-bold text-white">Zenith Stage</h3>
-                <p className="text-xs text-emerald-300/80 font-mono mt-0.5">
+                <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">Zenith Stage</h3>
+                <p className="text-xs text-emerald-800 dark:text-emerald-300 font-mono mt-0.5 font-bold">
                   {cms.stage_zenith_note || 'Stage 4 • Quiz & Literary Items'}
                 </p>
               </div>
-              <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-neutral-300 font-sans leading-relaxed">
                 Hosts Islamic Quiz, Extempore Oratory, Essay Writing, and Literary Competitions.
               </p>
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-emerald-400">
+              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-bold">
                 <span>Imam Malik Auditorium</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
