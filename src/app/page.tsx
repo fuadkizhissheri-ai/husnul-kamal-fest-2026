@@ -242,22 +242,22 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-wrap justify-center items-center gap-4 pt-2"
+              className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-2 w-full"
             >
               <Link
                 href="/register"
-                className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-white dark:text-[#0B0B0B] hover:bg-[#9E741D] dark:hover:bg-[#C8A86B] dark:hover:text-[#0B0B0B] text-base px-8 py-4 shadow-luxury hover:-translate-y-1 hover:shadow-gold-glow transition-all duration-300 group"
+                className="w-full max-w-xs sm:w-auto flex items-center justify-center gap-2 font-bebas text-lg sm:text-xl font-bold tracking-wider leading-none py-3.5 px-8 rounded-full bg-stone-900 text-amber-300 dark:bg-stone-900 dark:text-amber-300 shadow-md hover:bg-black dark:hover:bg-black hover:-translate-y-0.5 hover:shadow-gold-glow transition-all duration-300 group"
               >
-                <span suppressHydrationWarning>{cms.hero_cta_text || 'Register Delegate'}</span>
+                <span suppressHydrationWarning>{(cms.hero_cta_text || 'REGISTER AS DELEGATE').toUpperCase()}</span>
                 <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
 
               <Link
                 href="/schedule"
-                className="btn-pill-luxury luxury-glass text-[#18181B] dark:text-white border border-[#9E741D]/30 dark:border-[#C8A86B]/40 hover:border-[#9E741D] dark:hover:border-[#C8A86B] hover:bg-[#9E741D]/10 hover:-translate-y-0.5 text-base px-8 py-4 transition-all duration-300"
+                className="w-full max-w-xs sm:w-auto flex items-center justify-center gap-2 font-bebas text-lg sm:text-xl font-bold tracking-wider leading-none py-3.5 px-8 rounded-full border-2 border-amber-600/50 dark:border-amber-500/50 text-slate-900 dark:text-amber-300 bg-white/80 dark:bg-stone-900/80 hover:bg-amber-500/10 hover:-translate-y-0.5 shadow-sm transition-all duration-300 group"
               >
-                <Calendar className="w-5 h-5 text-[#9E741D] dark:text-[#C8A86B]" />
-                <span>Explore Schedule</span>
+                <Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>EXPLORE SCHEDULE</span>
               </Link>
             </motion.div>
 
