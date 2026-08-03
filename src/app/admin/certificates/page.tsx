@@ -231,7 +231,7 @@ export default function AdminCertificatesPage() {
               {/* Results Table */}
               {!previewResult && (
                 <div className="luxury-glass rounded-[24px] border border-[#9E741D]/25 dark:border-white/10 overflow-hidden shadow-luxury">
-                  <div className="overflow-x-auto">
+                  <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
                     <table className="hk-table">
                       <thead>
                         <tr>
@@ -318,7 +318,7 @@ export default function AdminCertificatesPage() {
 
               {!previewParticipant && (
                 <div className="luxury-glass rounded-[24px] border border-[#9E741D]/25 dark:border-white/10 overflow-hidden shadow-luxury">
-                  <div className="overflow-x-auto">
+                  <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
                     <table className="hk-table">
                       <thead>
                         <tr>

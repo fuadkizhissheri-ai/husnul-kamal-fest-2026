@@ -392,8 +392,8 @@ export default function ParticipantsPage() {
 
         {/* DESKTOP PARTICIPANTS TABLE (>= md screens) */}
         <div className="hidden md:block luxury-glass border border-[#C8A86B]/30 rounded-[28px] overflow-hidden shadow-luxury">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+          <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
+            <table className="w-full min-w-[650px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-black/10 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-slate-400 font-mono text-[10px] uppercase tracking-wider">
                   <th className="py-4 px-5">Chest No</th>

@@ -659,7 +659,7 @@ export default function AdminProgrammesPage() {
         <>
           {/* DESKTOP TABLE */}
           <div className="hidden md:block luxury-glass rounded-[28px] border border-[#9E741D]/25 dark:border-white/10 overflow-hidden shadow-luxury">
-            <div className="overflow-x-auto">
+            <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
               <table className="hk-table">
                 <thead>
                   <tr>

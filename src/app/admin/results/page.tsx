@@ -293,8 +293,8 @@ export default function AdminResultsPage() {
         <div className="text-center py-16 text-slate-500">Loading results...</div>
       ) : (
         <div className="luxury-glass rounded-[28px] overflow-hidden border border-[#9E741D]/25 dark:border-[#C8A86B]/30 shadow-luxury">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+          <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
+            <table className="w-full min-w-[650px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#18181B] text-[#F5E6C4] dark:bg-[#0B0B0B] dark:text-[#C8A86B] font-mono text-[11px] uppercase tracking-wider border-b border-[#9E741D]/20">
                   <th className="py-4 px-6 font-bold">Position</th>

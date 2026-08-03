@@ -145,8 +145,8 @@ export default function ResultsPage() {
           </div>
         ) : (
           <div className="luxury-glass rounded-[28px] border border-[#C8A86B]/30 shadow-luxury overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
+              <table className="w-full min-w-[650px] text-left text-xs">
                 <thead>
                   <tr className="bg-black/10 dark:bg-white/10 text-[#C8A86B] font-heading font-bold uppercase tracking-wider border-b border-[#C8A86B]/20">
                     <th className="py-4 px-6">Position</th>

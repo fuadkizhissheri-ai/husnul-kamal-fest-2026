@@ -292,7 +292,7 @@ export default function AdminParticipantsPage() {
         <TableSkeleton rows={8} cols={6} />
       ) : (
         <div className="luxury-glass border border-[#9E741D]/25 dark:border-[#C8A86B]/20 rounded-2xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
             <table className="hk-table">
               <thead>
                 <tr>

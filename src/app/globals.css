@@ -218,8 +218,13 @@
   /* =====================================================
      TABLE UTILITIES (Admin Panel & Public Scoreboard)
      ===================================================== */
+  .hk-table-wrapper {
+    @apply w-full overflow-x-auto whitespace-nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .hk-table {
-    @apply w-full text-xs;
+    @apply w-full min-w-[650px] text-xs;
   }
 
   .hk-table thead tr {
