@@ -322,45 +322,45 @@ export default function LiveDisplayPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#FAF8F3] dark:bg-[#070709] text-slate-900 dark:text-white overflow-hidden flex flex-col justify-between font-sans select-none">
+    <div className="fixed inset-0 z-50 bg-[#FAF8F3] dark:bg-[#070709] text-slate-900 dark:text-white overflow-y-auto sm:overflow-hidden flex flex-col justify-between font-sans select-none">
       
       {/* Arabic Calligraphy Ambient Background */}
       <ArabicCalligraphyCanvas />
 
       {/* TOP TV HEADER / BRANDING */}
-      <header className="relative z-20 px-8 py-5 flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-black/40 backdrop-blur-md">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-2xl bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#070709] flex items-center justify-center font-serif font-extrabold text-xl shadow-lg">
+      <header className="relative z-20 px-4 sm:px-8 py-3 sm:py-5 flex flex-col md:flex-row items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/90 dark:bg-black/60 backdrop-blur-md gap-3">
+        <div className="flex items-center space-x-3 text-center md:text-left">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#070709] flex items-center justify-center font-serif font-extrabold text-lg sm:text-xl shadow-lg shrink-0">
             ﷺ
           </div>
           <div>
-            <h1 className="font-heading font-black text-2xl tracking-wide text-slate-900 dark:text-white flex items-center space-x-2">
+            <h1 className="font-heading font-black text-lg sm:text-2xl tracking-wide text-slate-900 dark:text-white flex items-center justify-center md:justify-start space-x-2">
               <span>HUSNUL KAMAL</span>
               <span className="text-[#9E741D] dark:text-[#C8A86B] font-serif">2026</span>
             </h1>
-            <p className="text-xs text-slate-500 dark:text-neutral-400 font-mono">Mifthahul Uloom Madrasa • Live Screen-Casting Mode</p>
+            <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Mifthahul Uloom Madrasa • Live Screen-Casting Mode</p>
           </div>
         </div>
 
         {/* Live Indicator & Controls */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2 bg-emerald-500/15 text-emerald-400 px-3.5 py-1.5 rounded-full border border-emerald-500/30 text-xs font-mono font-bold">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          <div className="flex items-center space-x-1.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono font-bold">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>REALTIME SYNCED</span>
+            <span>REALTIME</span>
           </div>
 
-          <div className="flex items-center space-x-2 bg-rose-500/20 text-rose-400 px-4 py-1.5 rounded-full border border-rose-500/40 text-xs font-bold font-mono animate-pulse">
-            <Radio className="w-4 h-4" />
-            <span>LIVE BROADCAST</span>
+          <div className="flex items-center space-x-1.5 bg-rose-500/20 text-rose-500 dark:text-rose-400 px-3 py-1 sm:py-1.5 rounded-full border border-rose-500/40 text-[10px] sm:text-xs font-bold font-mono animate-pulse">
+            <Radio className="w-3.5 h-3.5" />
+            <span>LIVE TV</span>
           </div>
 
-          <div className="flex items-center space-x-2 bg-white/5 border border-white/10 p-1 rounded-full">
+          <div className="flex items-center space-x-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-1 rounded-full">
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white"
+              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title={isPaused ? 'Resume Auto-Slide' : 'Pause Auto-Slide'}
             >
               {isPaused ? <Play className="w-4 h-4 text-[#C8A86B]" /> : <Pause className="w-4 h-4" />}
@@ -368,7 +368,7 @@ export default function LiveDisplayPage() {
 
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white"
+              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title="Toggle Alert Audio"
             >
               {soundEnabled ? <Volume2 className="w-4 h-4 text-[#C8A86B]" /> : <VolumeX className="w-4 h-4 text-neutral-500" />}
@@ -376,33 +376,33 @@ export default function LiveDisplayPage() {
 
             <button
               onClick={toggleFullscreen}
-              className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white"
+              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title="Toggle Fullscreen"
             >
               <Maximize className="w-4 h-4" />
             </button>
 
-            {/* STOP SCREEN CAST BUTTON (Top-Right Header) */}
+            {/* STOP SCREEN CAST BUTTON */}
             <button
               onClick={handleManualStopCast}
-              className="flex items-center space-x-1.5 bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs px-4 py-2 rounded-full transition-all border border-rose-400/30 shadow-lg cursor-pointer ml-2"
+              className="flex items-center space-x-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-1.5 rounded-full transition-all border border-rose-400/30 shadow-md cursor-pointer ml-1 min-h-[36px]"
               title="Stop Live Screen Casting"
             >
-              <Power className="w-4 h-4" />
-              <span>Stop Cast</span>
+              <Power className="w-3.5 h-3.5" />
+              <span>Stop</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* SIMULTANEOUS 4-STAGE LIVE BROADCAST TICKER BAR */}
-      <div className="relative z-10 bg-black/60 backdrop-blur-md border-b border-white/10 px-8 py-2.5 flex items-center justify-between overflow-x-auto text-xs">
-        <div className="flex items-center space-x-2 font-mono font-bold text-rose-400 uppercase whitespace-nowrap">
-          <Radio className="w-4 h-4 animate-pulse text-rose-500" />
-          <span>4-STAGE LIVE MONITOR:</span>
+      <div className="relative z-10 bg-black/80 dark:bg-black/60 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-2 flex items-center justify-between overflow-x-auto text-[11px] sm:text-xs">
+        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-white/10 shrink-0">
+          <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+          <span>4-STAGE MONITOR:</span>
         </div>
 
-        <div className="flex items-center space-x-6 overflow-x-auto">
+        <div className="flex items-center space-x-4 overflow-x-auto py-1 pl-3 scrollbar-none">
           {[
             { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40' },
             { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
@@ -411,17 +411,17 @@ export default function LiveDisplayPage() {
           ].map((st) => {
             const liveItem = liveSchedules.find((s) => s.stage && s.stage.toLowerCase() === st.id);
             return (
-              <div key={st.id} className="flex items-center space-x-2 whitespace-nowrap">
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono border ${st.badgeClass}`}>
+              <div key={st.id} className="flex items-center space-x-2 whitespace-nowrap shrink-0">
+                <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold font-mono border ${st.badgeClass}`}>
                   {st.label}
                 </span>
                 {liveItem ? (
-                  <span className="text-white font-bold font-serif flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                  <span className="text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
                     <span>{liveItem.programme?.name}</span>
                   </span>
                 ) : (
-                  <span className="text-neutral-500 italic text-[11px]">No live item</span>
+                  <span className="text-neutral-500 italic text-[10px]">No live item</span>
                 )}
               </div>
             );
@@ -430,7 +430,7 @@ export default function LiveDisplayPage() {
       </div>
 
       {/* MAIN CAROUSEL SLIDES */}
-      <main className="relative z-10 flex-1 px-8 py-6 flex items-center justify-center">
+      <main className="relative z-10 flex-1 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full">
         
         {loading ? (
           <div className="text-center text-neutral-400 font-mono">Connecting to live score feed...</div>
@@ -640,42 +640,27 @@ export default function LiveDisplayPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.6 }}
-                className="w-full max-w-6xl space-y-6"
+                className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="text-center space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 4 of 4 • Winners Ticker</span>
-                  <h2 className="text-3xl sm:text-5xl font-heading font-black text-white">
-                    LATEST PUBLISHED RESULTS
+                <div className="space-y-1 sm:space-y-2">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 4 of 4 • Recent Published Results</span>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-white flex items-center justify-center space-x-2 sm:space-x-3">
+                    <Flame className="w-6 h-6 sm:w-10 sm:h-10 text-rose-500 animate-pulse" />
+                    <span>LATEST PUBLISHED RESULTS</span>
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {latestResults.slice(0, 6).map((res) => (
-                    <div
-                      key={res.id}
-                      className="luxury-glass p-5 rounded-[24px] border border-[#C8A86B]/30 flex items-center justify-between"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center space-x-2">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C8A86B]/20 text-[#C8A86B]">
-                            {res.position}
-                          </span>
-                          <span className="text-xs font-mono text-neutral-400">{res.programme.category}</span>
-                          {res.programme.stage && (
-                            <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase ${getStageInfo(res.programme.stage).badgeClass}`}>
-                              {res.programme.stage}
-                            </span>
-                          )}
-                        </div>
-                        <h4 className="font-heading font-bold text-base text-white">{res.participant.fullName}</h4>
-                        <p className="text-xs text-neutral-400 font-sans">{res.programme.name} • <span className="text-[#C8A86B] font-mono">{res.participant.madrasa}</span></p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  {latestResults.slice(0, 4).map((res) => (
+                    <div key={res.id} className="luxury-glass p-4 rounded-[20px] sm:rounded-[28px] border border-white/10 text-left flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] font-mono text-[#C8A86B] font-bold uppercase">{res.programme?.name}</div>
+                        <div className="font-serif font-bold text-sm sm:text-base text-white uppercase">{res.participant?.fullName}</div>
+                        <div className="text-[10px] text-neutral-400 font-mono">Chest: {res.participant?.chestNumber} • House: {res.participant?.group}</div>
                       </div>
-
-                      <div className="text-right space-y-1">
-                        <div className="text-xl font-heading font-black text-[#C8A86B]">+{res.points} pts</div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white">
-                          {res.participant.group} ({res.participant.chestNumber})
-                        </span>
+                      <div className="text-right shrink-0 ml-2">
+                        <div className="text-xs sm:text-sm font-bold text-white font-mono">{res.position}</div>
+                        <div className="text-xs sm:text-sm font-bold text-[#C8A86B] font-mono">+{res.points} Pts</div>
                       </div>
                     </div>
                   ))}
@@ -690,14 +675,14 @@ export default function LiveDisplayPage() {
 
       {/* CONFIRMATION PROMPT MODAL FOR STOP SCREEN CAST */}
       {isConfirmingStop && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-6">
-          <div className="luxury-glass p-8 rounded-[36px] border-2 border-rose-500/40 max-w-md w-full text-center space-y-6 shadow-2xl">
-            <div className="w-14 h-14 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center mx-auto">
-              <Power className="w-8 h-8" />
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0E0E12] border border-rose-500/40 p-6 rounded-[28px] max-w-md w-full text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+              <Power className="w-6 h-6" />
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-2xl font-heading font-extrabold text-white">Stop Live Screen-Casting?</h3>
+            <div className="space-y-1">
+              <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-white">Stop Live Screen-Casting?</h3>
               <p className="text-xs text-neutral-400 font-sans">
                 This will disconnect live data listeners, stop auto-sliding, and return to the main homepage.
               </p>
@@ -706,13 +691,13 @@ export default function LiveDisplayPage() {
             <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={() => setIsConfirmingStop(false)}
-                className="py-3 rounded-2xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-all"
+                className="py-3 rounded-2xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-all min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmStopCast}
-                className="py-3 rounded-2xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-500 transition-all shadow-lg"
+                className="py-3 rounded-2xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-500 transition-all shadow-lg min-h-[44px]"
               >
                 Yes, Stop & Exit
               </button>
@@ -728,27 +713,27 @@ export default function LiveDisplayPage() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4"
           >
-            <div className="max-w-2xl w-full luxury-glass p-10 rounded-[36px] border-2 border-[#C8A86B] text-center space-y-6 shadow-2xl relative overflow-hidden">
-              <div className="w-16 h-16 rounded-full bg-[#C8A86B] text-[#070709] flex items-center justify-center mx-auto shadow-lg animate-bounce">
-                <Trophy className="w-8 h-8" />
+            <div className="max-w-2xl w-full luxury-glass p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] border-2 border-[#C8A86B] text-center space-y-4 sm:space-y-6 shadow-2xl relative overflow-hidden">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#C8A86B] text-[#070709] flex items-center justify-center mx-auto shadow-lg animate-bounce">
+                <Trophy className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs font-mono font-bold uppercase text-[#C8A86B] tracking-widest animate-pulse">
+                <span className="text-[10px] sm:text-xs font-mono font-bold uppercase text-[#C8A86B] tracking-widest animate-pulse">
                   🏆 BREAKING RESULT ANNOUNCEMENT
                 </span>
-                <h3 className="text-3xl sm:text-4xl font-heading font-black text-white">
+                <h3 className="text-xl sm:text-4xl font-heading font-black text-white">
                   {breakingAlert.programme.name}
                 </h3>
               </div>
 
-              <div className="bg-[#C8A86B]/20 p-6 rounded-[28px] border border-[#C8A86B]/40 space-y-2">
-                <div className="text-2xl font-heading font-bold text-white">
+              <div className="bg-[#C8A86B]/20 p-4 sm:p-6 rounded-[20px] sm:rounded-[28px] border border-[#C8A86B]/40 space-y-2">
+                <div className="text-lg sm:text-2xl font-heading font-bold text-white">
                   {breakingAlert.position} — {breakingAlert.participant.fullName}
                 </div>
-                <div className="text-xs font-mono text-[#C8A86B] font-bold">
+                <div className="text-[10px] sm:text-xs font-mono text-[#C8A86B] font-bold">
                   {breakingAlert.participant.madrasa} • House: {breakingAlert.participant.group} • Chest No: {breakingAlert.participant.chestNumber} • Awarded +{breakingAlert.points} Points
                 </div>
               </div>
@@ -758,20 +743,21 @@ export default function LiveDisplayPage() {
       </AnimatePresence>
 
       {/* BOTTOM SLIDE CONTROL & CAROUSEL TICKER BAR */}
-      <footer className="relative z-20 px-8 py-4 border-t border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-between">
+      <footer className="relative z-20 px-4 sm:px-8 py-3 border-t border-white/10 bg-black/70 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
         <div className="flex items-center space-x-2">
           {[0, 1, 2, 3].map((idx) => (
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`h-2.5 rounded-full transition-all ${
-                currentSlide === idx ? 'w-10 bg-[#C8A86B]' : 'w-2.5 bg-white/20 hover:bg-white/40'
+              className={`h-2.5 rounded-full transition-all min-h-[24px] min-w-[24px] flex items-center justify-center ${
+                currentSlide === idx ? 'w-8 bg-[#C8A86B]' : 'w-2.5 bg-white/20 hover:bg-white/40'
               }`}
+              title={`Jump to Slide ${idx + 1}`}
             />
           ))}
         </div>
 
-        <div className="text-xs font-mono text-neutral-400">
+        <div className="text-[10px] sm:text-xs font-mono text-neutral-400">
           Auto-Rotating Screen-Cast Mode • Real-time Sync Every 5s
         </div>
       </footer>
