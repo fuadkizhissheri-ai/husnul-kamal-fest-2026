@@ -207,11 +207,11 @@ export default function HomePage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[180px] bg-[#9E741D]/10 dark:bg-[#C8A86B]/15 blur-[90px] rounded-full pointer-events-none" />
 
               <h1
-                className="text-4xl sm:text-7xl lg:text-8xl font-heading font-extrabold tracking-tight leading-[1.05] relative z-10"
+                className="text-4xl sm:text-7xl lg:text-8xl font-heading font-black tracking-wider uppercase leading-[1.05] relative z-10"
                 suppressHydrationWarning
               >
-                <span className="bg-gradient-to-r from-[#18181B] via-[#7A5600] to-[#18181B] dark:from-white dark:via-[#F5E6C4] dark:to-white bg-clip-text text-transparent drop-shadow-sm">
-                  {cms.fest_title || 'Husnul Kamal 2026'}
+                <span className="bg-gradient-to-r from-slate-950 via-[#7A5600] to-[#9E741D] dark:from-white dark:via-[#F5E6C4] dark:to-[#C8A86B] bg-clip-text text-transparent filter drop-shadow-[0_4px_16px_rgba(158,116,29,0.3)]">
+                  {cms.fest_title || 'HUSNUL KAMAL 2026'}
                 </span>
               </h1>
 
