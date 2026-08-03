@@ -221,8 +221,9 @@ export default function HomePage() {
               {/* Soft Gold Underline Divider */}
               <div className="h-0.5 w-32 mx-auto bg-gradient-to-r from-transparent via-[#9E741D]/60 dark:via-[#C8A86B]/60 to-transparent my-3 opacity-80" />
 
-              <p className="text-base sm:text-xl font-heading text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase tracking-wider text-center max-w-2xl mx-auto">
-                CELEBRATING ISLAMIC HERITAGE, DIVINE QIRAT &amp; DEVOTION
+              <p className="text-base sm:text-xl font-heading text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase tracking-wider text-center max-w-2xl mx-auto leading-snug">
+                <span className="block">CELEBRATING ISLAMIC HERITAGE</span>
+                <span className="block">DIVINE QIRAT &amp; DEVOTION</span>
               </p>
             </motion.div>
 
@@ -234,7 +235,7 @@ export default function HomePage() {
               className="max-w-3xl mx-auto px-4 text-xs sm:text-sm text-slate-700 dark:text-neutral-300 font-sans leading-relaxed tracking-wide text-center uppercase font-semibold"
               suppressHydrationWarning
             >
-              {cms.about_description || 'AN ULTRA-PREMIUM CULTURAL PLATFORM HOSTING 350+ DELEGATES ACROSS 4 COMPETITIVE CATEGORIES AND 2 GRAND HOUSES: MAVADDA & MAHABBA.'}
+              {(cms.about_description || 'MIFTHAHUL ULOOM MADRASA ULLISHERIKKUNNU PROUDLY PRESENTS HUSNUL KAMAL MEELAD FEST 2026 A GRAND CELEBRATION OF TALENT, SPIRITUALITY, AND ARTISTIC BRILLIANCE.').replace(/[-–—]/g, ' ')}
             </motion.p>
 
             {/* Primary & Secondary Pill CTAs with Smooth Hover States */}
