@@ -126,18 +126,10 @@ export default function HomePage() {
       <div className="space-y-8 sm:space-y-12 pb-20 selection:bg-[#C8A86B] selection:text-[#0B0B0B]">
 
         {/* ================= HERO SECTION ================= */}
-        <section className="relative min-h-[75vh] flex items-center justify-center pt-2 sm:pt-4 pb-4 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <section className="relative min-h-[75vh] flex items-center justify-center pt-2 sm:pt-4 pb-4 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FFFDF6] dark:bg-[#0B0B0B]">
           
-          {/* Background Ambient Glow & Mesh */}
-          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1542816417-0983cbe82752?auto=format&fit=crop&w=2000&q=90"
-              alt="Cinematic background"
-              className="w-full h-full object-cover scale-105 filter brightness-75 dark:brightness-50 transition-transform duration-1000"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#F8F8F8]/90 via-[#F8F8F8]/60 to-[#F8F8F8] dark:from-[#0B0B0B]/90 dark:via-[#0B0B0B]/70 dark:to-[#0B0B0B]" />
-          </div>
+          {/* Static Off-White / Dark Clean Solid Background */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#FFFDF6] dark:bg-[#0B0B0B]" />
 
           {/* Corner Islamic Geometric Accent Vectors (Subtle 5% Opacity) */}
           <div className="absolute top-6 left-6 w-32 h-32 text-[#C8A86B]/10 pointer-events-none z-0 hidden lg:block">
