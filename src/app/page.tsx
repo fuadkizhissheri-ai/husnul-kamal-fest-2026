@@ -210,10 +210,10 @@ export default function HomePage() {
                 className="font-bebas font-black uppercase text-center relative z-10 space-y-2 sm:space-y-3 py-2 leading-none"
                 suppressHydrationWarning
               >
-                <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[115px] font-black tracking-wide leading-none bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 dark:from-[#FFE8B2] dark:via-[#E5C158] dark:to-[#B8860B] bg-clip-text text-transparent filter drop-shadow-[0_6px_24px_rgba(217,119,6,0.35)]">
+                <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[115px] font-black tracking-wide leading-none bg-gradient-to-r from-slate-950 via-amber-950 to-slate-900 dark:from-white dark:via-[#F5E6C4] dark:to-[#C8A86B] bg-clip-text text-transparent filter drop-shadow-[0_4px_20px_rgba(158,116,29,0.3)]">
                   HUSNUL KAMAL
                 </span>
-                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[88px] font-black tracking-wider leading-none uppercase bg-gradient-to-r from-amber-700 via-amber-500 to-amber-400 dark:from-[#E5C158] dark:via-[#FFE8B2] dark:to-[#B8860B] bg-clip-text text-transparent filter drop-shadow-[0_4px_18px_rgba(217,119,6,0.3)]">
+                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[88px] font-black tracking-wider leading-none uppercase bg-gradient-to-r from-amber-950 via-amber-900 to-slate-950 dark:from-[#C8A86B] dark:via-[#F5E6C4] dark:to-white bg-clip-text text-transparent filter drop-shadow-[0_3px_15px_rgba(158,116,29,0.25)]">
                   MEELAD FEST 2026
                 </span>
               </h1>
