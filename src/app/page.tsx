@@ -164,18 +164,18 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex justify-center mx-auto mt-1 sm:mt-2 mb-2 sm:mb-3"
+              className="flex justify-center mx-auto mt-1 sm:mt-2 mb-2 sm:mb-3 bg-transparent border-0 shadow-none"
             >
-              <div className="relative group cursor-pointer">
+              <div className="relative group cursor-pointer bg-transparent border-0 shadow-none p-0 m-0">
                 {logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={logoUrl}
                     alt="Husnul Kamal Fest Logo Emblem"
-                    className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-64 sm:h-80 md:h-96 lg:h-[420px] object-contain mx-auto relative z-10 filter drop-shadow-[0_12px_28px_rgba(158,116,29,0.45)] group-hover:scale-105 transition-transform duration-500"
+                    className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-auto object-contain mx-auto bg-transparent border-0 outline-none relative z-10 filter drop-shadow-[0_8px_20px_rgba(158,116,29,0.3)] group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-64 sm:h-80 md:h-96 lg:h-[420px] rounded-full bg-gradient-to-br from-[#18181B] via-[#2D2D30] to-[#0B0B0B] dark:from-white dark:via-neutral-100 dark:to-neutral-200 border-4 border-[#C8A86B] text-[#C8A86B] dark:text-[#0B0B0B] font-serif font-bold text-7xl sm:text-8xl flex items-center justify-center shadow-2xl relative z-10 group-hover:scale-105 transition-transform duration-500">
+                  <div className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-48 sm:h-64 md:h-80 lg:h-96 bg-transparent text-[#C8A86B] dark:text-[#C8A86B] font-serif font-bold text-7xl sm:text-8xl flex items-center justify-center relative z-10 filter drop-shadow-[0_8px_20px_rgba(158,116,29,0.3)] group-hover:scale-105 transition-transform duration-500">
                     ﷺ
                   </div>
                 )}
