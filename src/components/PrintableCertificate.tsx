@@ -86,7 +86,7 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
         className: 'hk-certificate',
         width: 1050,
         height: 740,
-        scale: 2.362,
+        scale: 2,
         backgroundColor: '#F8F5EE',
         filename,
       });

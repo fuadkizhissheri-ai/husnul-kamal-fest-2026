@@ -23,7 +23,7 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
     className,
     width,
     height,
-    scale = 3,
+    scale = 2,
     backgroundColor = null,
     filename,
     format = 'image/jpeg',
@@ -38,9 +38,9 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
   }
 
   // 2. Allow flexbox reflow & font rendering layout settlement
-  await new Promise((resolve) => setTimeout(resolve, 150));
+  await new Promise((resolve) => setTimeout(resolve, 200));
 
-  // 3. Capture canvas with exact target dimensions and stylesheet cloning
+  // 3. Capture canvas with unscaled off-screen cloned DOM context
   const canvas = await html2canvas(element, {
     scale,
     useCORS: true,
@@ -49,6 +49,12 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
     logging: false,
     width,
     height,
+    windowWidth: width + 200,
+    windowHeight: height + 200,
+    x: 0,
+    y: 0,
+    scrollX: 0,
+    scrollY: 0,
     onclone: (clonedDoc: Document) => {
       // Copy all active stylesheets and font link tags into cloned document context
       const styleElements = document.querySelectorAll('link[rel="stylesheet"], style');
@@ -58,11 +64,27 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
 
       const clonedEl = clonedDoc.querySelector(`.${className}`) as HTMLElement;
       if (clonedEl) {
+        // Isolate target element into clean, unscaled top-level body container
+        clonedDoc.body.innerHTML = '';
+        clonedDoc.body.appendChild(clonedEl);
+
+        clonedDoc.body.style.margin = '0';
+        clonedDoc.body.style.padding = '0';
+        clonedDoc.body.style.width = `${width}px`;
+        clonedDoc.body.style.height = `${height}px`;
+        clonedDoc.body.style.overflow = 'hidden';
+        clonedDoc.body.style.backgroundColor = backgroundColor || '#F8F5EE';
+
         clonedEl.style.transform = 'none';
+        clonedEl.style.webkitTransform = 'none';
+        clonedEl.style.position = 'absolute';
+        clonedEl.style.top = '0';
+        clonedEl.style.left = '0';
         clonedEl.style.margin = '0';
-        clonedEl.style.position = 'relative';
+        clonedEl.style.padding = '0';
         clonedEl.style.width = `${width}px`;
         clonedEl.style.height = `${height}px`;
+        clonedEl.style.zIndex = '999999';
       }
     },
   } as any);
