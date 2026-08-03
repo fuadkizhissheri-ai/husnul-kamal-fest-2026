@@ -164,7 +164,7 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex justify-center mb-3 sm:mb-4"
+              className="flex justify-center mx-auto my-4 sm:my-6 mb-4 sm:mb-6"
             >
               <div className="relative group cursor-pointer">
                 {/* Soft Radial Ambient Gold Glow behind Logo */}
@@ -175,10 +175,10 @@ export default function HomePage() {
                   <img
                     src={logoUrl}
                     alt="Husnul Kamal Fest Logo Emblem"
-                    className="w-44 sm:w-56 lg:w-64 h-44 sm:h-56 lg:h-64 object-contain relative z-10 filter drop-shadow-[0_12px_24px_rgba(158,116,29,0.4)] group-hover:scale-105 transition-transform duration-500"
+                    className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-64 sm:h-80 md:h-96 lg:h-[420px] object-contain mx-auto relative z-10 filter drop-shadow-[0_12px_28px_rgba(158,116,29,0.45)] group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-40 sm:w-52 lg:w-60 h-40 sm:h-52 lg:h-60 rounded-full bg-gradient-to-br from-[#18181B] via-[#2D2D30] to-[#0B0B0B] dark:from-white dark:via-neutral-100 dark:to-neutral-200 border-4 border-[#C8A86B] text-[#C8A86B] dark:text-[#0B0B0B] font-serif font-bold text-7xl sm:text-8xl flex items-center justify-center shadow-2xl relative z-10 group-hover:scale-105 transition-transform duration-500">
+                  <div className="w-64 sm:w-80 md:w-96 lg:w-[420px] h-64 sm:h-80 md:h-96 lg:h-[420px] rounded-full bg-gradient-to-br from-[#18181B] via-[#2D2D30] to-[#0B0B0B] dark:from-white dark:via-neutral-100 dark:to-neutral-200 border-4 border-[#C8A86B] text-[#C8A86B] dark:text-[#0B0B0B] font-serif font-bold text-7xl sm:text-8xl flex items-center justify-center shadow-2xl relative z-10 group-hover:scale-105 transition-transform duration-500">
                     ﷺ
                   </div>
                 )}
