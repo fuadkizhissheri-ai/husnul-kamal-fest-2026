@@ -386,22 +386,32 @@ export default function LiveDisplayPage() {
       </header>
 
       {/* SIMULTANEOUS 4-STAGE LIVE BROADCAST TICKER BAR */}
-      <div className="relative z-10 w-full bg-white/95 dark:bg-black/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-8 py-2.5 flex items-center overflow-x-auto text-[11px] sm:text-xs">
-        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0 sticky left-0 bg-white/95 dark:bg-black/90 z-10 py-1 shadow-sm">
+      <div className="relative z-10 w-full bg-white/95 dark:bg-black/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-8 py-2 flex items-center overflow-x-auto no-scrollbar [webkit-overflow-scrolling:touch] text-[11px] sm:text-xs">
+        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0 sticky left-0 bg-white/95 dark:bg-black/90 z-20 py-1 shadow-sm">
           <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
           <span>4-STAGE MONITOR:</span>
         </div>
 
-        <div className="flex items-center space-x-3 sm:space-x-4 py-1 pl-3 shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-4 py-1 pl-3 shrink-0 flex-nowrap">
           {[
-            { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40' },
-            { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40' },
-            { id: 'lumina', label: 'Lumina Stage', badgeClass: 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40' },
-            { id: 'zenith', label: 'Zenith Stage', badgeClass: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40' },
+            { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40', slideIdx: 1 },
+            { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40', slideIdx: 2 },
+            { id: 'lumina', label: 'Lumina Stage', badgeClass: 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40', slideIdx: 3 },
+            { id: 'zenith', label: 'Zenith Stage', badgeClass: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40', slideIdx: 0 },
           ].map((st) => {
             const liveItem = liveSchedules.find((s) => s.stage && s.stage.toLowerCase() === st.id);
+            const isCurrentStage = currentSlide === st.slideIdx;
             return (
-              <div key={st.id} className="flex items-center space-x-2 whitespace-nowrap shrink-0">
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => setCurrentSlide(st.slideIdx)}
+                className={`relative flex items-center space-x-2 whitespace-nowrap shrink-0 px-2.5 py-1 rounded-xl transition-all ${
+                  isCurrentStage
+                    ? 'bg-[#9E741D]/15 dark:bg-[#C8A86B]/20 border border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
+                }`}
+              >
                 <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold font-mono border ${st.badgeClass}`}>
                   {st.label}
                 </span>
@@ -413,7 +423,16 @@ export default function LiveDisplayPage() {
                 ) : (
                   <span className="text-slate-400 dark:text-neutral-500 italic text-[10px]">No live item</span>
                 )}
-              </div>
+
+                {/* Active Tab Indicator Underline */}
+                {isCurrentStage && (
+                  <motion.div
+                    layoutId="activeStageMonitorTab"
+                    className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-[#9E741D] dark:bg-[#C8A86B] rounded-full"
+                    transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                  />
+                )}
+              </button>
             );
           })}
         </div>
