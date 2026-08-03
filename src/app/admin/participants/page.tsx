@@ -431,10 +431,10 @@ export default function AdminParticipantsPage() {
                     onChange={(e) => setEditCategory(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold"
                   >
-                    <option value="Sub Junior">Sub Junior</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Senior">Senior</option>
-                    <option value="Super Senior">Super Senior</option>
+                    <option value="Sub Junior">Sub Junior (Classes 3, 4)</option>
+                    <option value="Junior">Junior (Classes 5, 6)</option>
+                    <option value="Senior">Senior (Classes 7, 8)</option>
+                    <option value="Super Senior">Super Senior (Classes 9-12)</option>
                   </select>
                 </div>
 

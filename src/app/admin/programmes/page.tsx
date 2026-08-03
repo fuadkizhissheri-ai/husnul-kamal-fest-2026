@@ -963,11 +963,11 @@ export default function AdminProgrammesPage() {
                 <div>
                   <label className="hk-label">Category</label>
                   <select value={category} onChange={(e) => setCategory(e.target.value)} className="hk-select">
-                    <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Sub Junior</option>
-                    <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Junior</option>
-                    <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Senior</option>
-                    <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Super Senior</option>
-                    <option value="General" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">General</option>
+                    <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Sub Junior (Classes 3, 4)</option>
+                    <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Junior (Classes 5, 6)</option>
+                    <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Senior (Classes 7, 8)</option>
+                    <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Super Senior (Classes 9-12)</option>
+                    <option value="General" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">General (Open Category)</option>
                   </select>
                 </div>
                 <div>

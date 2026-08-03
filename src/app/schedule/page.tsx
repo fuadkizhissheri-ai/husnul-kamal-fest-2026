@@ -184,7 +184,7 @@ export default function SchedulePage() {
                       : 'bg-black/5 dark:bg-white/5 text-slate-700 dark:text-neutral-300 border-slate-300 dark:border-white/10 hover:border-[#9E741D]'
                   }`}
                 >
-                  {cat}
+                  {cat === 'Sub Junior' ? 'Sub Junior (Cl 3,4)' : cat === 'Junior' ? 'Junior (Cl 5,6)' : cat === 'Senior' ? 'Senior (Cl 7,8)' : cat === 'Super Senior' ? 'Super Senior (Cl 9-12)' : cat}
                 </button>
               ))}
             </div>

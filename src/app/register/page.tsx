@@ -506,10 +506,10 @@ export default function RegisterPage() {
                   onChange={(e) => setCategory(e.target.value as any)}
                   className="w-full px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-[#0B0B0B] dark:text-white focus:outline-none"
                 >
-                  <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Sub Junior (Classes 1-4)</option>
-                  <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Junior (Classes 5-7)</option>
-                  <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Senior (Classes 8-10)</option>
-                  <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Super Senior (Classes 11-12+)</option>
+                  <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Sub Junior (Classes 3, 4)</option>
+                  <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Junior (Classes 5, 6)</option>
+                  <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Senior (Classes 7, 8)</option>
+                  <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Super Senior (Classes 9-12)</option>
                 </select>
               </div>
 
