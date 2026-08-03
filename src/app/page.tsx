@@ -77,7 +77,7 @@ export default function HomePage() {
 
   // Countdown timer logic
   useEffect(() => {
-    const targetDate = cms.countdown_target ? new Date(cms.countdown_target) : new Date('2026-08-10T09:00:00');
+    const targetDate = cms.countdown_target ? new Date(cms.countdown_target) : new Date('2026-08-26T07:00:00');
     
     const updateCountdown = () => {
       const now = new Date();

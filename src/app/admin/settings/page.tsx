@@ -100,7 +100,7 @@ export default function AdminSettingsPage() {
   const [festDates, setFestDates] = useState('August 10 – 12, 2026');
   const [venueName, setVenueName] = useState('Mifthahul Uloom Campus');
   const [venueAddress, setVenueAddress] = useState('Mifthahul Uloom Madrasa, Ullisherikkunnu, Kerala');
-  const [countdownTarget, setCountdownTarget] = useState('2026-08-10T09:00:00');
+  const [countdownTarget, setCountdownTarget] = useState('2026-08-26T07:00:00');
 
   // Contact CMS (Powers Site-wide Footer, Navbar WhatsApp & Export Documents)
   const [contactPhone, setContactPhone] = useState('+91 73064 80848');
