@@ -134,19 +134,19 @@ export default function Navbar() {
           {/* REGISTER NOW CTA (NAVBAR PRIMARY ACTION) */}
           <Link
             href="/register"
-            className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-white dark:text-[#0B0B0B] hover:bg-[#9E741D] dark:hover:bg-[#C8A86B] font-bold text-xs px-3.5 py-2 shadow-md transition-all duration-300 flex items-center space-x-1.5 shrink-0 font-bebas tracking-wider text-sm uppercase"
+            className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-white dark:text-[#0B0B0B] hover:bg-[#9E741D] dark:hover:bg-[#C8A86B] font-bebas tracking-wider text-base uppercase px-5 py-2.5 shadow-md transition-all duration-300 flex items-center justify-center gap-2 shrink-0 leading-none"
           >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Register Now</span>
+            <UserPlus className="w-4 h-4 shrink-0" />
+            <span className="leading-none translate-y-[1px] inline-block">Register Now</span>
           </Link>
 
           {/* ADMIN DESK CTA */}
           <Link
             href="/admin/dashboard"
-            className="hidden sm:inline-flex btn-pill-luxury bg-white/10 text-slate-800 dark:text-white border border-slate-300 dark:border-white/10 hover:border-[#C8A86B] text-xs px-3.5 py-2 shadow-sm transition-all duration-300 flex items-center space-x-1.5 shrink-0 font-bebas tracking-wider text-sm uppercase"
+            className="hidden sm:inline-flex btn-pill-luxury bg-white/10 text-slate-800 dark:text-white border border-slate-300 dark:border-white/10 hover:border-[#C8A86B] font-bebas tracking-wider text-base uppercase px-5 py-2.5 shadow-sm transition-all duration-300 items-center justify-center gap-2 shrink-0 leading-none"
           >
-            <LayoutDashboard className="w-3.5 h-3.5" />
-            <span>Admin</span>
+            <LayoutDashboard className="w-4 h-4 shrink-0" />
+            <span className="leading-none translate-y-[1px] inline-block">Admin</span>
           </Link>
 
           {/* MOBILE MENU TOGGLE */}
