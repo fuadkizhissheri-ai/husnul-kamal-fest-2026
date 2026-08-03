@@ -270,11 +270,15 @@ export default function HomePage() {
             >
               {/* Card 1: Countdown */}
               <div className="luxury-glass p-4 rounded-[28px] text-center border border-[#9E741D]/25 dark:border-[#C8A86B]/30 animate-float hover:-translate-y-1 hover:border-[#9E741D]/70 dark:hover:border-[#C8A86B]/70 hover:shadow-gold-glow transition-all duration-300 cursor-default">
-                <div className="text-2xl sm:text-3xl font-heading font-black text-[#9E741D] dark:text-[#C8A86B]" suppressHydrationWarning>
-                  {timeLeft.days}d {timeLeft.hours}h
+                <div className="text-xl sm:text-2xl font-heading font-black text-[#9E741D] dark:text-[#C8A86B]" suppressHydrationWarning>
+                  {timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0 ? (
+                    `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`
+                  ) : (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold animate-pulse text-lg">LIVE NOW</span>
+                  )}
                 </div>
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">
-                  Countdown
+                  {timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0 ? 'Fest Countdown' : 'Event Status'}
                 </div>
               </div>
 

@@ -979,6 +979,26 @@ export default function AdminSettingsPage() {
                 />
               </div>
 
+              {/* DYNAMIC FEST START DATE & TIME PICKER FOR COUNTDOWN CARD */}
+              <div className="p-4 rounded-2xl bg-[#C8A86B]/10 border border-[#C8A86B]/30 md:col-span-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-white font-bold text-xs flex items-center space-x-2">
+                    <Calendar className="w-4 h-4 text-[#C8A86B]" />
+                    <span>Fest Start Date &amp; Time (Powers Homepage Dynamic Countdown)</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-[#C8A86B] font-bold">DYNAMIC COUNTDOWN</span>
+                </div>
+                <input
+                  type="datetime-local"
+                  value={countdownTarget ? countdownTarget.slice(0, 16) : ''}
+                  onChange={(e) => setCountdownTarget(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-[#C8A86B] font-mono font-bold text-sm focus:outline-none focus:border-[#C8A86B]"
+                />
+                <p className="text-[10px] text-slate-400 font-sans">
+                  The homepage countdown card calculates Days, Hours, and Minutes dynamically in real-time based on this target date. If the event date passes, it automatically shows <strong>LIVE NOW</strong>.
+                </p>
+              </div>
+
               <div className="flex items-center justify-between pt-4 border-t border-white/10 md:col-span-2">
                 <div>
                   <div className="font-bold text-white text-xs">Delegate Registration Status</div>
