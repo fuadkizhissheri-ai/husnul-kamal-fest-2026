@@ -328,23 +328,23 @@ export default function LiveDisplayPage() {
       <ArabicCalligraphyCanvas />
 
       {/* TOP TV HEADER / BRANDING */}
-      <header className="relative z-20 px-4 sm:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-black/80 backdrop-blur-md gap-3">
-        <div className="flex items-center space-x-3 text-center md:text-left">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#070709] flex items-center justify-center font-serif font-extrabold text-lg sm:text-xl shadow-lg shrink-0">
+      <header className="relative z-20 px-3 sm:px-8 py-2 landscape:py-1.5 flex flex-col md:flex-row items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-black/80 backdrop-blur-md gap-2 shrink-0">
+        <div className="flex items-center space-x-2.5 text-center md:text-left">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#070709] flex items-center justify-center font-serif font-extrabold text-base sm:text-xl shadow-lg shrink-0">
             ﷺ
           </div>
           <div>
-            <h1 className="font-heading font-black text-lg sm:text-2xl tracking-wide text-slate-900 dark:text-white flex items-center justify-center md:justify-start space-x-2">
+            <h1 className="font-heading font-black text-base sm:text-2xl tracking-wide text-slate-900 dark:text-white flex items-center justify-center md:justify-start space-x-1.5">
               <span>HUSNUL KAMAL</span>
               <span className="text-[#9E741D] dark:text-[#C8A86B] font-serif">2026</span>
             </h1>
-            <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Mifthahul Uloom Madrasa • Live Screen-Casting Mode</p>
+            <p className="hidden md:block text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Mifthahul Uloom Madrasa • Live Screen-Casting Mode</p>
           </div>
         </div>
 
         {/* Live Indicator & Controls */}
-        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 w-full md:w-auto">
-          <div className="flex items-center space-x-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono font-bold">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-1.5 sm:gap-3 w-full md:w-auto">
+          <div className="flex items-center space-x-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border border-emerald-500/30 text-[9px] sm:text-xs font-mono font-bold">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -352,47 +352,47 @@ export default function LiveDisplayPage() {
             <span>REALTIME</span>
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-rose-500/20 text-rose-600 dark:text-rose-400 px-3 py-1.5 rounded-full border border-rose-500/40 text-[10px] sm:text-xs font-bold font-mono animate-pulse">
-            <Radio className="w-3.5 h-3.5" />
+          <div className="flex items-center space-x-1.5 bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border border-rose-500/40 text-[9px] sm:text-xs font-bold font-mono animate-pulse">
+            <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>LIVE TV</span>
           </div>
 
-          <div className="flex items-center space-x-1 bg-slate-200/80 dark:bg-white/10 border border-slate-300 dark:border-white/10 p-1 rounded-full">
+          <div className="flex items-center space-x-1 bg-slate-200/80 dark:bg-white/10 border border-slate-300 dark:border-white/10 p-0.5 sm:p-1 rounded-full">
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center"
               title={isPaused ? 'Resume Auto-Slide' : 'Pause Auto-Slide'}
             >
-              {isPaused ? <Play className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <Pause className="w-4 h-4" />}
+              {isPaused ? <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
 
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center"
               title="Toggle Alert Audio"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <VolumeX className="w-4 h-4 text-neutral-500" />}
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-500" />}
             </button>
 
             <button
               onClick={toggleFullscreen}
-              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[32px] min-w-[32px] sm:min-h-[36px] sm:min-w-[36px] flex items-center justify-center"
               title="Toggle Fullscreen"
             >
-              <Maximize className="w-4 h-4" />
+              <Maximize className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
       </header>
 
       {/* SIMULTANEOUS 4-STAGE LIVE BROADCAST TICKER BAR */}
-      <div className="relative z-10 w-full bg-white/95 dark:bg-black/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-8 py-2 flex items-center overflow-x-auto no-scrollbar [webkit-overflow-scrolling:touch] text-[11px] sm:text-xs">
-        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0 sticky left-0 bg-white/95 dark:bg-black/90 z-20 py-1 shadow-sm">
-          <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+      <div className="relative z-10 w-full bg-white/95 dark:bg-black/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-8 py-1.5 landscape:py-1 flex items-center overflow-x-auto no-scrollbar [webkit-overflow-scrolling:touch] text-[10px] sm:text-xs shrink-0">
+        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0 sticky left-0 bg-white/95 dark:bg-black/90 z-20 py-0.5 shadow-sm">
+          <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse text-rose-500" />
           <span>4-STAGE MONITOR:</span>
         </div>
 
-        <div className="flex items-center space-x-2 sm:space-x-4 py-1 pl-3 shrink-0 flex-nowrap">
+        <div className="flex items-center space-x-2 sm:space-x-4 py-0.5 pl-3 shrink-0 flex-nowrap">
           {[
             { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40', slideIdx: 1 },
             { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40', slideIdx: 2 },
@@ -406,7 +406,7 @@ export default function LiveDisplayPage() {
                 key={st.id}
                 type="button"
                 onClick={() => setCurrentSlide(st.slideIdx)}
-                className={`relative flex items-center space-x-2 whitespace-nowrap shrink-0 px-2.5 py-1 rounded-xl transition-all ${
+                className={`relative flex items-center space-x-2 whitespace-nowrap shrink-0 px-2.5 py-0.5 sm:py-1 rounded-xl transition-all ${
                   isCurrentStage
                     ? 'bg-[#9E741D]/15 dark:bg-[#C8A86B]/20 border border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-sm'
                     : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
@@ -439,7 +439,7 @@ export default function LiveDisplayPage() {
       </div>
 
       {/* MAIN CAROUSEL SLIDES */}
-      <main className="relative z-10 flex-1 px-3 sm:px-8 py-4 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full">
+      <main className="relative z-10 flex-1 px-3 sm:px-8 py-3 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full min-h-0 overflow-y-auto">
         
         {loading ? (
           <div className="text-center text-slate-500 dark:text-neutral-400 font-mono">Connecting to live score feed...</div>
