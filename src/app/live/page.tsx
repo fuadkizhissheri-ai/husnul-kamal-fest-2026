@@ -328,7 +328,7 @@ export default function LiveDisplayPage() {
       <ArabicCalligraphyCanvas />
 
       {/* TOP TV HEADER / BRANDING */}
-      <header className="relative z-20 px-4 sm:px-8 py-3 sm:py-5 flex flex-col md:flex-row items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/90 dark:bg-black/60 backdrop-blur-md gap-3">
+      <header className="relative z-20 px-4 sm:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-black/80 backdrop-blur-md gap-3">
         <div className="flex items-center space-x-3 text-center md:text-left">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#070709] flex items-center justify-center font-serif font-extrabold text-lg sm:text-xl shadow-lg shrink-0">
             ﷺ
@@ -343,8 +343,8 @@ export default function LiveDisplayPage() {
         </div>
 
         {/* Live Indicator & Controls */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-          <div className="flex items-center space-x-1.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono font-bold">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3 w-full md:w-auto">
+          <div className="flex items-center space-x-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono font-bold">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -352,62 +352,52 @@ export default function LiveDisplayPage() {
             <span>REALTIME</span>
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-rose-500/20 text-rose-500 dark:text-rose-400 px-3 py-1 sm:py-1.5 rounded-full border border-rose-500/40 text-[10px] sm:text-xs font-bold font-mono animate-pulse">
+          <div className="flex items-center space-x-1.5 bg-rose-500/20 text-rose-600 dark:text-rose-400 px-3 py-1.5 rounded-full border border-rose-500/40 text-[10px] sm:text-xs font-bold font-mono animate-pulse">
             <Radio className="w-3.5 h-3.5" />
             <span>LIVE TV</span>
           </div>
 
-          <div className="flex items-center space-x-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-1 rounded-full">
+          <div className="flex items-center space-x-1 bg-slate-200/80 dark:bg-white/10 border border-slate-300 dark:border-white/10 p-1 rounded-full">
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title={isPaused ? 'Resume Auto-Slide' : 'Pause Auto-Slide'}
             >
-              {isPaused ? <Play className="w-4 h-4 text-[#C8A86B]" /> : <Pause className="w-4 h-4" />}
+              {isPaused ? <Play className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <Pause className="w-4 h-4" />}
             </button>
 
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title="Toggle Alert Audio"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#C8A86B]" /> : <VolumeX className="w-4 h-4 text-neutral-500" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" /> : <VolumeX className="w-4 h-4 text-neutral-500" />}
             </button>
 
             <button
               onClick={toggleFullscreen}
-              className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="p-2 rounded-full hover:bg-slate-300 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 min-h-[36px] min-w-[36px] flex items-center justify-center"
               title="Toggle Fullscreen"
             >
               <Maximize className="w-4 h-4" />
-            </button>
-
-            {/* STOP SCREEN CAST BUTTON */}
-            <button
-              onClick={handleManualStopCast}
-              className="flex items-center space-x-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-1.5 rounded-full transition-all border border-rose-400/30 shadow-md cursor-pointer ml-1 min-h-[36px]"
-              title="Stop Live Screen Casting"
-            >
-              <Power className="w-3.5 h-3.5" />
-              <span>Stop</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* SIMULTANEOUS 4-STAGE LIVE BROADCAST TICKER BAR */}
-      <div className="relative z-10 bg-black/80 dark:bg-black/60 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-2 flex items-center justify-between overflow-x-auto text-[11px] sm:text-xs">
-        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-white/10 shrink-0">
+      <div className="relative z-10 w-full bg-white/90 dark:bg-black/70 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 sm:px-8 py-2.5 flex items-center justify-between overflow-x-auto text-[11px] sm:text-xs">
+        <div className="flex items-center space-x-1.5 font-mono font-bold text-rose-600 dark:text-rose-400 uppercase whitespace-nowrap pr-3 border-r border-slate-300 dark:border-white/10 shrink-0">
           <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
           <span>4-STAGE MONITOR:</span>
         </div>
 
-        <div className="flex items-center space-x-4 overflow-x-auto py-1 pl-3 scrollbar-none">
+        <div className="flex items-center space-x-3 sm:space-x-4 overflow-x-auto py-1 pl-3 no-scrollbar shrink-0">
           {[
-            { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40' },
-            { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
-            { id: 'lumina', label: 'Lumina Stage', badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
-            { id: 'zenith', label: 'Zenith Stage', badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+            { id: 'aura', label: 'Aura Stage', badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40' },
+            { id: 'legacy', label: 'Legacy Stage', badgeClass: 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40' },
+            { id: 'lumina', label: 'Lumina Stage', badgeClass: 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40' },
+            { id: 'zenith', label: 'Zenith Stage', badgeClass: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40' },
           ].map((st) => {
             const liveItem = liveSchedules.find((s) => s.stage && s.stage.toLowerCase() === st.id);
             return (
@@ -416,12 +406,12 @@ export default function LiveDisplayPage() {
                   {st.label}
                 </span>
                 {liveItem ? (
-                  <span className="text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1">
+                  <span className="text-slate-900 dark:text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
                     <span>{liveItem.programme?.name}</span>
                   </span>
                 ) : (
-                  <span className="text-neutral-500 italic text-[10px]">No live item</span>
+                  <span className="text-slate-400 dark:text-neutral-500 italic text-[10px]">No live item</span>
                 )}
               </div>
             );
@@ -433,12 +423,12 @@ export default function LiveDisplayPage() {
       <main className="relative z-10 flex-1 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full">
         
         {loading ? (
-          <div className="text-center text-neutral-400 font-mono">Connecting to live score feed...</div>
+          <div className="text-center text-slate-500 dark:text-neutral-400 font-mono">Connecting to live score feed...</div>
         ) : isStoppedRemotely ? (
           <div className="text-center space-y-4 luxury-glass p-10 rounded-[36px] border border-rose-500/40">
             <AlertCircle className="w-12 h-12 text-rose-400 mx-auto animate-bounce" />
-            <h2 className="text-3xl font-heading font-bold text-white">Live Screen-Casting Stopped</h2>
-            <p className="text-xs text-neutral-400">The live broadcast session was remotely stopped by Admin Desk. Redirecting to home...</p>
+            <h2 className="text-3xl font-heading font-bold text-slate-900 dark:text-white">Live Screen-Casting Stopped</h2>
+            <p className="text-xs text-slate-500 dark:text-neutral-400">The live broadcast session was remotely stopped by Admin Desk. Redirecting to home...</p>
           </div>
         ) : (
           <AnimatePresence mode="wait">
@@ -451,48 +441,48 @@ export default function LiveDisplayPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.6 }}
-                className="w-full max-w-6xl space-y-12 text-center"
+                className="w-full max-w-6xl space-y-6 sm:space-y-10 text-center"
               >
-                <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 1 of 4 • Overall House Standing</span>
-                  <h2 className="text-4xl sm:text-6xl font-heading font-black text-white">
+                <div className="space-y-1 sm:space-y-2">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 1 of 4 • Overall House Standing</span>
+                  <h2 className="text-2xl sm:text-5xl lg:text-6xl font-heading font-black text-slate-900 dark:text-white">
                     HOUSE CHAMPIONSHIP SCOREBOARD
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="luxury-glass p-10 rounded-[36px] border-2 border-[#C8A86B]/40 shadow-2xl space-y-4 relative overflow-hidden bg-gradient-to-b from-[#C8A86B]/15 to-transparent">
-                    <div className="text-xs font-mono font-bold uppercase text-[#C8A86B] tracking-widest">House Group 1</div>
-                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-white">MAVADDA</h3>
-                    <div className="text-6xl sm:text-8xl font-heading font-black text-[#C8A86B]">
+                <div className="flex flex-col md:grid md:grid-cols-2 gap-4 sm:gap-8">
+                  <div className="luxury-glass p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] border-2 border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-[#9E741D]/10 via-[#9E741D]/5 to-transparent dark:from-[#C8A86B]/15 dark:to-transparent">
+                    <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-[#9E741D] dark:text-[#C8A86B] tracking-widest">House Group 1</div>
+                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">MAVADDA</h3>
+                    <div className="text-5xl sm:text-8xl font-heading font-black text-[#9E741D] dark:text-[#C8A86B]">
                       {groupScores.MAVADDA}
                     </div>
-                    <p className="text-xs text-neutral-400 font-mono">Total Cumulative Points</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Total Cumulative Points</p>
                   </div>
 
-                  <div className="luxury-glass p-10 rounded-[36px] border-2 border-white/20 shadow-2xl space-y-4 relative overflow-hidden bg-gradient-to-b from-white/10 to-transparent">
-                    <div className="text-xs font-mono font-bold uppercase text-neutral-400 tracking-widest">House Group 2</div>
-                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-white">MAHABBA</h3>
-                    <div className="text-6xl sm:text-8xl font-heading font-black text-white">
+                  <div className="luxury-glass p-6 sm:p-10 rounded-[28px] sm:rounded-[36px] border-2 border-slate-300 dark:border-white/20 shadow-2xl space-y-2 sm:space-y-4 relative overflow-hidden bg-gradient-to-b from-black/5 to-transparent dark:from-white/10 dark:to-transparent">
+                    <div className="text-[10px] sm:text-xs font-mono font-bold uppercase text-slate-500 dark:text-neutral-400 tracking-widest">House Group 2</div>
+                    <h3 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">MAHABBA</h3>
+                    <div className="text-5xl sm:text-8xl font-heading font-black text-slate-900 dark:text-white">
                       {groupScores.MAHABBA}
                     </div>
-                    <p className="text-xs text-neutral-400 font-mono">Total Cumulative Points</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Total Cumulative Points</p>
                   </div>
                 </div>
 
-                <div className="space-y-3 max-w-4xl mx-auto pt-4">
-                  <div className="flex items-center justify-between text-sm font-bold font-mono">
-                    <span className="text-[#C8A86B]">MAVADDA ({mavaddaPct}%)</span>
-                    <span className="text-white">MAHABBA ({mahabbaPct}%)</span>
+                <div className="space-y-2 sm:space-y-3 max-w-4xl mx-auto pt-2">
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-bold font-mono">
+                    <span className="text-[#9E741D] dark:text-[#C8A86B]">MAVADDA ({mavaddaPct}%)</span>
+                    <span className="text-slate-900 dark:text-white">MAHABBA ({mahabbaPct}%)</span>
                   </div>
-                  <div className="h-6 w-full rounded-full bg-white/10 p-1 flex overflow-hidden border border-white/20">
+                  <div className="h-5 sm:h-6 w-full rounded-full bg-slate-200 dark:bg-white/10 p-1 flex overflow-hidden border border-slate-300 dark:border-white/20">
                     <div
                       style={{ width: `${mavaddaPct}%` }}
-                      className="h-full bg-gradient-to-r from-[#C8A86B] to-[#e6ca94] rounded-l-full transition-all duration-1000 shadow-lg"
+                      className="h-full bg-gradient-to-r from-[#9E741D] to-[#C8A86B] rounded-l-full transition-all duration-1000 shadow-lg"
                     />
                     <div
                       style={{ width: `${mahabbaPct}%` }}
-                      className="h-full bg-white rounded-r-full transition-all duration-1000 shadow-lg"
+                      className="h-full bg-slate-900 dark:bg-white rounded-r-full transition-all duration-1000 shadow-lg"
                     />
                   </div>
                 </div>
@@ -507,124 +497,25 @@ export default function LiveDisplayPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.6 }}
-                className="w-full max-w-6xl space-y-6 text-center"
+                className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 2 of 4 • Individual Performers</span>
-                  <h2 className="text-3xl sm:text-5xl font-heading font-black text-white flex items-center justify-center space-x-3">
-                    <UserCheck className="w-10 h-10 text-[#C8A86B]" />
+                <div className="space-y-1 sm:space-y-2">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 2 of 4 • Individual Performers</span>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white flex items-center justify-center space-x-2 sm:space-x-3">
+                    <UserCheck className="w-6 h-6 sm:w-10 sm:h-10 text-[#9E741D] dark:text-[#C8A86B]" />
                     <span>MADRASA TOP TALENTS</span>
                   </h2>
-                  <p className="text-xs text-neutral-400 font-mono">Top performing individual student per Madrasa unit</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Top performing individual student per Madrasa unit</p>
                 </div>
 
-                {madrasaTalents.length === 0 ? (
-                  <div className="text-neutral-500 py-10">No individual results published yet.</div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                    {madrasaTalents.slice(0, 3).map((m, idx) => (
-                      <div
-                        key={m.madrasa}
-                        className="luxury-glass p-8 rounded-[32px] border border-[#C8A86B]/40 space-y-4 relative overflow-hidden bg-gradient-to-b from-[#C8A86B]/15 to-transparent text-left shadow-2xl"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#C8A86B] text-black">
-                            {m.madrasa}
-                          </span>
-                          <span className="text-xs font-mono font-bold text-[#C8A86B]">
-                            #{idx + 1} Ranked
-                          </span>
-                        </div>
-
-                        <div className="space-y-1 pt-2">
-                          <div className="text-2xl font-heading font-extrabold text-white">
-                            {m.topStudent.fullName}
-                          </div>
-                          <div className="flex items-center space-x-2 text-xs font-mono text-neutral-300">
-                            <span className="text-[#C8A86B] font-bold">Chest: {m.topStudent.chestNumber}</span>
-                            <span>•</span>
-                            <span>{m.topStudent.group}</span>
-                            <span>•</span>
-                            <span>{m.topStudent.category}</span>
-                          </div>
-                        </div>
-
-                        <div className="bg-black/40 p-4 rounded-2xl border border-white/10 flex items-center justify-between">
-                          <span className="text-xs font-sans text-neutral-400">Individual Points:</span>
-                          <span className="text-2xl font-heading font-black text-[#C8A86B]">
-                            {m.topStudent.singlePoints} pts
-                          </span>
-                        </div>
-
-                        <div className="space-y-1 pt-1 text-[11px] font-mono text-neutral-400">
-                          <div className="text-[10px] font-bold uppercase text-[#C8A86B]">Won Individual Events:</div>
-                          {m.topStudent.wonProgrammes.map((p, i) => (
-                            <div key={i} className="flex justify-between truncate">
-                              <span className="truncate">• {p.name}</span>
-                              <span className="text-white font-bold ml-2">{p.position}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* SLIDE 3: CATEGORY TALENT */}
-            {currentSlide === 2 && (
-              <motion.div
-                key="slide-2"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 0.6 }}
-                className="w-full max-w-6xl space-y-6 text-center"
-              >
-                <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 3 of 4 • Star Performers</span>
-                  <h2 className="text-3xl sm:text-5xl font-heading font-black text-white flex items-center justify-center space-x-3">
-                    <Star className="w-10 h-10 text-[#C8A86B]" />
-                    <span>CATEGORY CHAMPION TALENTS</span>
-                  </h2>
-                  <p className="text-xs text-neutral-400 font-mono">Highest cumulative scorer per category across all programmes</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 pt-2">
-                  {categoryTalents.map((ct) => (
-                    <div
-                      key={ct.category}
-                      className="luxury-glass p-6 rounded-[28px] border-2 border-[#C8A86B]/40 space-y-4 relative overflow-hidden bg-gradient-to-b from-[#C8A86B]/20 to-transparent text-left shadow-2xl flex flex-col justify-between"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                          <span className="text-xs font-heading font-bold text-[#C8A86B] uppercase tracking-wider">
-                            {ct.category}
-                          </span>
-                          <Trophy className="w-4 h-4 text-[#C8A86B]" />
-                        </div>
-
-                        <div className="space-y-1">
-                          <h4 className="font-heading font-extrabold text-xl text-white leading-snug">
-                            {ct.topStudent.fullName}
-                          </h4>
-                          <p className="text-[11px] text-[#C8A86B] font-mono font-semibold">
-                            Chest No: {ct.topStudent.chestNumber}
-                          </p>
-                        </div>
-
-                        <div className="text-xs text-neutral-300 font-sans space-y-0.5">
-                          <p className="font-bold">{ct.topStudent.madrasa}</p>
-                          <p className="text-[#C8A86B] font-mono font-bold">House: {ct.topStudent.group}</p>
-                        </div>
-                      </div>
-
-                      <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-                        <span className="text-[10px] font-mono text-neutral-400">Total Points</span>
-                        <span className="text-2xl font-heading font-black text-[#C8A86B]">
-                          {ct.topStudent.totalPoints} pts
-                        </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                  {madrasaTalents.map((mt, i) => (
+                    <div key={i} className="luxury-glass p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] border border-slate-300 dark:border-white/10 text-left space-y-2 sm:space-y-3">
+                      <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{mt.madrasa}</div>
+                      <div className="font-serif font-bold text-base sm:text-xl text-slate-900 dark:text-white uppercase">{mt.topStudent?.fullName}</div>
+                      <div className="flex items-center justify-between text-xs text-slate-600 dark:text-neutral-400 pt-1 border-t border-slate-200 dark:border-white/10 font-mono">
+                        <span>Chest: {mt.topStudent?.chestNumber}</span>
+                        <span className="text-[#9E741D] dark:text-[#C8A86B] font-bold">{mt.topStudent?.singlePoints} Pts</span>
                       </div>
                     </div>
                   ))}
@@ -632,7 +523,38 @@ export default function LiveDisplayPage() {
               </motion.div>
             )}
 
-            {/* SLIDE 4: LATEST PUBLISHED RESULTS TICKER */}
+            {/* SLIDE 3: CATEGORY TALENT */}
+            {currentSlide === 2 && (
+              <motion.div
+                key="slide-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.6 }}
+                className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
+              >
+                <div className="space-y-1 sm:space-y-2">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 3 of 4 • Category Individual Champions</span>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white flex items-center justify-center space-x-2 sm:space-x-3">
+                    <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-[#9E741D] dark:text-[#C8A86B]" />
+                    <span>CATEGORY INDIVIDUAL CHAMPIONS</span>
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                  {categoryTalents.map((ct, i) => (
+                    <div key={i} className="luxury-glass p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] border border-slate-300 dark:border-white/10 text-center space-y-2 sm:space-y-3">
+                      <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{ct.category}</div>
+                      <div className="font-serif font-bold text-base sm:text-lg text-slate-900 dark:text-white uppercase">{ct.topStudent?.fullName}</div>
+                      <div className="text-xs font-mono text-slate-500 dark:text-neutral-400">Chest: {ct.topStudent?.chestNumber}</div>
+                      <div className="text-xl sm:text-2xl font-black text-[#9E741D] dark:text-[#C8A86B] font-heading">{ct.topStudent?.totalPoints} Pts</div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* SLIDE 4: LATEST RESULTS */}
             {currentSlide === 3 && (
               <motion.div
                 key="slide-3"
@@ -643,8 +565,8 @@ export default function LiveDisplayPage() {
                 className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
                 <div className="space-y-1 sm:space-y-2">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#C8A86B]">Slide 4 of 4 • Recent Published Results</span>
-                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-white flex items-center justify-center space-x-2 sm:space-x-3">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 4 of 4 • Recent Published Results</span>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white flex items-center justify-center space-x-2 sm:space-x-3">
                     <Flame className="w-6 h-6 sm:w-10 sm:h-10 text-rose-500 animate-pulse" />
                     <span>LATEST PUBLISHED RESULTS</span>
                   </h2>
@@ -652,15 +574,15 @@ export default function LiveDisplayPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   {latestResults.slice(0, 4).map((res) => (
-                    <div key={res.id} className="luxury-glass p-4 rounded-[20px] sm:rounded-[28px] border border-white/10 text-left flex items-center justify-between">
+                    <div key={res.id} className="luxury-glass p-4 rounded-[20px] sm:rounded-[28px] border border-slate-300 dark:border-white/10 text-left flex items-center justify-between">
                       <div>
-                        <div className="text-[10px] font-mono text-[#C8A86B] font-bold uppercase">{res.programme?.name}</div>
-                        <div className="font-serif font-bold text-sm sm:text-base text-white uppercase">{res.participant?.fullName}</div>
-                        <div className="text-[10px] text-neutral-400 font-mono">Chest: {res.participant?.chestNumber} • House: {res.participant?.group}</div>
+                        <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{res.programme?.name}</div>
+                        <div className="font-serif font-bold text-sm sm:text-base text-slate-900 dark:text-white uppercase">{res.participant?.fullName}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">Chest: {res.participant?.chestNumber} • House: {res.participant?.group}</div>
                       </div>
                       <div className="text-right shrink-0 ml-2">
-                        <div className="text-xs sm:text-sm font-bold text-white font-mono">{res.position}</div>
-                        <div className="text-xs sm:text-sm font-bold text-[#C8A86B] font-mono">+{res.points} Pts</div>
+                        <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-mono">{res.position}</div>
+                        <div className="text-xs sm:text-sm font-bold text-[#9E741D] dark:text-[#C8A86B] font-mono">+{res.points} Pts</div>
                       </div>
                     </div>
                   ))}
@@ -670,7 +592,6 @@ export default function LiveDisplayPage() {
 
           </AnimatePresence>
         )}
-
       </main>
 
       {/* CONFIRMATION PROMPT MODAL FOR STOP SCREEN CAST */}
