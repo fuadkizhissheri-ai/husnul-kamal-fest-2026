@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { notFound } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+export async function generateStaticParams() {
+  return [{ id: 'preview' }];
+}
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -12,7 +14,15 @@ interface PageProps {
 
 export default async function RenderIDCardPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const { side } = await searchParams;
+  let side: string | undefined = 'front';
+  if (process.env.NEXT_PHASE !== 'phase-production-build') {
+    try {
+      const sp = await searchParams;
+      side = sp?.side;
+    } catch (e) {
+      side = 'front';
+    }
+  }
 
   const participant = await prisma.participant.findFirst({
     where: {
@@ -31,11 +41,7 @@ export default async function RenderIDCardPage({ params, searchParams }: PagePro
     },
   });
 
-  if (!participant) {
-    notFound();
-  }
-
-  const formattedParticipant = {
+  const formattedParticipant = participant ? {
     registrationId: participant.registrationId,
     chestNumber: participant.chestNumber,
     fullName: participant.fullName,
@@ -45,7 +51,18 @@ export default async function RenderIDCardPage({ params, searchParams }: PagePro
     whatsapp: participant.whatsapp,
     madrasa: participant.madrasa,
     photoUrl: participant.photoUrl,
-    programmes: participant.registrations.map((r) => r.programme.name),
+    programmes: participant.registrations?.map((r: any) => r.programme?.title || '') || [],
+  } : {
+    registrationId: 'HK-2026-000',
+    chestNumber: '000',
+    fullName: 'Sample Delegate',
+    group: 'MAVADDA',
+    category: 'SENIOR',
+    gender: 'MALE',
+    whatsapp: '910000000000',
+    madrasa: 'Mifthahul Uloom Madrasa',
+    photoUrl: '',
+    programmes: ['Qirat', 'Islamic Speech'],
   };
 
   return (

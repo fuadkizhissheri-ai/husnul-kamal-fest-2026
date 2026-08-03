@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { realtimeEmitter } from '@/lib/realtime';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 
 export async function GET(request: Request) {
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return NextResponse.json({ status: 'realtime_disabled_in_static_export' });
+  }
+
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({

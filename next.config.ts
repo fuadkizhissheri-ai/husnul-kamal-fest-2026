@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ── Compress all text responses (HTML, JS, CSS, JSON) ──
-  compress: true,
+  // ── Enable static HTML export for Capacitor Mobile App ──
+  output: 'export',
 
   // ── Image optimization ──
   images: {
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400, // 24h CDN cache
     deviceSizes: [375, 640, 768, 1024, 1280, 1440, 1920],

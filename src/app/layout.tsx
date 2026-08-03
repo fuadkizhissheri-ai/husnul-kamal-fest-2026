@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -26,6 +26,18 @@ const inter = Inter({
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://husnul-kamal-fest-2026.vercel.app');
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAF8F3' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B0B0B' },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -64,6 +76,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={`${spaceGrotesk.variable} ${inter.variable} dark`}>
       <head>
+        {/* Mobile Viewport Safe-Area & Zoom Lock for Native Android / iOS WebViews */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
         {/* Open Graph & Twitter Meta Tags for WhatsApp and Social Link Preview Scrapers */}
         <meta property="og:title" content="Husnul Kamal Meelad Fest 2026 | Mifthahul Uloom Madrasa" />
         <meta property="og:description" content="Mifthahul Uloom Madrasa Ullisherikkunnu proudly presents Husnul Kamal Meelad Fest 2026." />
@@ -86,7 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preload hint for the API that every page needs on mount */}
         <link rel="preload" href="/api/settings" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className="bg-[#F8F8F8] text-[#0B0B0B] dark:bg-[#0B0B0B] dark:text-[#FFFFFF] min-h-screen flex flex-col font-sans antialiased selection:bg-[#C8A86B] selection:text-[#0B0B0B]">
+      <body className="bg-[#FAF8F3] text-[#0B0B0B] dark:bg-[#0B0B0B] dark:text-[#FFFFFF] min-h-screen flex flex-col font-sans antialiased selection:bg-[#C8A86B] selection:text-[#0B0B0B] overflow-x-hidden max-w-[100vw] w-full pb-safe">
         <ThemeProvider>
           <Navbar />
           <main className="flex-1">
