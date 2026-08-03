@@ -15,6 +15,10 @@ export default function Navbar() {
   const [waPhone, setWaPhone] = useState('917306480848');
   const pathname = usePathname();
 
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/render')) {
+    return null;
+  }
+
   const loadPhone = useCallback(() => {
     fetch('/api/settings')
       .then((res) => res.json())

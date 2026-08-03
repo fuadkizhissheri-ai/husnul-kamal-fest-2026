@@ -224,7 +224,7 @@
   }
 
   .hk-table {
-    @apply w-full min-w-[650px] text-xs;
+    @apply w-full min-w-[700px] text-xs;
   }
 
   .hk-table thead tr {

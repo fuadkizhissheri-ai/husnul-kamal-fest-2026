@@ -307,7 +307,7 @@ export default function AdminSchedulePage() {
       ) : (
         <div className="luxury-glass rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 overflow-hidden shadow-luxury">
           <div className="w-full overflow-x-auto whitespace-nowrap [webkit-overflow-scrolling:touch]">
-            <table className="w-full min-w-[650px] text-left text-xs">
+            <table className="w-full min-w-[700px] text-left text-xs">
             <thead>
               <tr className="bg-slate-100 dark:bg-black/40 text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase tracking-wider border-b-2 border-[#9E741D]/30 dark:border-white/10">
                 <th className="py-4 px-6 text-[#9E741D] dark:text-[#C8A86B]">Stage Venue</th>

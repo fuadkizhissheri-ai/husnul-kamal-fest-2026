@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 px-3.5 sm:px-8 py-4 sm:py-6 max-w-7xl w-full mx-auto space-y-6">
           <ErrorBoundary fallbackTitle="Admin Page Error">
             {children}
           </ErrorBoundary>

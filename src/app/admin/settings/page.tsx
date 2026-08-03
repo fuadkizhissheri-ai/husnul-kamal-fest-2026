@@ -497,15 +497,15 @@ export default function AdminSettingsPage() {
                   )}
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     placeholder="https://... logo URL"
                     value={festLogoUrl}
                     onChange={(e) => setFestLogoUrl(e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono text-[11px]"
+                    className="flex-1 w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono text-[11px] truncate"
                   />
-                  <label className="btn-pill-luxury bg-[#C8A86B] text-[#0B0B0B] font-bold text-xs px-3 py-2 flex items-center space-x-1 cursor-pointer shrink-0">
+                  <label className="btn-pill-luxury bg-[#C8A86B] text-[#0B0B0B] font-bold text-xs px-3 py-2 flex items-center justify-center space-x-1 cursor-pointer shrink-0">
                     <Upload className="w-3.5 h-3.5" />
                     <span>{uploadingLogo ? 'Uploading...' : 'Upload PNG'}</span>
                     <input
@@ -540,15 +540,15 @@ export default function AdminSettingsPage() {
                   )}
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     placeholder="https://... light logo URL"
                     value={festLogoLightUrl}
                     onChange={(e) => setFestLogoLightUrl(e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono text-[11px]"
+                    className="flex-1 w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono text-[11px] truncate"
                   />
-                  <label className="btn-pill-luxury bg-white/20 text-white font-bold text-xs px-3 py-2 flex items-center space-x-1 cursor-pointer shrink-0">
+                  <label className="btn-pill-luxury bg-white/20 text-white font-bold text-xs px-3 py-2 flex items-center justify-center space-x-1 cursor-pointer shrink-0">
                     <Upload className="w-3.5 h-3.5 text-[#C8A86B]" />
                     <span>{uploadingLightLogo ? 'Uploading...' : 'Upload Light Logo'}</span>
                     <input

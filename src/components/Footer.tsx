@@ -2,12 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MapPin, Phone, Mail, Globe, Share2, MessageSquare } from 'lucide-react';
 import { fetchWithCache, invalidateCache } from '@/lib/clientCache';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 
 export default function Footer() {
+  const pathname = usePathname();
   const [cms, setCms] = useState<Record<string, string>>({});
+
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/render')) {
+    return null;
+  }
 
   const loadSettings = (bypassCache = false) => {
     if (bypassCache) invalidateCache('/api/settings');
