@@ -221,8 +221,8 @@ export default function HomePage() {
               {/* Soft Gold Underline Divider */}
               <div className="h-0.5 w-32 mx-auto bg-gradient-to-r from-transparent via-[#9E741D]/60 dark:via-[#C8A86B]/60 to-transparent my-3 opacity-80" />
 
-              <p className="text-lg sm:text-2xl font-heading text-[#9E741D] dark:text-[#C8A86B] font-medium max-w-3xl mx-auto">
-                Celebrating Islamic Heritage, Divine Qirat &amp; Devotion
+              <p className="text-base sm:text-xl font-heading text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase tracking-wider text-center max-w-2xl mx-auto">
+                CELEBRATING ISLAMIC HERITAGE, DIVINE QIRAT &amp; DEVOTION
               </p>
             </motion.div>
 
@@ -231,10 +231,10 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="max-w-2xl mx-auto text-sm sm:text-base text-slate-700 dark:text-neutral-300 font-sans leading-relaxed"
+              className="max-w-3xl mx-auto px-4 text-xs sm:text-sm text-slate-700 dark:text-neutral-300 font-sans leading-relaxed tracking-wide text-center uppercase font-semibold"
               suppressHydrationWarning
             >
-              {cms.about_description || 'An ultra-premium cultural platform hosting 350+ delegates across 4 competitive categories and 2 grand houses: MAVADDA & MAHABBA.'}
+              {cms.about_description || 'AN ULTRA-PREMIUM CULTURAL PLATFORM HOSTING 350+ DELEGATES ACROSS 4 COMPETITIVE CATEGORIES AND 2 GRAND HOUSES: MAVADDA & MAHABBA.'}
             </motion.p>
 
             {/* Primary & Secondary Pill CTAs with Smooth Hover States */}
