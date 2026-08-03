@@ -161,25 +161,23 @@ export default function ArabicCalligraphyCanvas() {
       mouse.y = e.clientY - rect.top;
       mouse.active = true;
 
-      // Spawn playful golden and emerald green dots following the mouse cursor
-      if (!prefersReducedMotion) {
-        for (let k = 0; k < 2; k++) {
-          const colorRand = Math.random();
-          const colorType: 'gold' | 'green' | 'gold-green' =
-            colorRand < 0.4 ? 'gold' : colorRand < 0.75 ? 'green' : 'gold-green';
+      // Spawn small, subtle, isolated particle dots following the cursor (no large radial glows or blurs)
+      if (!prefersReducedMotion && Math.random() < 0.4) {
+        const colorRand = Math.random();
+        const colorType: 'gold' | 'green' | 'gold-green' =
+          colorRand < 0.4 ? 'gold' : colorRand < 0.75 ? 'green' : 'gold-green';
 
-          sparkles.push({
-            x: mouse.x + (Math.random() - 0.5) * 20,
-            y: mouse.y + (Math.random() - 0.5) * 20,
-            vx: (Math.random() - 0.5) * 1.4,
-            vy: (Math.random() - 0.5) * 1.4 - 0.2,
-            size: Math.random() * 3.5 + 1.5,
-            alpha: 0.85,
-            life: 0,
-            maxLife: Math.random() * 25 + 15,
-            colorType,
-          });
-        }
+        sparkles.push({
+          x: mouse.x + (Math.random() - 0.5) * 12,
+          y: mouse.y + (Math.random() - 0.5) * 12,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8 - 0.2,
+          size: Math.random() * 1.5 + 1.2,
+          alpha: 0.6,
+          life: 0,
+          maxLife: Math.random() * 20 + 12,
+          colorType,
+        });
       }
     };
 
@@ -247,32 +245,7 @@ export default function ArabicCalligraphyCanvas() {
         smoothMouse.y += (-1000 - smoothMouse.y) * 0.05;
       }
 
-      // ── 1. RENDER CURSOR SPOTLIGHT ORB (GOLD & GREEN TINT) ──
-      if (smoothMouse.x > -500 && !prefersReducedMotion) {
-        ctx.save();
-        const isDark = document.documentElement.classList.contains('dark');
-        const spotlightGrad = ctx.createRadialGradient(
-          smoothMouse.x, smoothMouse.y, 0,
-          smoothMouse.x, smoothMouse.y, 220
-        );
-        if (isDark) {
-          spotlightGrad.addColorStop(0, 'rgba(200, 168, 107, 0.14)');
-          spotlightGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.07)');
-          spotlightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        } else {
-          spotlightGrad.addColorStop(0, 'rgba(158, 116, 29, 0.12)');
-          spotlightGrad.addColorStop(0.5, 'rgba(6, 95, 70, 0.06)');
-          spotlightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        }
-
-        ctx.fillStyle = spotlightGrad;
-        ctx.beginPath();
-        ctx.arc(smoothMouse.x, smoothMouse.y, 220, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // ── 2. RENDER CLICK RIPPLES ──
+      // ── 1. RENDER CLICK RIPPLES ──
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rip = ripples[i];
         rip.radius += (rip.maxRadius - rip.radius) * 0.08 + 2;
@@ -295,14 +268,14 @@ export default function ArabicCalligraphyCanvas() {
         ctx.restore();
       }
 
-      // ── 3. RENDER PLAYFUL GOLD & GREEN PARTICLES ──
+      // ── 2. RENDER SMALL SUBTLE PARTICLES (NO SPOTLIGHT BLOB OR BLUR BLEED) ──
       const isDark = document.documentElement.classList.contains('dark');
       for (let i = sparkles.length - 1; i >= 0; i--) {
         const sp = sparkles[i];
         sp.x += sp.vx;
         sp.y += sp.vy;
         sp.life++;
-        sp.alpha = (1 - sp.life / sp.maxLife) * 0.85 * globalFade;
+        sp.alpha = (1 - sp.life / sp.maxLife) * 0.6 * globalFade;
 
         if (sp.life >= sp.maxLife) {
           sparkles.splice(i, 1);
@@ -313,24 +286,16 @@ export default function ArabicCalligraphyCanvas() {
         ctx.beginPath();
         ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
 
-        let dotGrad = ctx.createRadialGradient(sp.x, sp.y, 0, sp.x, sp.y, sp.size);
         if (sp.colorType === 'green') {
-          dotGrad.addColorStop(0, isDark ? '#34D399' : '#059669');
-          dotGrad.addColorStop(1, isDark ? '#059669' : '#065F46');
-          ctx.shadowColor = isDark ? '#34D399' : '#059669';
+          ctx.fillStyle = isDark ? '#34D399' : '#059669';
         } else if (sp.colorType === 'gold-green') {
-          dotGrad.addColorStop(0, isDark ? '#F5E6C4' : '#C8A86B');
-          dotGrad.addColorStop(1, isDark ? '#10B981' : '#065F46');
-          ctx.shadowColor = isDark ? '#C8A86B' : '#9E741D';
+          ctx.fillStyle = isDark ? '#C8A86B' : '#9E741D';
         } else {
-          dotGrad.addColorStop(0, isDark ? '#FDE68A' : '#C8A86B');
-          dotGrad.addColorStop(1, isDark ? '#C8A86B' : '#7A5600');
-          ctx.shadowColor = isDark ? '#FDE68A' : '#9E741D';
+          ctx.fillStyle = isDark ? '#FDE68A' : '#C8A86B';
         }
 
-        ctx.fillStyle = dotGrad;
         ctx.globalAlpha = sp.alpha;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 0;
         ctx.fill();
         ctx.restore();
       }

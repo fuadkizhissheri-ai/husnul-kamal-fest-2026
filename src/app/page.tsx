@@ -167,9 +167,6 @@ export default function HomePage() {
               className="flex justify-center mx-auto mt-1 sm:mt-2 mb-2 sm:mb-3"
             >
               <div className="relative group cursor-pointer">
-                {/* Soft Radial Ambient Gold Glow behind Logo */}
-                <div className="absolute inset-0 bg-[#9E741D]/25 dark:bg-[#C8A86B]/30 blur-3xl rounded-full scale-125 group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
-
                 {logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
