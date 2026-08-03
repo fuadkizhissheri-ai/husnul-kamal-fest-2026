@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.font-bebas {
+  font-family: 'Bebas Neue', sans-serif, system-ui;
+}
 
 /* =====================================================
    HUSNUL KAMAL DESIGN SYSTEM — CSS CUSTOM PROPERTIES

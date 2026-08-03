@@ -42,8 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* Google Fonts for Certificate PDF & JPEG Rendering */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Montserrat:wght@400;600;700;800;900&display=swap" />
+        {/* Google Fonts for Web Header & Certificate PDF & JPEG Rendering */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Montserrat:wght@400;600;700;800;900&display=swap" />
 
         {/* Preload hint for the API that every page needs on mount */}
         <link rel="preload" href="/api/settings" as="fetch" crossOrigin="anonymous" />
