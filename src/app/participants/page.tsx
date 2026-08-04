@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import TableSkeleton from '@/components/TableSkeleton';
 import PrintableIDCard from '@/components/PrintableIDCard';
@@ -104,6 +104,8 @@ export default function ParticipantsPage() {
     }
   };
 
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+
   // Filtered and Sorted (by Chest Number Ascending) Participants
   const filteredParticipants = useMemo(() => {
     let result = [...participants];
@@ -116,8 +118,8 @@ export default function ParticipantsPage() {
       result = result.filter((p) => p.category === selectedCategory);
     }
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    if (deferredSearchQuery.trim()) {
+      const q = deferredSearchQuery.toLowerCase().trim();
       result = result.filter(
         (p) =>
           p.fullName.toLowerCase().includes(q) ||
@@ -129,7 +131,7 @@ export default function ParticipantsPage() {
 
     // Sort by Chest Number Ascending
     return result.sort((a, b) => a.chestNumber.localeCompare(b.chestNumber, undefined, { numeric: true }));
-  }, [participants, selectedGroup, selectedCategory, searchQuery]);
+  }, [participants, selectedGroup, selectedCategory, deferredSearchQuery]);
 
   const handleDownloadPDF = () => {
     const filterTitle = `Participants Directory — Group: ${selectedGroup} | Category: ${selectedCategory}`;

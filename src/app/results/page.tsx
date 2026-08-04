@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import PrintableCertificate from '@/components/PrintableCertificate';
 import { Trophy, Search, Download, X, Medal } from 'lucide-react';
@@ -62,18 +62,24 @@ export default function ResultsPage() {
   const groups = ['ALL', 'MAVADDA', 'MAHABBA'];
   const positions = ['ALL', '1st Place', '2nd Place', '3rd Place'];
 
-  const filteredResults = results.filter((r) => {
-    if (!r.programme || !r.participant) return false;
-    const matchesCategory = selectedCategory === 'ALL' || r.programme?.category === selectedCategory;
-    const matchesGroup = selectedGroup === 'ALL' || r.participant?.group === selectedGroup;
-    const matchesPosition = selectedPosition === 'ALL' || r.position?.includes(selectedPosition);
-    const matchesSearch =
-      (r.participant?.fullName ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (r.participant?.chestNumber ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (r.programme?.name ?? '').toLowerCase().includes(searchQuery.toLowerCase());
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
-    return matchesCategory && matchesGroup && matchesPosition && matchesSearch;
-  });
+  const filteredResults = useMemo(() => {
+    return results.filter((r) => {
+      if (!r.programme || !r.participant) return false;
+      const matchesCategory = selectedCategory === 'ALL' || r.programme?.category === selectedCategory;
+      const matchesGroup = selectedGroup === 'ALL' || r.participant?.group === selectedGroup;
+      const matchesPosition = selectedPosition === 'ALL' || r.position?.includes(selectedPosition);
+      const q = deferredSearchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        (r.participant?.fullName ?? '').toLowerCase().includes(q) ||
+        (r.participant?.chestNumber ?? '').toLowerCase().includes(q) ||
+        (r.programme?.name ?? '').toLowerCase().includes(q);
+
+      return matchesCategory && matchesGroup && matchesPosition && matchesSearch;
+    });
+  }, [results, selectedCategory, selectedGroup, selectedPosition, deferredSearchQuery]);
 
   return (
     <SmoothScroll>

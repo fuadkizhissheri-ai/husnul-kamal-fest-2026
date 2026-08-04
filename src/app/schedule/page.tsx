@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useDeferredValue } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import { getStageInfo, FIXED_STAGES } from '@/lib/stages';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
@@ -53,25 +53,31 @@ export default function SchedulePage() {
 
   const categories = ['ALL', 'Sub Junior', 'Junior', 'Senior', 'Super Senior'];
 
-  const filtered = scheduleItems.filter((item) => {
-    const itemStageId = getStageInfo(item.stage || 'Aura').id.toLowerCase();
-    const targetStageId = selectedStage.toLowerCase();
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
-    const matchesStage =
-      selectedStage === 'ALL' ||
-      itemStageId === targetStageId ||
-      (item.stage && item.stage.toLowerCase().includes(targetStageId));
+  const filtered = useMemo(() => {
+    return scheduleItems.filter((item) => {
+      const itemStageId = getStageInfo(item.stage || 'Aura').id.toLowerCase();
+      const targetStageId = selectedStage.toLowerCase();
 
-    const itemCategory = item.programme?.category || 'General';
-    const matchesCategory = selectedCategory === 'ALL' || itemCategory === selectedCategory;
+      const matchesStage =
+        selectedStage === 'ALL' ||
+        itemStageId === targetStageId ||
+        (item.stage && item.stage.toLowerCase().includes(targetStageId));
 
-    const progName = item.programme?.name || 'Untitled Programme';
-    const matchesSearch =
-      progName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.stage || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const itemCategory = item.programme?.category || 'General';
+      const matchesCategory = selectedCategory === 'ALL' || itemCategory === selectedCategory;
 
-    return matchesStage && matchesCategory && matchesSearch;
-  });
+      const progName = item.programme?.name || 'Untitled Programme';
+      const q = deferredSearchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        progName.toLowerCase().includes(q) ||
+        (item.stage || '').toLowerCase().includes(q);
+
+      return matchesStage && matchesCategory && matchesSearch;
+    });
+  }, [scheduleItems, selectedStage, selectedCategory, deferredSearchQuery]);
 
   useEffect(() => {
     console.log(`[Public Schedule Page] Rendering ${filtered.length} of ${scheduleItems.length}...`);
