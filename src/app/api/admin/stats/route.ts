@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
+import { autoSyncScheduleStatuses } from '@/lib/scheduleAutoSync';
 
 export async function GET() {
   try {
@@ -8,6 +9,9 @@ export async function GET() {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Auto-sync programme statuses based on date/time
+    await autoSyncScheduleStatuses();
 
     const [totalParticipants, totalProgrammes, resultsPublished, announcementsCount] = await Promise.all([
       prisma.participant.count(),

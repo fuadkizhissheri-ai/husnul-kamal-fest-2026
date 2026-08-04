@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 import { getStageInfo } from '@/lib/stages';
+import { autoSyncScheduleStatuses } from '@/lib/scheduleAutoSync';
 
 export async function GET(request: Request) {
   try {
@@ -11,6 +12,9 @@ export async function GET(request: Request) {
     const stage = searchParams.get('stage');
     const status = searchParams.get('status');
     const query = searchParams.get('q');
+
+    // 0. Auto-sync time-based status transitions before fetching
+    await autoSyncScheduleStatuses();
 
     // 1. Fetch explicit Schedule records
     const explicitSchedules = await prisma.schedule.findMany({
