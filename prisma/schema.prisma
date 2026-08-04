@@ -95,9 +95,9 @@ model Announcement {
   coordinatorName         String?
   coordinatorDesignation  String?
   coordinator1Name        String?  @default("FUAD JALALI")
-  coordinator1Designation  String?  @default("Programme Coordinator")
+  coordinator1Designation  String?  @default("Fest Convenor")
   coordinator2Name        String?  @default("MIDLAJ ROSHAN KAMALI")
-  coordinator2Designation  String?  @default("Programme Coordinator")
+  coordinator2Designation  String?  @default("Coordinator")
   signatoryOption         String?  @default("BOTH") // BOTH, COORD1, COORD2
   signatureUrl            String?
   pdfUrl                  String?

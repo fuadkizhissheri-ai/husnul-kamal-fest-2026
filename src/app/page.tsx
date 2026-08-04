@@ -25,14 +25,14 @@ import { motion } from 'framer-motion';
 
 const DEFAULT_COMMITTEE = [
   {
-    name: 'Midlaj Roshan Kamali',
-    position: 'Chief Convener',
-    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    name: 'Fuad Jalali',
+    position: 'Fest Convenor',
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
   },
   {
-    name: 'Fuad Jalali',
-    position: 'Programme Coordinator',
-    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    name: 'Midlaj Roshan Kamali',
+    position: 'Coordinator',
+    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
   },
   {
     name: 'Husain Saqafi',

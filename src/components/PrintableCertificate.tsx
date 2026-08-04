@@ -68,9 +68,9 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
     : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const coord1Name = coordinatorSettings?.coord1Name || 'Fuad Jalali';
-  const coord1Desig = coordinatorSettings?.coord1Designation || 'Programme Coordinator';
+  const coord1Desig = coordinatorSettings?.coord1Designation || 'Fest Convenor';
   const coord2Name = coordinatorSettings?.coord2Name || 'Midlaj Roshan Kamali';
-  const coord2Desig = coordinatorSettings?.coord2Designation || 'Programme Coordinator';
+  const coord2Desig = coordinatorSettings?.coord2Designation || 'Coordinator';
 
   // Format position for badge
   const positionLabel = isParticipation ? 'PARTICIPANT' : result.position.toUpperCase();

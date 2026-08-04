@@ -45,9 +45,9 @@ export default function AdminAnnouncementsPage() {
   // Dual Coordinators
   const [signatoryOption, setSignatoryOption] = useState<'BOTH' | 'COORD1' | 'COORD2'>('BOTH');
   const [coordinator1Name, setCoordinator1Name] = useState('FUAD JALALI');
-  const [coordinator1Designation, setCoordinator1Designation] = useState('Programme Coordinator');
+  const [coordinator1Designation, setCoordinator1Designation] = useState('Fest Convenor');
   const [coordinator2Name, setCoordinator2Name] = useState('MIDLAJ ROSHAN KAMALI');
-  const [coordinator2Designation, setCoordinator2Designation] = useState('Programme Coordinator');
+  const [coordinator2Designation, setCoordinator2Designation] = useState('Coordinator');
 
   const fetchAnnouncements = () => {
     setLoading(true);
@@ -84,9 +84,9 @@ export default function AdminAnnouncementsPage() {
       setRefNumber(item.refNumber || '');
       setSignatoryOption((item.signatoryOption as any) || 'BOTH');
       setCoordinator1Name(item.coordinator1Name || 'FUAD JALALI');
-      setCoordinator1Designation(item.coordinator1Designation || 'Programme Coordinator');
+      setCoordinator1Designation(item.coordinator1Designation || 'Fest Convenor');
       setCoordinator2Name(item.coordinator2Name || 'MIDLAJ ROSHAN KAMALI');
-      setCoordinator2Designation(item.coordinator2Designation || 'Programme Coordinator');
+      setCoordinator2Designation(item.coordinator2Designation || 'Coordinator');
     } else {
       setEditingItem(null);
       setTitle('');
@@ -95,9 +95,9 @@ export default function AdminAnnouncementsPage() {
       setRefNumber(`HK/2026/CIR-${String(announcements.length + 1).padStart(3, '0')}`);
       setSignatoryOption('BOTH');
       setCoordinator1Name('FUAD JALALI');
-      setCoordinator1Designation('Programme Coordinator');
+      setCoordinator1Designation('Fest Convenor');
       setCoordinator2Name('MIDLAJ ROSHAN KAMALI');
-      setCoordinator2Designation('Programme Coordinator');
+      setCoordinator2Designation('Coordinator');
     }
     setIsModalOpen(true);
   };

@@ -119,11 +119,11 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
 
   currentY += 16;
 
-  const coord1Name = circular.coordinator1Name || circular.coordinatorName || 'FUAD JALALI';
-  const coord1Desig = circular.coordinator1Designation || circular.coordinatorDesignation || 'Programme Coordinator';
+  const coord1Name = circular.coordinator1Name || circular.coordinatorName || 'Fuad Jalali';
+  const coord1Desig = circular.coordinator1Designation || circular.coordinatorDesignation || 'Fest Convenor';
 
-  const coord2Name = circular.coordinator2Name || 'MIDLAJ ROSHAN KAMALI';
-  const coord2Desig = circular.coordinator2Designation || 'Programme Coordinator';
+  const coord2Name = circular.coordinator2Name || 'Midlaj Roshan Kamali';
+  const coord2Desig = circular.coordinator2Designation || 'Coordinator';
 
   const option = (circular.signatoryOption || 'BOTH').toUpperCase();
 
