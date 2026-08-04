@@ -463,7 +463,11 @@ export default function LiveDisplayPage() {
             { id: 'lumina', label: 'Lumina Stage', badgeClass: 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40', slideIdx: 3 },
             { id: 'zenith', label: 'Zenith Stage', badgeClass: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40', slideIdx: 0 },
           ].map((st) => {
-            const liveItem = liveSchedules.find((s) => s.stage && s.stage.toLowerCase() === st.id);
+            const liveItem = liveSchedules.find(
+              (s) => s.stage && (s.stage.toLowerCase() === st.id || s.stage.toLowerCase().includes(st.id))
+            );
+            const progName = liveItem?.programme?.name || (liveItem as any)?.name;
+            const progCategory = liveItem?.programme?.category || (liveItem as any)?.category;
             const isCurrentStage = currentSlide === st.slideIdx;
             return (
               <button
@@ -480,9 +484,10 @@ export default function LiveDisplayPage() {
                   {st.label}
                 </span>
                 {liveItem ? (
-                  <span className="text-slate-900 dark:text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
-                    <span>{liveItem.programme?.name}</span>
+                  <span className="text-slate-900 dark:text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>{progName}</span>
+                    <span className="text-[9px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-semibold">({progCategory || 'General'})</span>
                   </span>
                 ) : (
                   <span className="text-slate-400 dark:text-neutral-500 italic text-[10px]">No live item</span>

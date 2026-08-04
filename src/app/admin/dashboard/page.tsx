@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Users, Sparkles, Trophy, Bell, Calendar, TrendingUp, Clock, Tv, Power, Radio, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { useRealtimeSync } from '@/components/useRealtimeSync';
 
 interface StatsData {
   stats: {
@@ -49,7 +50,13 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 4000);
+    return () => clearInterval(interval);
   }, []);
+
+  useRealtimeSync(() => {
+    fetchDashboardData();
+  });
 
   const handleToggleRemoteCast = async (newStatus: 'active' | 'stopped') => {
     setUpdatingCast(true);
@@ -197,15 +204,23 @@ export default function AdminDashboardPage() {
             { id: 'lumina', label: 'Lumina Stage', color: 'border-amber-500/50 text-amber-800 dark:text-amber-400 bg-amber-500/10' },
             { id: 'zenith', label: 'Zenith Stage', color: 'border-emerald-500/50 text-emerald-800 dark:text-emerald-400 bg-emerald-500/10' },
           ].map((st) => {
-            const liveItem = liveSchedules.find((s) => s.stage && s.stage.toLowerCase() === st.id);
+            const liveItem = liveSchedules.find(
+              (s) => s.stage && (s.stage.toLowerCase() === st.id || s.stage.toLowerCase().includes(st.id))
+            );
+            const progName = liveItem?.programme?.name || (liveItem as any)?.name;
+            const progCategory = liveItem?.programme?.category || (liveItem as any)?.category;
+
             return (
-              <div key={st.id} className={`p-4 rounded-2xl border ${st.color} space-y-2 relative overflow-hidden`}>
+              <div key={st.id} className={`p-4 rounded-2xl border ${st.color} space-y-2.5 relative overflow-hidden transition-all duration-300 shadow-sm`}>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold font-mono text-[11px]">{st.label}</span>
+                  <span className="font-bold font-mono text-[11px] uppercase tracking-wider">{st.label}</span>
                   {liveItem ? (
-                    <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-rose-500/30 text-rose-700 dark:text-rose-300 animate-pulse flex items-center space-x-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                      <span>LIVE NOW</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 animate-pulse flex items-center space-x-1.5 shadow-xs">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span>LIVE</span>
                     </span>
                   ) : (
                     <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-black/5 dark:bg-white/10 text-slate-500 dark:text-slate-400">
@@ -214,11 +229,20 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
 
-                <div className="pt-1">
+                <div className="pt-0.5">
                   {liveItem ? (
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{liveItem.programme?.name}</p>
-                      <p className="text-[10px] opacity-80">{liveItem.programme?.category} • {liveItem.startTime}</p>
+                    <div className="space-y-1">
+                      <p className="font-bold text-slate-900 dark:text-white text-sm leading-snug line-clamp-2">
+                        {progName || 'Ongoing Programme'}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
+                        <span className="font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                          {progCategory || 'General'}
+                        </span>
+                        {liveItem.startTime && (
+                          <span className="text-slate-500 dark:text-slate-400 font-semibold">• {liveItem.startTime}</span>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">No programme live currently</p>
