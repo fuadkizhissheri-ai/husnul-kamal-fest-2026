@@ -4,7 +4,9 @@ import React, { useState, useEffect, useCallback, useMemo, useDeferredValue } fr
 import SmoothScroll from '@/components/SmoothScroll';
 import { getStageInfo, FIXED_STAGES } from '@/lib/stages';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
-import { Calendar, Search, MapPin, Clock, Radio, CheckCircle2, Hourglass, LayoutGrid, List } from 'lucide-react';
+import { downloadPDFReport } from '@/lib/pdfExporter';
+import { downloadCSVReport } from '@/lib/csvExporter';
+import { Calendar, Search, MapPin, Clock, Radio, CheckCircle2, Hourglass, LayoutGrid, List, Download, FileSpreadsheet, Printer } from 'lucide-react';
 import { fetchWithCache, invalidateCache } from '@/lib/clientCache';
 
 interface ScheduleItem {
@@ -109,6 +111,38 @@ export default function SchedulePage() {
     }
   };
 
+  const handleDownloadPDF = () => {
+    const headers = ['Stage Venue', 'Programme Name', 'Category', 'Date', 'Start Time', 'End Time', 'Status'];
+    const rows = filtered.map((item) => [
+      item.stage || 'Aura Stage',
+      item.programme?.name || 'Untitled Programme',
+      item.programme?.category || 'General',
+      item.date || '2026-09-15',
+      item.startTime || '09:00 AM',
+      item.endTime || '11:00 AM',
+      item.status || 'UPCOMING',
+    ]);
+    downloadPDFReport('Official Programme Itinerary & Schedule', headers, rows, 'Husnul_Kamal_Official_Schedule.pdf');
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['Stage Venue', 'Programme Name', 'Category', 'Date', 'Start Time', 'End Time', 'Status'];
+    const rows = filtered.map((item) => [
+      item.stage || 'Aura Stage',
+      item.programme?.name || 'Untitled Programme',
+      item.programme?.category || 'General',
+      item.date || '2026-09-15',
+      item.startTime || '09:00 AM',
+      item.endTime || '11:00 AM',
+      item.status || 'UPCOMING',
+    ]);
+    downloadCSVReport('Husnul_Kamal_Official_Schedule.csv', headers, rows);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <SmoothScroll>
       <div className="min-h-screen pt-24 pb-20 font-sans">
@@ -127,6 +161,35 @@ export default function SchedulePage() {
           <p className="text-sm text-slate-600 dark:text-neutral-400 max-w-2xl mx-auto font-sans leading-relaxed">
             Real-time stage schedules categorized across 4 fixed venues: <strong className="text-purple-600 dark:text-purple-400">Aura</strong>, <strong className="text-blue-600 dark:text-blue-400">Legacy</strong>, <strong className="text-[#9E741D] dark:text-[#C8A86B]">Lumina</strong>, and <strong className="text-emerald-600 dark:text-emerald-400">Zenith</strong>.
           </p>
+
+          {/* DOWNLOAD & EXPORT ACTION BUTTONS */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button
+              onClick={handleDownloadPDF}
+              className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] font-bold text-xs px-5 py-2.5 shadow-lg hover:bg-[#9E741D] flex items-center space-x-2 cursor-pointer transition-all"
+              title="Download Formatted PDF Schedule"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download PDF Schedule</span>
+            </button>
+
+            <button
+              onClick={handleExportCSV}
+              className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg flex items-center space-x-2 cursor-pointer transition-all"
+              title="Export Complete Schedule as Excel / CSV"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span>Export Excel / CSV</span>
+            </button>
+
+            <button
+              onClick={handlePrint}
+              className="p-2.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-700 dark:text-neutral-300 border border-slate-300 dark:border-white/10 flex items-center justify-center cursor-pointer transition-all"
+              title="Print Schedule"
+            >
+              <Printer className="w-4 h-4" />
+            </button>
+          </div>
         </section>
 
         {/* STAGE FILTER TABS */}
