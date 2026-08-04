@@ -1,3 +1,5 @@
+import { downloadFile } from '@/lib/fileDownloader';
+
 export function downloadCSVReport(filename: string, headers: string[], rows: (string | number)[][]) {
   const escapeCell = (cell: string | number) => {
     const str = String(cell ?? '');
@@ -12,12 +14,6 @@ export function downloadCSVReport(filename: string, headers: string[], rows: (st
     ...rows.map((row) => row.map(escapeCell).join(',')),
   ].join('\n');
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename.endsWith('.csv') ? filename : `${filename}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const finalName = filename.endsWith('.csv') ? filename : `${filename}.csv`;
+  downloadFile(csvContent, finalName, 'text/csv;charset=utf-8;');
 }

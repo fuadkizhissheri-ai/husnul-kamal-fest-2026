@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { downloadFile } from '@/lib/fileDownloader';
 
 export interface ScoreCardConfig {
   programmeName: string;
@@ -77,7 +78,8 @@ export function downloadPDFReport(title: string, headers: string[], rows: (strin
     );
   }
 
-  doc.save(filename);
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
 }
 
 /**
@@ -291,4 +293,8 @@ function renderSingleScoreCardPage(
     pageHeight - 6,
     { align: 'center' }
   );
+
+  const pdfDataUri = doc.output('datauristring');
+  const filename = `${config.programmeName.replace(/[^a-zA-Z0-9]/g, '_')}_ScoreCard.pdf`;
+  downloadFile(pdfDataUri, filename, 'application/pdf');
 }

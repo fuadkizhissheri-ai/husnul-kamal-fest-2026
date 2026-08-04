@@ -1,5 +1,7 @@
 import html2canvas from 'html2canvas';
 
+import { downloadFile } from '@/lib/fileDownloader';
+
 export interface PixelAccurateExportOptions {
   element: HTMLElement;
   className: string;
@@ -91,8 +93,5 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
 
   // 4. Download file
   const imageDataUrl = canvas.toDataURL(format, quality);
-  const downloadLink = document.createElement('a');
-  downloadLink.href = imageDataUrl;
-  downloadLink.download = filename;
-  downloadLink.click();
+  await downloadFile(imageDataUrl, filename, format);
 }

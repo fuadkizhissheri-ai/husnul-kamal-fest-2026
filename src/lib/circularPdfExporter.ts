@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { downloadFile } from '@/lib/fileDownloader';
 
 export interface CircularData {
   title: string;
@@ -211,5 +212,6 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
 
   // Trigger Instant Download
   const filename = `${refNum.replace(/[/\\?%*:|"<>]/g, '_')}_Official_Circular.pdf`;
-  doc.save(filename);
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
 }

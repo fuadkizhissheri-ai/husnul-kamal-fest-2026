@@ -303,10 +303,10 @@ export default function ParticipantsPage() {
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL CATEGORIES</option>
-                <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SUB JUNIOR</option>
-                <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">JUNIOR</option>
-                <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SENIOR</option>
-                <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SUPER SENIOR</option>
+                <option value="Sub Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SUB JUNIOR (Classes 3, 4)</option>
+                <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">JUNIOR (Classes 5, 6)</option>
+                <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SENIOR (Classes 7, 8)</option>
+                <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SUPER SENIOR (Classes 9-12)</option>
               </select>
             </div>
 

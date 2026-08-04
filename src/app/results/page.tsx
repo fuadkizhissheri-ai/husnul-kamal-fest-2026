@@ -110,7 +110,9 @@ export default function ResultsPage() {
               className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
             >
               {categories.map((c) => (
-                <option key={c} value={c} className="bg-slate-900 text-white">Category: {c}</option>
+                <option key={c} value={c} className="bg-slate-900 text-white">
+                  Category: {c === 'Sub Junior' ? 'Sub Junior (Classes 3, 4)' : c === 'Junior' ? 'Junior (Classes 5, 6)' : c === 'Senior' ? 'Senior (Classes 7, 8)' : c === 'Super Senior' ? 'Super Senior (Classes 9-12)' : c}
+                </option>
               ))}
             </select>
 
