@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { TabNavigationProvider } from '@/components/TabNavigationProvider';
 
 // ── Fonts with display:swap so text renders immediately in fallback ──
 const spaceGrotesk = Space_Grotesk({
@@ -108,14 +109,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-[#FAF8F3] text-[#0B0B0B] dark:bg-[#0B0B0B] dark:text-[#FFFFFF] min-h-screen flex flex-col font-sans antialiased selection:bg-[#C8A86B] selection:text-[#0B0B0B] overflow-x-hidden max-w-[100vw] w-full pb-safe">
         <ThemeProvider>
-          <AutoRefreshHandler />
-          <Navbar />
-          <main className="flex-1">
-            <ErrorBoundary fallbackTitle="Page failed to load">
-              {children}
-            </ErrorBoundary>
-          </main>
-          <Footer />
+          <TabNavigationProvider>
+            <div className="flex flex-col min-h-[100dvh]">
+              <AutoRefreshHandler />
+              <Navbar />
+              <main className="flex-1 bg-white dark:bg-[#0B0B0B] transition-colors duration-300">
+                <ErrorBoundary fallbackTitle="Page failed to load">
+                  {children}
+                </ErrorBoundary>
+              </main>
+              <Footer />
+            </div>
+          </TabNavigationProvider>
         </ThemeProvider>
       </body>
     </html>
