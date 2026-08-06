@@ -72,6 +72,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { AutoRefreshHandler } from '@/components/AutoRefreshHandler';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${spaceGrotesk.variable} ${inter.variable} dark`}>
@@ -106,6 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-[#FAF8F3] text-[#0B0B0B] dark:bg-[#0B0B0B] dark:text-[#FFFFFF] min-h-screen flex flex-col font-sans antialiased selection:bg-[#C8A86B] selection:text-[#0B0B0B] overflow-x-hidden max-w-[100vw] w-full pb-safe">
         <ThemeProvider>
+          <AutoRefreshHandler />
           <Navbar />
           <main className="flex-1">
             <ErrorBoundary fallbackTitle="Page failed to load">
