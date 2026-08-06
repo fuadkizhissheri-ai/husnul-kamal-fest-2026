@@ -148,13 +148,13 @@ export default function SchedulePage() {
       <div className="min-h-screen pt-24 pb-20 font-sans">
         
         {/* HEADER SECTION */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-4">
+        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-3 sm:space-y-4 py-4 sm:py-6">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full hk-badge-gold">
             <Calendar className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" />
             <span>Official Event Itinerary • 4 Stages</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-heading font-black tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl sm:text-6xl font-heading font-black tracking-tight text-slate-900 dark:text-white">
             PROGRAMME <span className="text-[#9E741D] dark:text-[#C8A86B] font-serif font-normal italic">SCHEDULE</span>
           </h1>
 
@@ -163,43 +163,46 @@ export default function SchedulePage() {
           </p>
 
           {/* DOWNLOAD & EXPORT ACTION BUTTONS */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2">
             <button
               onClick={handleDownloadPDF}
-              className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] font-bold text-xs px-5 py-2.5 shadow-lg hover:bg-[#9E741D] flex items-center space-x-2 cursor-pointer transition-all"
+              className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] font-bold text-xs px-2 sm:px-5 py-2.5 shadow-lg hover:bg-[#9E741D] flex items-center justify-center space-x-1 sm:space-x-2 cursor-pointer transition-all"
               title="Download Formatted PDF Schedule"
             >
               <Download className="w-4 h-4" />
-              <span>Download PDF Schedule</span>
+              <span className="hidden sm:inline">Download PDF Schedule</span>
+              <span className="sm:hidden">PDF Schedule</span>
             </button>
 
             <button
               onClick={handleExportCSV}
-              className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg flex items-center space-x-2 cursor-pointer transition-all"
+              className="px-2 sm:px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg flex items-center justify-center space-x-1 sm:space-x-2 cursor-pointer transition-all"
               title="Export Complete Schedule as Excel / CSV"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span>Export Excel / CSV</span>
+              <span className="hidden sm:inline">Export Excel / CSV</span>
+              <span className="sm:hidden">Export CSV</span>
             </button>
 
             <button
               onClick={handlePrint}
-              className="p-2.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-700 dark:text-neutral-300 border border-slate-300 dark:border-white/10 flex items-center justify-center cursor-pointer transition-all"
+              className="col-span-2 sm:col-span-1 p-2.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-700 dark:text-neutral-300 border border-slate-300 dark:border-white/10 flex items-center justify-center cursor-pointer transition-all"
               title="Print Schedule"
             >
               <Printer className="w-4 h-4" />
+              <span className="ml-2 sm:hidden text-xs font-bold">Print Schedule</span>
             </button>
           </div>
         </section>
 
         {/* STAGE FILTER TABS */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-8">
-          <div className="flex items-center justify-center flex-wrap gap-3">
+        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-4 sm:pt-8">
+          <div className="flex items-center sm:justify-center overflow-x-auto whitespace-nowrap scrollbar-none gap-2 sm:gap-3 py-1">
             <button
               onClick={() => setSelectedStage('ALL')}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
+              className={`shrink-0 px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
                 selectedStage === 'ALL'
-                  ? 'bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] border-transparent shadow-lg scale-105'
+                  ? 'bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] border-transparent shadow-lg sm:scale-105'
                   : 'bg-black/5 dark:bg-white/5 text-slate-700 dark:text-neutral-300 border-slate-300 dark:border-white/10 hover:border-[#9E741D]'
               }`}
             >
@@ -212,9 +215,9 @@ export default function SchedulePage() {
                 <button
                   key={st.id}
                   onClick={() => setSelectedStage(st.id)}
-                  className={`px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
+                  className={`shrink-0 px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
                     isActive
-                      ? `${st.badgeClass} scale-105 shadow-lg`
+                      ? `${st.badgeClass} sm:scale-105 shadow-lg`
                       : 'bg-black/5 dark:bg-white/5 text-slate-700 dark:text-neutral-300 border-slate-300 dark:border-white/10 hover:border-[#9E741D]'
                   }`}
                 >
@@ -242,12 +245,12 @@ export default function SchedulePage() {
             </div>
 
             {/* Category Filter */}
-            <div className="flex items-center space-x-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-none py-1 md:pb-0">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap border ${
+                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all border ${
                     selectedCategory === cat
                       ? 'bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] border-transparent shadow-md'
                       : 'bg-black/5 dark:bg-white/5 text-slate-700 dark:text-neutral-300 border-slate-300 dark:border-white/10 hover:border-[#9E741D]'
