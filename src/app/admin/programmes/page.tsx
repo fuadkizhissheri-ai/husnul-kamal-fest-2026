@@ -424,6 +424,16 @@ export default function AdminProgrammesPage() {
       }
 
       setIsModalOpen(false);
+      
+      // Update local state instantly for snappy UI
+      if (data.programme) {
+        if (method === 'POST') {
+          setProgrammes((prev) => [...prev, data.programme]);
+        } else if (method === 'PUT') {
+          setProgrammes((prev) => prev.map((p) => p.id === data.programme.id ? data.programme : p));
+        }
+      }
+
       fetchProgrammes();
       router.refresh();
     } catch (error: any) {

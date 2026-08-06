@@ -90,8 +90,8 @@ export async function POST(request: Request) {
 
     const programme = await prisma.programme.create({
       data: {
-        name,
-        category,
+        name: name || '',
+        category: category || '',
         stage: stage || 'Aura Stage',
         date: date || '2026-09-15',
         startTime: startTime || '09:00 AM',
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     broadcastRealtimeChange('PROGRAMMES_UPDATED', programme);
     broadcastRealtimeChange('SCHEDULE_UPDATED', programme);
 
-    return NextResponse.json({ success: true, programme });
+    return NextResponse.json({ success: true, programme }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to create programme' }, { status: 500 });
   }
@@ -140,15 +140,15 @@ export async function PUT(request: Request) {
     const updated = await prisma.programme.update({
       where: { id },
       data: {
-        name,
-        category,
-        stage,
-        date,
-        startTime,
-        endTime,
+        name: name || undefined,
+        category: category || undefined,
+        stage: stage || undefined,
+        date: date ?? undefined,
+        startTime: startTime ?? undefined,
+        endTime: endTime ?? undefined,
         participantLimit: participantLimit ? parseInt(participantLimit, 10) : undefined,
-        isGroup,
-        isActive,
+        isGroup: isGroup ?? undefined,
+        isActive: isActive ?? undefined,
       },
     });
 
