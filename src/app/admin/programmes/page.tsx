@@ -61,45 +61,55 @@ export function normalizeStage(s?: string): string {
  * Combines Search, Category, Stage, Type, Date, and Status using strict AND logic.
  */
 export function filterProgrammeList(programmes: ProgrammeItem[], filters: FilterState): ProgrammeItem[] {
+  if (
+    !filters.searchQuery &&
+    filters.selectedCategory === 'ALL' &&
+    filters.selectedStageFilter === 'ALL' &&
+    filters.selectedType === 'ALL' &&
+    filters.selectedDate === 'ALL' &&
+    filters.selectedStatus === 'ALL'
+  ) {
+    return programmes;
+  }
+
   return programmes.filter((p) => {
     // 1. Search Query (Matches programme name, stage, category, or date)
-    const q = filters.searchQuery.trim().toLowerCase();
+    const q = (filters.searchQuery || '').trim().toLowerCase();
     const matchSearch =
       !q ||
-      p.name.toLowerCase().includes(q) ||
-      (p.stage && p.stage.toLowerCase().includes(q)) ||
-      (p.category && p.category.toLowerCase().includes(q)) ||
-      (p.date && p.date.toLowerCase().includes(q));
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.stage || '').toLowerCase().includes(q) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.date || '').toLowerCase().includes(q);
 
     // 2. Category Match
-    const matchCat = filters.selectedCategory === 'ALL' || p.category === filters.selectedCategory;
+    const matchCat =
+      !filters.selectedCategory ||
+      filters.selectedCategory === 'ALL' ||
+      p.category === filters.selectedCategory;
 
-    // 3. Stage Match (Resolves raw DB strings like 'Stage 1 (Imam Bukhari Stage)' -> 'Aura')
+    // 3. Stage Match
     const resolvedStageId = getStageInfo(p.stage || '').id.toLowerCase();
-    const targetStageId = filters.selectedStageFilter.trim().toLowerCase();
+    const targetStageId = (filters.selectedStageFilter || 'ALL').trim().toLowerCase();
 
     const matchStage =
+      !filters.selectedStageFilter ||
       filters.selectedStageFilter === 'ALL' ||
       resolvedStageId === targetStageId ||
-      (p.stage && p.stage.toLowerCase().includes(targetStageId));
-
-    if (filters.selectedStageFilter !== 'ALL') {
-      console.log('Comparing Stage:', {
-        selectedFilter: filters.selectedStageFilter,
-        rawDbStage: p.stage,
-        resolvedStageId: getStageInfo(p.stage || '').id,
-        match: matchStage,
-      });
-    }
+      (p.stage || '').toLowerCase().includes(targetStageId);
 
     // 4. Type Match (Single Item vs Group Item)
     const matchType =
+      !filters.selectedType ||
       filters.selectedType === 'ALL' ||
       (filters.selectedType === 'Single Item' && !p.isGroup) ||
       (filters.selectedType === 'Group Item' && p.isGroup);
 
     // 5. Scheduled Date Match
-    const matchDate = filters.selectedDate === 'ALL' || p.date === filters.selectedDate;
+    const matchDate =
+      !filters.selectedDate ||
+      filters.selectedDate === 'ALL' ||
+      p.date === filters.selectedDate;
 
     // 6. Programme Status Match (Upcoming, Live, Completed)
     const hasResults = Boolean(p.results && p.results.length > 0);
