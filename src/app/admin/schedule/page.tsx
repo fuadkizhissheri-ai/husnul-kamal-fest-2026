@@ -473,6 +473,16 @@ export default function AdminSchedulePage() {
                 </select>
               </div>
 
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Event Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">Start Time</label>
