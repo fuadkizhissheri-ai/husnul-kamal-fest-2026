@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -62,6 +64,10 @@ export async function GET(request: Request) {
       programmes: formatted,
       categoryProgrammes,
       generalProgrammes,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to fetch programmes' }, { status: 500 });

@@ -274,6 +274,7 @@ function GroupRegBlock({
 }
 
 export default function AdminProgrammesPage() {
+  const router = useRouter();
   const [programmes, setProgrammes] = useState<ProgrammeItem[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -289,6 +290,7 @@ export default function AdminProgrammesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ProgrammeItem | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Score Card Modal State
   const [scoreCardProg, setScoreCardProg] = useState<ProgrammeItem | null>(null);
@@ -384,29 +386,50 @@ export default function AdminProgrammesPage() {
       setDate('2026-09-15'); setStartTime('09:00 AM'); setEndTime('11:00 AM');
       setParticipantLimit(10); setIsGroup(false);
     }
+    setFormError(null);
     setIsModalOpen(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     const payload = {
       id: editingItem?.id,
       name, category, stage, date, startTime, endTime, participantLimit, isGroup,
     };
     const method = editingItem ? 'PUT' : 'POST';
-    await fetch('/api/programmes', {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    setIsModalOpen(false);
-    fetchProgrammes();
+    
+    try {
+      const res = await fetch('/api/programmes', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setFormError(data.error || 'Failed to save programme. Please try again.');
+        return;
+      }
+
+      setIsModalOpen(false);
+      fetchProgrammes();
+      router.refresh();
+    } catch (error: any) {
+      console.error('Save programme error:', error);
+      setFormError(error.message || 'Network error occurred while saving.');
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await fetch(`/api/programmes?id=${id}`, { method: 'DELETE' });
-    setConfirmDeleteId(null);
-    fetchProgrammes();
+    try {
+      await fetch(`/api/programmes?id=${id}`, { method: 'DELETE' });
+      setConfirmDeleteId(null);
+      fetchProgrammes();
+      router.refresh();
+    } catch (e) {
+      console.error('Failed to delete programme:', e);
+    }
   };
 
   const handleExportPDF = () => {
@@ -944,6 +967,13 @@ export default function AdminProgrammesPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {formError && (
+              <div className="p-3 bg-rose-500/20 border border-rose-500/40 rounded-xl text-rose-300 text-xs flex items-start space-x-2">
+                <span className="font-bold">Error:</span>
+                <span>{formError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
 
