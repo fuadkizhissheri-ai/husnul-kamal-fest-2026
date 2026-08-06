@@ -166,12 +166,17 @@ export default function AdminSchedulePage() {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include',
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setDoubleBookingError(data.error || 'Failed to save schedule entry. Please try again.');
+        if (res.status === 401) {
+          setDoubleBookingError('Session expired or unauthorized (401). Please refresh the page and log in again.');
+        } else {
+          setDoubleBookingError(data.error || 'Failed to save schedule entry. Please try again.');
+        }
         return;
       }
 

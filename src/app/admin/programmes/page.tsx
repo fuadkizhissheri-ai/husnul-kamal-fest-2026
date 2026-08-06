@@ -415,11 +415,16 @@ export default function AdminProgrammesPage() {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include',
       });
 
       const data = await res.json();
       if (!res.ok) {
-        setFormError(data.error || 'Failed to save programme. Please try again.');
+        if (res.status === 401) {
+          setFormError('Session expired or unauthorized (401). Please refresh the page and log in again.');
+        } else {
+          setFormError(data.error || 'Failed to save programme. Please try again.');
+        }
         return;
       }
 

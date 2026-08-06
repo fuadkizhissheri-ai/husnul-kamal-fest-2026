@@ -24,7 +24,7 @@ export async function createAdminSession(payload: AdminPayload) {
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 60 * 60 * 24, // 24 hours
     path: '/',
   });
