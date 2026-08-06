@@ -303,6 +303,12 @@ export default function AdminProgrammesPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Bulk Upload State
+  const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
+  const [bulkUploadRows, setBulkUploadRows] = useState<any[]>([]);
+  const [bulkUploadError, setBulkUploadError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   // Score Card Modal State
   const [scoreCardProg, setScoreCardProg] = useState<ProgrammeItem | null>(null);
   const [judgeCount, setJudgeCount] = useState<number>(3);
@@ -401,6 +407,78 @@ export default function AdminProgrammesPage() {
     }
     setFormError(null);
     setIsModalOpen(true);
+  };
+
+  const handleBulkUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setBulkUploadError(null);
+    setBulkUploadRows([]);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('action', 'parse');
+
+    try {
+      const res = await fetch('/api/programmes/bulk-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Failed to parse PDF');
+
+      if (data.rows && data.rows.length > 0) {
+        setBulkUploadRows(data.rows);
+      } else {
+        setBulkUploadError('No programme rows could be extracted from the PDF.');
+      }
+    } catch (err: any) {
+      setBulkUploadError(err.message);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleConfirmBulkInsert = async () => {
+    setIsUploading(true);
+    setBulkUploadError(null);
+
+    const formData = new FormData();
+    formData.append('action', 'insert');
+    formData.append('items', JSON.stringify(bulkUploadRows));
+
+    try {
+      const res = await fetch('/api/programmes/bulk-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Failed to bulk insert');
+
+      setIsBulkUploadModalOpen(false);
+      setBulkUploadRows([]);
+      fetchProgrammes();
+      alert(`Successfully added ${data.count} programmes!`);
+    } catch (err: any) {
+      setBulkUploadError(err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUpdateBulkRow = (id: string, field: string, value: any) => {
+    setBulkUploadRows((prev) => 
+      prev.map(row => row.id === id ? { ...row, [field]: value } : row)
+    );
+  };
+
+  const handleDeleteBulkRow = (id: string) => {
+    setBulkUploadRows((prev) => prev.filter(row => row.id !== id));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -546,6 +624,13 @@ export default function AdminProgrammesPage() {
           >
             <Printer className="w-4 h-4" />
             <span>Batch Score Sheets ({filteredProgrammes.length})</span>
+          </button>
+          <button
+            onClick={() => setIsBulkUploadModalOpen(true)}
+            className="btn-pill-luxury bg-[#FAF8F3] text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-bold text-xs px-4 py-2.5 flex items-center gap-1.5 shadow-md whitespace-nowrap"
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            <span>Bulk Add via PDF</span>
           </button>
           <button
             onClick={() => handleOpenModal()}
@@ -1117,6 +1202,104 @@ export default function AdminProgrammesPage() {
                 Delete
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* BULK UPLOAD MODAL */}
+      {isBulkUploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="luxury-glass p-6 rounded-[32px] border border-[#C8A86B]/30 max-w-5xl w-full space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 className="text-lg font-bold font-serif text-white">
+                Bulk Add Programmes via PDF
+              </h3>
+              <button onClick={() => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {bulkUploadError && (
+              <div className="p-3 bg-rose-500/20 border border-rose-500/40 rounded-xl text-rose-300 text-xs">
+                {bulkUploadError}
+              </div>
+            )}
+
+            {!bulkUploadRows.length ? (
+              <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-slate-700 rounded-2xl">
+                <FileSpreadsheet className="w-12 h-12 text-slate-500 mb-4" />
+                <p className="text-slate-300 text-sm mb-4">Upload a PDF containing programme lists to extract rows.</p>
+                <label className="cursor-pointer bg-[#C8A86B] text-slate-950 px-6 py-2 rounded-xl font-bold text-xs shadow-lg hover:bg-[#b09259] transition-colors">
+                  {isUploading ? 'Parsing PDF...' : 'Select PDF File'}
+                  <input type="file" accept=".pdf" className="hidden" onChange={handleBulkUploadFile} disabled={isUploading} />
+                </label>
+                <p className="text-slate-500 text-[10px] mt-4 max-w-md text-center">
+                  Note: PDF text extraction is a heuristic process. After uploading, you will be able to review and fix the columns before saving to the database.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 overflow-auto border border-white/10 rounded-xl bg-black/20 p-2">
+                  <table className="w-full text-left text-xs whitespace-nowrap">
+                    <thead>
+                      <tr className="text-slate-400 border-b border-white/10">
+                        <th className="p-2 font-semibold">Action</th>
+                        <th className="p-2 font-semibold min-w-[200px]">Extracted Text / Name</th>
+                        <th className="p-2 font-semibold">Category</th>
+                        <th className="p-2 font-semibold">Stage</th>
+                        <th className="p-2 font-semibold">Date</th>
+                        <th className="p-2 font-semibold">Times</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {bulkUploadRows.map((row) => (
+                        <tr key={row.id} className="hover:bg-white/5">
+                          <td className="p-2">
+                            <button onClick={() => handleDeleteBulkRow(row.id)} className="text-rose-400 hover:text-rose-300"><Trash2 className="w-4 h-4" /></button>
+                          </td>
+                          <td className="p-2">
+                            <input 
+                              type="text" 
+                              value={row.name} 
+                              onChange={(e) => handleUpdateBulkRow(row.id, 'name', e.target.value)}
+                              className="bg-transparent border border-white/20 rounded px-2 py-1 w-full text-white"
+                            />
+                            <div className="text-[9px] text-slate-500 truncate mt-1" title={row.rawLine}>Raw: {row.rawLine}</div>
+                          </td>
+                          <td className="p-2">
+                            <select value={row.category} onChange={(e) => handleUpdateBulkRow(row.id, 'category', e.target.value)} className="bg-slate-900 border border-white/20 rounded px-2 py-1 text-white">
+                              <option value="General">General</option>
+                              <option value="Sub Junior">Sub Junior</option>
+                              <option value="Junior">Junior</option>
+                              <option value="Senior">Senior</option>
+                              <option value="Super Senior">Super Senior</option>
+                            </select>
+                          </td>
+                          <td className="p-2">
+                            <input type="text" value={row.stage} onChange={(e) => handleUpdateBulkRow(row.id, 'stage', e.target.value)} className="bg-transparent border border-white/20 rounded px-2 py-1 w-24 text-white" />
+                          </td>
+                          <td className="p-2">
+                            <input type="date" value={row.date} onChange={(e) => handleUpdateBulkRow(row.id, 'date', e.target.value)} className="bg-transparent border border-white/20 rounded px-2 py-1 text-white" />
+                          </td>
+                          <td className="p-2 flex gap-1">
+                            <input type="text" value={row.startTime} onChange={(e) => handleUpdateBulkRow(row.id, 'startTime', e.target.value)} className="bg-transparent border border-white/20 rounded px-2 py-1 w-20 text-white" />
+                            <input type="text" value={row.endTime} onChange={(e) => handleUpdateBulkRow(row.id, 'endTime', e.target.value)} className="bg-transparent border border-white/20 rounded px-2 py-1 w-20 text-white" />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div className="pt-2 flex justify-end gap-3 border-t border-white/10 mt-2">
+                  <button onClick={() => setBulkUploadRows([])} className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white">
+                    Cancel & Upload Different File
+                  </button>
+                  <button onClick={handleConfirmBulkInsert} disabled={isUploading} className="px-6 py-2 bg-[#C8A86B] text-slate-950 text-xs font-bold rounded-xl hover:bg-[#b09259] disabled:opacity-50">
+                    {isUploading ? 'Inserting...' : `Confirm & Insert ${bulkUploadRows.length} Rows`}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
