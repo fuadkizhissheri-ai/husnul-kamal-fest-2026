@@ -1,8 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-// @ts-ignore - Module will be installed on Vercel deployment
-import { App } from '@capacitor/app';
 import { useRouter, usePathname } from 'next/navigation';
 
 interface TabNavigationContextType {
@@ -65,7 +63,7 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
     return popped;
   }, []);
 
-  const handleBackAction = useCallback(async (fromCapacitor = false, canGoBack = true) => {
+  const handleBackAction = useCallback(async (fromCapacitor = false, canGoBack = true, CapacitorApp?: any) => {
     isBackActionInProgress.current = true;
 
     try {
@@ -106,8 +104,8 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
         }
       } else {
         // 4. EXIT CHECK
-        if (fromCapacitor) {
-          App.exitApp();
+        if (fromCapacitor && CapacitorApp) {
+          CapacitorApp.exitApp();
         }
         return false;
       }
@@ -120,20 +118,39 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
   }, [activeTabHistory.length, pathname, popTab, router]);
 
   useEffect(() => {
-    // App.addListener returns a Promise resolving to a PluginListenerHandle in Capacitor 6+
-    const backListener = App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
-      handleBackAction(true, canGoBack);
-    }).catch((err: any) => {
-      // Catch error if running in standard web mode without Capacitor plugin
-      return null;
-    });
+    let handler: any;
+    let isSubscribed = true;
+
+    const setupBackButton = async () => {
+      try {
+        const { App } = await import('@capacitor/app');
+        if (!isSubscribed) return;
+
+        handler = await App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
+          // Fallback DOM check for unmanaged modals as requested by user
+          const openModal = document.querySelector('[role="dialog"]');
+          if (openModal) {
+            const closeBtn = openModal.querySelector('button[data-close]') as HTMLButtonElement;
+            if (closeBtn) {
+              closeBtn.click();
+              return;
+            }
+          }
+
+          handleBackAction(true, canGoBack, App);
+        });
+      } catch (e) {
+        console.log('Capacitor App plugin not available in web mode', e);
+      }
+    };
+
+    setupBackButton();
 
     return () => {
-      backListener.then((handler: any) => {
-        if (handler && handler.remove) {
-          handler.remove();
-        }
-      });
+      isSubscribed = false;
+      if (handler && typeof handler.remove === 'function') {
+        handler.remove();
+      }
     };
   }, [handleBackAction]);
 
