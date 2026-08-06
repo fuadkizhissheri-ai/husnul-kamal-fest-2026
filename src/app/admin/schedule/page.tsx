@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import { FIXED_STAGES, getStageInfo, checkDoubleBooking } from '@/lib/stages';
@@ -21,6 +22,7 @@ interface ScheduleItem {
 }
 
 export default function AdminSchedulePage() {
+  const router = useRouter();
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [programmes, setProgrammes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,6 +183,10 @@ export default function AdminSchedulePage() {
 
       setSchedules((prev) => prev.filter((s) => s.id !== id));
       setConfirmDeleteId(null);
+      
+      // Revalidate cache and refetch fresh states
+      fetchSchedules();
+      router.refresh();
     } catch (error) {
       console.error('Failed to delete schedule item:', error);
     }

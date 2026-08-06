@@ -33,19 +33,21 @@ export async function GET(request: Request) {
       },
     });
 
-    // 3. Create virtual schedule items for programmes that have timing/stage set
-    const virtualSchedules = unscheduledProgrammes.map((p) => ({
-      id: `virtual-${p.id}`,
-      programmeId: p.id,
-      stage: p.stage || 'Aura Stage',
-      date: p.date || '2026-09-15',
-      startTime: p.startTime || '09:00 AM',
-      endTime: p.endTime || '11:00 AM',
-      status: 'UPCOMING',
-      programme: p,
-      isVirtual: true,
-      createdAt: p.createdAt,
-    }));
+    // 3. Create virtual schedule items ONLY for programmes that actually have timing/stage set
+    const virtualSchedules = unscheduledProgrammes
+      .filter((p) => p.stage && p.date)
+      .map((p) => ({
+        id: `virtual-${p.id}`,
+        programmeId: p.id,
+        stage: p.stage as string,
+        date: p.date as string,
+        startTime: p.startTime || '09:00 AM',
+        endTime: p.endTime || '11:00 AM',
+        status: 'UPCOMING',
+        programme: p,
+        isVirtual: true,
+        createdAt: p.createdAt,
+      }));
 
     // 4. Merge all schedules
     let allSchedules = [...explicitSchedules, ...virtualSchedules];
@@ -237,9 +239,27 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Schedule ID is required.' }, { status: 400 });
     }
 
-    if (!id.startsWith('virtual-')) {
-      await prisma.schedule.delete({
-        where: { id },
+    let programmeIdToClear: string | null = null;
+
+    if (id.startsWith('virtual-')) {
+      programmeIdToClear = id.replace('virtual-', '');
+    } else {
+      const schedule = await prisma.schedule.findUnique({ where: { id } });
+      if (schedule) {
+        programmeIdToClear = schedule.programmeId;
+        await prisma.schedule.delete({ where: { id } });
+      }
+    }
+
+    if (programmeIdToClear) {
+      await prisma.programme.update({
+        where: { id: programmeIdToClear },
+        data: {
+          stage: null,
+          date: null,
+          startTime: null,
+          endTime: null,
+        },
       });
     }
 
