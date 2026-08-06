@@ -168,10 +168,22 @@ export default function AdminSchedulePage() {
     fetchSchedules();
   };
 
-  const handleDeleteSchedule = async (id: string) => {
-    await fetch(`/api/schedule?id=${id}`, { method: 'DELETE' });
-    setConfirmDeleteId(null);
-    fetchSchedules();
+  const handleDeleteSchedule = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/schedule?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log('Delete response:', data);
+
+      setSchedules((prev) => prev.filter((s) => s.id !== id));
+      setConfirmDeleteId(null);
+    } catch (error) {
+      console.error('Failed to delete schedule item:', error);
+    }
   };
 
   // Exporters
@@ -363,7 +375,11 @@ export default function AdminSchedulePage() {
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => setConfirmDeleteId(s.id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setConfirmDeleteId(s.id);
+                          }}
                           className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 rounded-lg"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -489,7 +505,7 @@ export default function AdminSchedulePage() {
                 Cancel
               </button>
               <button
-                onClick={() => handleDeleteSchedule(confirmDeleteId)}
+                onClick={(e) => confirmDeleteId && handleDeleteSchedule(e, confirmDeleteId)}
                 className="py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow-lg"
               >
                 Delete

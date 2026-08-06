@@ -245,7 +245,7 @@ export async function DELETE(request: Request) {
 
     broadcastRealtimeChange('SCHEDULE_UPDATED', { deletedId: id });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ status: 'success', message: 'Schedule deleted successfully' });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to delete schedule item' }, { status: 500 });
   }
