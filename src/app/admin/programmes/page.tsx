@@ -329,6 +329,8 @@ export default function AdminProgrammesPage() {
       let items: ProgrammeItem[] = [];
       if (Array.isArray(data)) {
         items = data;
+      } else if (Array.isArray(data.programmes)) {
+        items = data.programmes;
       } else if (data.categoryProgrammes || data.generalProgrammes) {
         items = [...(data.categoryProgrammes || []), ...(data.generalProgrammes || [])];
       }
