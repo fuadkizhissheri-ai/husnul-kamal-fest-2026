@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+// @ts-ignore - Module will be installed on Vercel deployment
 import { App } from '@capacitor/app';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -44,7 +45,7 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
 
     const setupListener = async () => {
       try {
-        await App.addListener('backButton', ({ canGoBack }) => {
+        await App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
           if (!isSubscribed) return;
 
           // 1. Try to pop tab history first
