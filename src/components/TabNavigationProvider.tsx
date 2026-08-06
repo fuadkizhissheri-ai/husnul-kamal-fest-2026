@@ -120,19 +120,20 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
   }, [activeTabHistory.length, pathname, popTab, router]);
 
   useEffect(() => {
-    let isSubscribed = true;
-    const setupListener = async () => {
-      try {
-        await App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
-          if (!isSubscribed) return;
-          handleBackAction(true, canGoBack);
-        });
-      } catch (err) {}
-    };
-    setupListener();
+    // App.addListener returns a Promise resolving to a PluginListenerHandle in Capacitor 6+
+    const backListener = App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
+      handleBackAction(true, canGoBack);
+    }).catch((err: any) => {
+      // Catch error if running in standard web mode without Capacitor plugin
+      return null;
+    });
+
     return () => {
-      isSubscribed = false;
-      try { App.removeAllListeners(); } catch (e) {}
+      backListener.then((handler: any) => {
+        if (handler && handler.remove) {
+          handler.remove();
+        }
+      });
     };
   }, [handleBackAction]);
 
