@@ -5,6 +5,8 @@ import { broadcastRealtimeChange } from '@/lib/realtime';
 import { getStageInfo } from '@/lib/stages';
 import { autoSyncScheduleStatuses } from '@/lib/scheduleAutoSync';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -99,7 +101,7 @@ export async function GET(request: Request) {
       { schedules: allSchedules },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=15',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
         },
       }
     );
