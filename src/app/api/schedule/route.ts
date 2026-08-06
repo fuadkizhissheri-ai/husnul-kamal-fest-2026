@@ -257,10 +257,10 @@ export async function DELETE(request: Request) {
       await prisma.programme.update({
         where: { id: programmeIdToClear },
         data: {
-          stage: null,
-          date: null,
-          startTime: null,
-          endTime: null,
+          stage: '',
+          date: '',
+          startTime: '',
+          endTime: '',
         },
       });
     }
