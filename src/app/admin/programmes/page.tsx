@@ -9,6 +9,7 @@ import {
   Sparkles, Plus, Edit3, Trash2, Download,
   Search, Printer, FileSpreadsheet, X, Users, FilterX, RotateCcw,
 } from 'lucide-react';
+import { useGlobalModal } from '@/components/TabNavigationProvider';
 
 interface ProgrammeItem {
   id: string;
@@ -308,6 +309,12 @@ export default function AdminProgrammesPage() {
   const [bulkUploadRows, setBulkUploadRows] = useState<any[]>([]);
   const [bulkUploadError, setBulkUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Global Modal Registrations for hardware back button
+  useGlobalModal(isModalOpen, () => { setIsModalOpen(false); setFormError(null); }, 'add-programme-modal');
+  useGlobalModal(isBulkUploadModalOpen, () => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }, 'bulk-upload-programme-modal');
+  useGlobalModal(!!confirmDeleteId, () => setConfirmDeleteId(null), 'delete-programme-modal');
+  useGlobalModal(!!scoreCardProg, () => setScoreCardProg(null), 'score-card-modal');
 
   // Score Card Modal State
   const [scoreCardProg, setScoreCardProg] = useState<ProgrammeItem | null>(null);

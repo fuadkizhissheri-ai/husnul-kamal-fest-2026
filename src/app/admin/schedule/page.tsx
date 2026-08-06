@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import { FIXED_STAGES, getStageInfo, checkDoubleBooking } from '@/lib/stages';
+import { useGlobalModal } from '@/components/TabNavigationProvider';
 import { Calendar, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, MapPin, Clock, AlertTriangle } from 'lucide-react';
 
 interface ScheduleItem {
@@ -46,6 +47,11 @@ export default function AdminSchedulePage() {
   const [startTime, setStartTime] = useState('09:00 AM');
   const [endTime, setEndTime] = useState('11:00 AM');
   const [status, setStatus] = useState('UPCOMING');
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  useGlobalModal(isModalOpen, () => { setIsModalOpen(false); setFormError(null); }, 'schedule-modal');
+  useGlobalModal(!!confirmDeleteId, () => setConfirmDeleteId(null), 'delete-schedule-modal');
 
   const fetchSchedules = () => {
     setLoading(true);

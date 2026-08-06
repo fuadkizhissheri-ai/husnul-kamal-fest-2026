@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTabNavigation } from '@/components/TabNavigationProvider';
 import {
   Settings, Save, CheckCircle2, Layout, Eye, Sparkles, Sliders, Calendar, MapPin,
   Phone, Mail, Award, Layers, Users, User, Plus, Trash2, ArrowUp, ArrowDown, Upload, Image as ImageIcon, AlertCircle, RotateCcw, Trophy, MessageCircle, Lock, ShieldCheck
@@ -109,7 +111,9 @@ export default function AdminSettingsPage() {
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState<'cms' | 'preview'>('cms');
+  
+  const { currentTab, setActiveTab } = useTabNavigation();
+  const activeTab = currentTab || 'cms';
 
   useEffect(() => {
     fetch('/api/settings')

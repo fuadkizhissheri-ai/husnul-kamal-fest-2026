@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { Users, Search, Download, Trash2, Edit, X, ShieldCheck, Sparkles, MessageCircle, AlertCircle, Save, Upload, Loader2, FileText } from 'lucide-react';
+import { useGlobalModal } from '@/components/TabNavigationProvider';
 import TableSkeleton from '@/components/TableSkeleton';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -58,6 +59,10 @@ export default function AdminParticipantsPage() {
   const [bulkUploadError, setBulkUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  // Global Modals
+  useGlobalModal(!!editParticipant, () => { setEditParticipant(null); setEditingProgrammes(false); }, 'edit-participant-modal');
+  useGlobalModal(isBulkUploadModalOpen, () => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }, 'bulk-upload-participant-modal');
 
   const fetchParticipants = async () => {
     setLoading(true);

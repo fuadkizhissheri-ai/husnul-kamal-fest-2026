@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Info, Save, CheckCircle2, Eye, Sliders, Sparkles, Award, Globe, Heart, ShieldCheck, Layers, Users } from 'lucide-react';
+import { useTabNavigation } from '@/components/TabNavigationProvider';
 
 export default function AdminAboutPage() {
   // 1. Header CMS
@@ -54,7 +55,9 @@ export default function AdminAboutPage() {
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState<'cms' | 'preview'>('cms');
+  
+  const { currentTab, setActiveTab } = useTabNavigation();
+  const activeTab = currentTab || 'cms';
 
   useEffect(() => {
     fetch('/api/about')
