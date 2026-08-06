@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { downloadPDFReport, downloadScoreCardPDF, downloadBatchScoreCardsPDF } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import { FIXED_STAGES, getStageInfo } from '@/lib/stages';
