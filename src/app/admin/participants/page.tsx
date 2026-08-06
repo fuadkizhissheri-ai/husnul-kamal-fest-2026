@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { downloadPDFReport } from '@/lib/pdfExporter';
-import { Users, Search, Download, Trash2, Edit, X, ShieldCheck, Sparkles, MessageCircle, AlertCircle, Save, Upload, Loader2 } from 'lucide-react';
+import { Users, Search, Download, Trash2, Edit, X, ShieldCheck, Sparkles, MessageCircle, AlertCircle, Save, Upload, Loader2, FileText } from 'lucide-react';
 import TableSkeleton from '@/components/TableSkeleton';
 import { useDebounce } from '@/hooks/useDebounce';
 
