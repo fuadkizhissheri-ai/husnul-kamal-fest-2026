@@ -160,14 +160,30 @@ export default function AdminSchedulePage() {
     };
 
     const method = editingItem ? 'PUT' : 'POST';
-    await fetch('/api/schedule', {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    
+    try {
+      const res = await fetch('/api/schedule', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    setIsModalOpen(false);
-    fetchSchedules();
+      const data = await res.json();
+
+      if (!res.ok) {
+        setDoubleBookingError(data.error || 'Failed to save schedule entry. Please try again.');
+        return;
+      }
+
+      setIsModalOpen(false);
+      
+      // Force instant UI refresh
+      fetchSchedules();
+      router.refresh();
+    } catch (error: any) {
+      console.error('Save schedule error:', error);
+      setDoubleBookingError(error.message || 'Network error occurred while saving.');
+    }
   };
 
   const handleDeleteSchedule = async (e: React.MouseEvent, id: string) => {
