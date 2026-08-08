@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import { Image as ImageIcon, X, ChevronLeft, ChevronRight, FolderOpen, Download, Check, Sparkles, Layers } from 'lucide-react';
+import { downloadFile } from '@/lib/fileDownloader';
 
 interface GalleryPhoto {
   id: string;
@@ -22,31 +23,15 @@ interface GalleryAlbum {
  */
 async function downloadImage(url: string, filename: string) {
   try {
-    if (url.startsWith('data:') || url.startsWith('blob:')) {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      return;
-    }
-
     const response = await fetch(url, { mode: 'cors' });
     if (!response.ok) throw new Error('Fetch image failed');
 
     const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    // Use the universal downloader which handles native Capacitor automatically
+    await downloadFile(blob, filename, blob.type || 'image/jpeg');
   } catch (error) {
     console.warn('Cross-origin blob fetch failed, falling back to direct anchor download:', error);
+    // If running in browser and CORS fails, standard anchor fallback
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';

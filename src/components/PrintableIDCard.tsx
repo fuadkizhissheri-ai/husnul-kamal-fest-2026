@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import QRCode from 'qrcode';
 import { Download, ShieldCheck, User, MapPin, Phone } from 'lucide-react';
 import { exportElementAsImage } from '@/lib/exportUtils';
+import { downloadFile } from '@/lib/fileDownloader';
 import { useLogo } from '@/lib/useLogo';
 
 interface PrintableIDCardProps {
@@ -90,12 +91,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
       const res = await fetch(downloadUrl);
       if (res.ok) {
         const blob = await res.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `ID-CARD_${sideName.toUpperCase()}_${participant.chestNumber}_${participant.fullName.replace(/\s+/g, '_')}.jpg`;
-        link.click();
-        URL.revokeObjectURL(blobUrl);
+        await downloadFile(blob, `ID-CARD_${sideName.toUpperCase()}_${participant.chestNumber}_${participant.fullName.replace(/\s+/g, '_')}.jpg`, 'image/jpeg');
         return;
       }
 
