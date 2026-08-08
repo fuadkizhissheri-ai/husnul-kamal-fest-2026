@@ -598,12 +598,18 @@ export default function RegisterPage() {
               </div>
 
               <div className="text-right">
-                <span className={`text-xs font-mono font-bold px-3 py-1.5 rounded-full border ${
-                  selectedProgrammeIds.length >= maxProgrammesAllowed
+                <span className={`text-[10px] sm:text-xs font-mono font-bold px-3 py-1.5 rounded-full border ${
+                  selectedProgrammeIds.filter(pid => {
+                    const p = categoryProgrammes.find(c => c.id === pid) || generalProgrammes.find(g => g.id === pid);
+                    return p && !p.isGroup && p.category.toLowerCase() !== 'general';
+                  }).length >= maxProgrammesAllowed
                     ? 'bg-rose-500/20 text-rose-400 border-rose-500/40'
                     : 'bg-[#C8A86B]/15 text-[#C8A86B] border-[#C8A86B]/30'
                 }`}>
-                  Selected: {selectedProgrammeIds.length} / {maxProgrammesAllowed} Max
+                  Selected Single Items: {selectedProgrammeIds.filter(pid => {
+                    const p = categoryProgrammes.find(c => c.id === pid) || generalProgrammes.find(g => g.id === pid);
+                    return p && !p.isGroup && p.category.toLowerCase() !== 'general';
+                  }).length} / {maxProgrammesAllowed} Max
                 </span>
               </div>
             </div>
