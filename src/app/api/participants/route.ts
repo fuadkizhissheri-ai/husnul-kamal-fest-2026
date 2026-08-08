@@ -186,8 +186,23 @@ export async function POST(request: Request) {
     const chestNumber = String(nextChestNum);
 
     // 3. Atomic Registration ID (HK2026-0001)
-    const totalCount = await prisma.participant.count();
-    const registrationId = `HK2026-${String(totalCount + 1).padStart(4, '0')}`;
+    // Find the highest existing registration ID to avoid unique constraint failures after deletions
+    const lastParticipant = await prisma.participant.findFirst({
+      orderBy: { registrationId: 'desc' },
+      select: { registrationId: true },
+    });
+
+    let nextIdNum = 1;
+    if (lastParticipant && lastParticipant.registrationId) {
+      const match = lastParticipant.registrationId.match(/HK2026-(\d+)/);
+      if (match) {
+        nextIdNum = parseInt(match[1], 10) + 1;
+      } else {
+        const totalCount = await prisma.participant.count();
+        nextIdNum = totalCount + 1;
+      }
+    }
+    const registrationId = `HK2026-${String(nextIdNum).padStart(4, '0')}`;
 
     // Create participant
     const participant = await prisma.participant.create({
