@@ -19,8 +19,12 @@ export interface CircularData {
 export function downloadOfficialCircularPDF(circular: CircularData) {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
-  const margin = 18;
+  const margin = 15; // 15mm as requested
   const contentWidth = pageWidth - margin * 2;
+
+  // Strip non-ASCII characters to prevent jsPDF garbling (Arabic, emojis, zero-width spaces)
+  const safeTitle = circular.title.replace(/[^\x20-\x7E\r\n]/g, '').trim();
+  const safeBody = circular.body.replace(/[^\x20-\x7E\r\n]/g, '');
 
   // 1. TOP HEADER BANNER (Official Letterhead Look)
   doc.setFillColor(7, 7, 9); // Dark Obsidian
@@ -83,7 +87,7 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
 
-  const titleLines = doc.splitTextToSize(circular.title.toUpperCase(), contentWidth);
+  const titleLines = doc.splitTextToSize(safeTitle.toUpperCase(), contentWidth);
   doc.text(titleLines, margin, 74);
 
   let currentY = 74 + titleLines.length * 7 + 4;
@@ -93,10 +97,10 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
 
-  const bodyLines = doc.splitTextToSize(circular.body, contentWidth);
+  const bodyLines = doc.splitTextToSize(safeBody, contentWidth);
   
   bodyLines.forEach((line: string) => {
-    if (currentY > 230) {
+    if (currentY > 260) {
       doc.addPage();
       currentY = 25;
     }
@@ -104,89 +108,35 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
     currentY += 6;
   });
 
-  currentY += 14;
-
-  if (currentY > 220) {
+  // 6. SINGLE SIGNATURE BLOCK
+  if (currentY > 240) {
     doc.addPage();
     currentY = 40;
+  } else {
+    currentY += 15;
   }
 
-  // 6. DUAL PROGRAMME COORDINATOR SIGNATURE BLOCK
+  const activeName = circular.coordinatorName || 'FUAD BIN ADAM';
+  const activeDesig = circular.coordinatorDesignation || 'Programme Convener, Husnul Kamal Fest 2026';
+
   doc.setTextColor(71, 85, 105);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'italic');
   doc.text('By Order & Authorization of Programme Coordinators,', margin, currentY);
 
-  currentY += 16;
+  currentY += 20;
 
-  const coord1Name = circular.coordinator1Name || circular.coordinatorName || 'FUAD BIN ADAM';
-  const coord1Desig = circular.coordinator1Designation || circular.coordinatorDesignation || 'Programme Convener, Husnul Kamal Fest 2026';
+  doc.setTextColor(15, 23, 42);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(activeName.toUpperCase(), margin, currentY);
 
-  const coord2Name = circular.coordinator2Name || 'Midlaj Roshan Kamali';
-  const coord2Desig = circular.coordinator2Designation || 'Coordinator';
+  currentY += 5;
 
-  const option = (circular.signatoryOption || 'BOTH').toUpperCase();
-
-  if (option === 'BOTH') {
-    // TWO COLUMNS SIGNATURE BLOCK (Side-by-Side)
-    const colWidth = (contentWidth - 10) / 2;
-    const col1X = margin;
-    const col2X = margin + colWidth + 10;
-
-    // Signature Lines
-    doc.setDrawColor(200, 168, 107);
-    doc.setLineWidth(0.8);
-    doc.line(col1X, currentY, col1X + colWidth - 10, currentY);
-    doc.line(col2X, currentY, col2X + colWidth - 10, currentY);
-
-    currentY += 6;
-
-    // Names
-    doc.setTextColor(15, 23, 42);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text(coord1Name, col1X, currentY);
-    doc.text(coord2Name, col2X, currentY);
-
-    currentY += 5;
-
-    // Designations
-    doc.setTextColor(100, 116, 139);
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'normal');
-    doc.text(coord1Desig, col1X, currentY);
-    doc.text(coord2Desig, col2X, currentY);
-
-    currentY += 4;
-    doc.text('Husnul Kamal Fest 2026', col1X, currentY);
-    doc.text('Husnul Kamal Fest 2026', col2X, currentY);
-  } else {
-    // SINGLE SIGNATURE BLOCK (Right-Aligned)
-    const activeName = option === 'COORD2' ? coord2Name : coord1Name;
-    const activeDesig = option === 'COORD2' ? coord2Desig : coord1Desig;
-    const signX = pageWidth - margin;
-
-    doc.setDrawColor(200, 168, 107);
-    doc.setLineWidth(0.8);
-    doc.line(signX - 60, currentY, signX, currentY);
-
-    currentY += 6;
-
-    doc.setTextColor(15, 23, 42);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text(activeName, signX, currentY, { align: 'right' });
-
-    currentY += 5;
-
-    doc.setTextColor(100, 116, 139);
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'normal');
-    doc.text(activeDesig, signX, currentY, { align: 'right' });
-
-    currentY += 4;
-    doc.text('Husnul Kamal Fest 2026', signX, currentY, { align: 'right' });
-  }
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(activeDesig, margin, currentY);
 
   // 7. FOOTER
   const pageCount = (doc as any).internal.getNumberOfPages();
