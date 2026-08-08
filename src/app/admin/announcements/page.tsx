@@ -42,12 +42,12 @@ export default function AdminAnnouncementsPage() {
   const [categoryBadge, setCategoryBadge] = useState('Fest News');
   const [refNumber, setRefNumber] = useState('');
   
-  // Dual Coordinators
-  const [signatoryOption, setSignatoryOption] = useState<'BOTH' | 'COORD1' | 'COORD2'>('BOTH');
-  const [coordinator1Name, setCoordinator1Name] = useState('FUAD JALALI');
-  const [coordinator1Designation, setCoordinator1Designation] = useState('Fest Convenor');
-  const [coordinator2Name, setCoordinator2Name] = useState('MIDLAJ ROSHAN KAMALI');
-  const [coordinator2Designation, setCoordinator2Designation] = useState('Coordinator');
+  // Single Signatory (default)
+  const [signatoryOption, setSignatoryOption] = useState<'BOTH' | 'COORD1' | 'COORD2'>('COORD1');
+  const [coordinator1Name, setCoordinator1Name] = useState('FUAD BIN ADAM');
+  const [coordinator1Designation, setCoordinator1Designation] = useState('Programme Convener');
+  const [coordinator2Name, setCoordinator2Name] = useState('');
+  const [coordinator2Designation, setCoordinator2Designation] = useState('');
 
   const fetchAnnouncements = () => {
     setLoading(true);
@@ -82,22 +82,22 @@ export default function AdminAnnouncementsPage() {
       setBody(item.body);
       setCategoryBadge(item.categoryBadge);
       setRefNumber(item.refNumber || '');
-      setSignatoryOption((item.signatoryOption as any) || 'BOTH');
-      setCoordinator1Name(item.coordinator1Name || 'FUAD JALALI');
-      setCoordinator1Designation(item.coordinator1Designation || 'Fest Convenor');
-      setCoordinator2Name(item.coordinator2Name || 'MIDLAJ ROSHAN KAMALI');
-      setCoordinator2Designation(item.coordinator2Designation || 'Coordinator');
+      setSignatoryOption((item.signatoryOption as any) || 'COORD1');
+      setCoordinator1Name(item.coordinator1Name || 'FUAD BIN ADAM');
+      setCoordinator1Designation(item.coordinator1Designation || 'Programme Convener');
+      setCoordinator2Name(item.coordinator2Name || '');
+      setCoordinator2Designation(item.coordinator2Designation || '');
     } else {
       setEditingItem(null);
       setTitle('');
       setBody('');
       setCategoryBadge('Fest News');
       setRefNumber(`HK/2026/CIR-${String(announcements.length + 1).padStart(3, '0')}`);
-      setSignatoryOption('BOTH');
-      setCoordinator1Name('FUAD JALALI');
-      setCoordinator1Designation('Fest Convenor');
-      setCoordinator2Name('MIDLAJ ROSHAN KAMALI');
-      setCoordinator2Designation('Coordinator');
+      setSignatoryOption('COORD1');
+      setCoordinator1Name('FUAD BIN ADAM');
+      setCoordinator1Designation('Programme Convener');
+      setCoordinator2Name('');
+      setCoordinator2Designation('');
     }
     setIsModalOpen(true);
   };
