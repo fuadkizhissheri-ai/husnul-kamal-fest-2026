@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import { downloadOfficialCircularPDF } from '@/lib/circularPdfExporter';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
-import { Bell, Search, Download, Calendar, FileText } from 'lucide-react';
+import { Bell, Search, Download, Calendar, FileText, X, ChevronRight } from 'lucide-react';
 import { fetchWithCache, invalidateCache } from '@/lib/clientCache';
 
 interface Announcement {
@@ -24,6 +24,7 @@ export default function AnnouncementsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
   const fetchAnnouncements = (bypassCache = false) => {
     if (bypassCache) invalidateCache('/api/announcements');
@@ -56,7 +57,7 @@ export default function AnnouncementsPage() {
 
   return (
     <SmoothScroll>
-      <div className="min-h-screen pt-24 pb-20 font-sans">
+      <div className="min-h-screen pt-24 pb-20 font-sans relative">
         
         {/* HEADER SECTION */}
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-4">
@@ -91,7 +92,7 @@ export default function AnnouncementsPage() {
             </div>
 
             {/* Category Filter */}
-            <div className="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+            <div className="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-hide">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -119,11 +120,12 @@ export default function AnnouncementsPage() {
               No circulars found matching the filter criteria.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((item) => (
                 <div
                   key={item.id}
-                  className="luxury-glass p-6 rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 shadow-luxury space-y-4 flex flex-col justify-between hover:-translate-y-1 transition-all"
+                  onClick={() => setSelectedAnnouncement(item)}
+                  className="luxury-glass p-6 rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 shadow-luxury space-y-4 flex flex-col justify-between hover:-translate-y-1 transition-all cursor-pointer group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -137,11 +139,11 @@ export default function AnnouncementsPage() {
                       )}
                     </div>
 
-                    <h3 className="text-lg font-heading font-bold text-slate-900 dark:text-white leading-snug">
+                    <h3 className="text-lg font-heading font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#9E741D] dark:group-hover:text-[#C8A86B] transition-colors">
                       {item.title}
                     </h3>
 
-                    <p className="text-xs text-slate-600 dark:text-neutral-300 font-sans leading-relaxed line-clamp-4">
+                    <p className="text-xs text-slate-600 dark:text-neutral-300 font-sans leading-relaxed line-clamp-3">
                       {item.body}
                     </p>
                   </div>
@@ -152,19 +154,81 @@ export default function AnnouncementsPage() {
                       <span>{new Date(item.publishedAt).toLocaleDateString()}</span>
                     </div>
 
-                    <button
-                      onClick={() => downloadOfficialCircularPDF(item)}
-                      className="btn-pill-luxury bg-[#18181B] text-[#F5E6C4] dark:bg-white dark:text-[#0B0B0B] text-[11px] px-3.5 py-1.5 font-bold shadow-md hover:bg-[#9E741D] dark:hover:bg-[#C8A86B]"
-                    >
-                      <Download className="w-3 h-3" />
-                      <span>Download Circular PDF</span>
-                    </button>
+                    <div className="flex items-center text-[#9E741D] dark:text-[#C8A86B] font-bold text-[10px] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                      Read More <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </section>
+
+        {/* FULL VIEW MODAL */}
+        {selectedAnnouncement && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedAnnouncement(null)}>
+            <div 
+              className="bg-[#F8F5EE] dark:bg-[#0B0B0B] w-full max-w-2xl max-h-[85vh] rounded-[32px] shadow-2xl border border-[#9E741D]/30 flex flex-col overflow-hidden relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-black/5 dark:border-white/5">
+                <div className="flex items-center space-x-3">
+                  <span className="hk-badge-gold">{selectedAnnouncement.categoryBadge}</span>
+                  {selectedAnnouncement.refNumber && (
+                    <span className="text-[11px] font-mono font-bold text-[#9E741D] dark:text-[#C8A86B]">
+                      {selectedAnnouncement.refNumber}
+                    </span>
+                  )}
+                </div>
+                <button 
+                  onClick={() => setSelectedAnnouncement(null)}
+                  className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-500 dark:text-slate-400"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body (Scrollable) */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-heading font-black text-slate-900 dark:text-white leading-tight">
+                    {selectedAnnouncement.title}
+                  </h2>
+                  <div className="flex items-center space-x-2 text-slate-500 font-mono text-[11px] mt-3">
+                    <Calendar className="w-3.5 h-3.5 text-[#9E741D] dark:text-[#C8A86B]" />
+                    <span>Published: {new Date(selectedAnnouncement.publishedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                <div className="prose prose-sm dark:prose-invert max-w-none font-sans text-slate-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                  {selectedAnnouncement.body}
+                </div>
+                
+                {selectedAnnouncement.coordinatorName && (
+                  <div className="pt-6 mt-6 border-t border-black/5 dark:border-white/5 text-sm">
+                    <div className="font-bold text-slate-900 dark:text-white">{selectedAnnouncement.coordinatorName}</div>
+                    <div className="text-slate-500 dark:text-neutral-400 text-xs mt-0.5">{selectedAnnouncement.coordinatorDesignation || 'Coordinator'}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex-shrink-0 p-6 bg-black/5 dark:bg-white/5 border-t border-black/5 dark:border-white/5 flex justify-end">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    downloadOfficialCircularPDF(selectedAnnouncement);
+                  }}
+                  className="btn-luxury flex items-center space-x-2 text-sm w-full sm:w-auto justify-center"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Circular PDF</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </SmoothScroll>
