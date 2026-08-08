@@ -258,42 +258,36 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
               </div>
 
               {/* ── Details Rows (UPPERCASE) ── */}
-              <div style={{ 
-                width: '100%', 
-                marginTop: '12px', 
-                marginBottom: '4px',
-                display: 'grid', 
-                gridTemplateColumns: '80px 1fr', 
-                rowGap: '6px', 
-                alignItems: 'center' 
-              }}>
+              <div style={{ width: '100%', marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '0' }}>
+                
                 {/* Group */}
-                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>GROUP</span>
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>GROUP</span>
                   <span style={{
-                    fontSize: '9px', fontWeight: '800',
+                    fontSize: '9.5px', fontWeight: '800',
                     background: grp.badgeBg,
                     border: `1px solid ${grp.badgeBorder}`,
                     color: grp.badgeText,
-                    padding: '2px 8px', borderRadius: '9999px',
+                    padding: '2px 10px', borderRadius: '9999px',
                     fontFamily: 'Inter, sans-serif',
                     textTransform: 'uppercase',
-                    display: 'inline-block'
                   }}>
                     {grp.label}
                   </span>
                 </div>
 
                 {/* Category */}
-                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>CATEGORY</span>
-                <span style={{ fontSize: '10px', fontWeight: '700', color: 'white', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', textAlign: 'right' }}>
-                  {participant.category}
-                </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>CATEGORY</span>
+                  <span style={{ fontSize: '10px', fontWeight: '700', color: 'white', fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', textAlign: 'right' }}>
+                    {participant.category}
+                  </span>
+                </div>
 
                 {/* Madrasa */}
                 {participant.madrasa && (
-                  <>
-                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', alignSelf: 'start', paddingTop: '2px' }}>MADRASA</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px', gap: '8px' }}>
+                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', minWidth: '60px', paddingTop: '1px' }}>MADRASA</span>
                     <span style={{ 
                       fontSize: '9.5px', 
                       fontWeight: '700', 
@@ -301,15 +295,13 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                       fontFamily: 'Inter, sans-serif', 
                       textAlign: 'right', 
                       textTransform: 'uppercase',
-                      lineHeight: '1.25',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
+                      lineHeight: '1.3',
+                      wordBreak: 'break-word',
+                      flex: 1
                     }}>
                       {participant.madrasa}
                     </span>
-                  </>
+                  </div>
                 )}
               </div>
 
