@@ -14,13 +14,65 @@ interface TabNavigationContextType {
 
 const TabNavigationContext = createContext<TabNavigationContextType | undefined>(undefined);
 
+export function useBackButtonHandler() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    let listener: any = null;
+
+    const init = async () => {
+      try {
+        const { App } = await import('@capacitor/app');
+        listener = await App.addListener('backButton', (data) => {
+          // Priority 1: Modal check
+          const openModal = document.querySelector('[role="dialog"], .modal-open, [data-modal]');
+          if (openModal) {
+            const closeButton = openModal.querySelector('button[aria-label="Close"], button[data-close], .close-btn') as HTMLButtonElement;
+            if (closeButton) {
+              closeButton.click();
+            }
+            return;
+          }
+
+          // Priority 2: Custom History / Browser History
+          const isRoot = pathname === '/' || pathname === '/admin/dashboard';
+          if (window.history.length > 1 && !isRoot) {
+            window.history.back();
+          } else {
+            // Priority 3: Exit ONLY on root page
+            App.exitApp();
+          }
+        });
+      } catch (e) {
+        console.log('Capacitor App plugin not available in web mode');
+      }
+    };
+
+    init();
+
+    return () => {
+      if (listener && typeof listener.remove === 'function') {
+        listener.remove();
+      }
+    };
+  }, [pathname]);
+}
+
 export function TabNavigationProvider({ children }: { children: React.ReactNode }) {
   const [activeTabHistory, setActiveTabHistory] = useState<string[]>([]);
   const router = useRouter();
   const pathname = usePathname();
 
+  const historyRef = useRef<string[]>([]);
   const modalsRef = useRef<{ id: string; onClose: () => void }[]>([]);
   const isBackActionInProgress = useRef(false);
+
+  useBackButtonHandler();
+
+  useEffect(() => {
+    historyRef.current = activeTabHistory;
+  }, [activeTabHistory]);
 
   const registerModal = useCallback((id: string, onClose: () => void) => {
     if (!modalsRef.current.find(m => m.id === id)) {
@@ -33,8 +85,6 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
     const exists = modalsRef.current.find((m) => m.id === id);
     if (exists) {
       modalsRef.current = modalsRef.current.filter((m) => m.id !== id);
-      // If we aren't currently popping this due to a back button, it means the user closed it manually
-      // We must clean up the history stack
       if (!isBackActionInProgress.current) {
         window.history.back();
       }
@@ -63,82 +113,28 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
     return popped;
   }, []);
 
-  const handlePopState = useCallback((e: PopStateEvent) => {
-    // 1. MODAL CHECK
-    if (modalsRef.current.length > 0) {
-      const topModal = modalsRef.current[modalsRef.current.length - 1];
-      topModal.onClose();
-      modalsRef.current.pop();
-      return;
-    }
-
-    // 2. TAB CHECK
-    if (activeTabHistory.length > 1) {
-      popTab();
-      return;
-    }
-  }, [activeTabHistory.length, popTab]);
-
   useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      isBackActionInProgress.current = true;
+      try {
+        if (modalsRef.current.length > 0) {
+          const topModal = modalsRef.current[modalsRef.current.length - 1];
+          topModal.onClose();
+          modalsRef.current.pop();
+          return;
+        }
+
+        if (historyRef.current.length > 1) {
+          setActiveTabHistory(prev => prev.slice(0, -1));
+          return;
+        }
+      } finally {
+        setTimeout(() => { isBackActionInProgress.current = false; }, 100);
+      }
+    };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [handlePopState]);
-
-  useEffect(() => {
-    let handler: any;
-    let isSubscribed = true;
-
-    const setupBackButton = async () => {
-      try {
-        const { App } = await import('@capacitor/app');
-        if (!isSubscribed) return;
-
-        handler = await App.addListener('backButton', ({ canGoBack }) => {
-          // Fallback DOM check for unmanaged modals
-          const openModal = document.querySelector('[role="dialog"]');
-          if (openModal) {
-            const closeBtn = openModal.querySelector('button[data-close]') as HTMLButtonElement;
-            if (closeBtn) {
-              closeBtn.click();
-              return;
-            }
-          }
-
-          // If we have custom history (modals or tabs), tell browser to go back
-          if (modalsRef.current.length > 0 || activeTabHistory.length > 1) {
-            window.history.back();
-            return;
-          }
-
-          // If on a subpage, use router back
-          const isRoot = window.location.pathname === '/' || window.location.pathname === '/admin/dashboard';
-          if (!isRoot) {
-            if (canGoBack || window.history.length > 1) {
-              router.back();
-              return;
-            } else {
-              router.push('/');
-              return;
-            }
-          }
-
-          // If on Root/Home and no custom history, EXIT APP
-          App.exitApp();
-        });
-      } catch (e) {
-        console.log('Capacitor App plugin not available in web mode', e);
-      }
-    };
-
-    setupBackButton();
-
-    return () => {
-      isSubscribed = false;
-      if (handler && typeof handler.remove === 'function') {
-        handler.remove();
-      }
-    };
-  }, [activeTabHistory.length, router]);
+  }, []);
 
   return (
     <TabNavigationContext.Provider value={{ activeTabHistory, currentTab, setActiveTab, popTab, registerModal, unregisterModal }}>
