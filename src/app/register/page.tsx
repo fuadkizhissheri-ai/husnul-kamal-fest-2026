@@ -253,6 +253,56 @@ export default function RegisterPage() {
     }
   };
 
+  const renderProgrammeGrid = (programmesList: any[]) => {
+    if (programmesList.length === 0) return (
+      <p className="text-xs text-slate-500 italic py-2">No programmes found in this section.</p>
+    );
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {programmesList.map((prog) => {
+          const isSelected = selectedProgrammeIds.includes(prog.id);
+          return (
+            <div
+              key={prog.id}
+              onClick={() => !prog.isFull && toggleProgrammeSelection(prog.id)}
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                isSelected
+                  ? 'bg-[#C8A86B]/20 border-[#C8A86B] shadow-md'
+                  : prog.isFull
+                  ? 'opacity-40 bg-black/5 dark:bg-white/5 border-transparent cursor-not-allowed'
+                  : 'bg-black/5 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:border-[#C8A86B]/50'
+              }`}
+            >
+              <div className="space-y-1">
+                <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1.5">
+                  <span>{prog.name}</span>
+                  {prog.isGroup && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-normal">
+                      Group
+                    </span>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">
+                  {prog.stage} • {prog.startTime}
+                </div>
+              </div>
+
+              <div className="shrink-0 pl-2">
+                {isSelected ? (
+                  <div className="w-5 h-5 rounded-full bg-[#C8A86B] text-[#0B0B0B] flex items-center justify-center font-bold text-xs">
+                    ✓
+                  </div>
+                ) : (
+                  <div className="w-5 h-5 rounded-full border border-slate-400 dark:border-white/30" />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   if (initialLoading || authLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-slate-500">
@@ -614,55 +664,22 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* CATEGORY-SPECIFIC PROGRAMMES */}
+            {/* CATEGORY-SPECIFIC SINGLE PROGRAMMES */}
             <div className="space-y-3">
               <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                 <Sparkles className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" />
                 <span>Category Programmes ({category})</span>
               </div>
+              {renderProgrammeGrid(categoryProgrammes.filter((p) => !p.isGroup))}
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {categoryProgrammes.map((prog) => {
-                  const isSelected = selectedProgrammeIds.includes(prog.id);
-                  return (
-                    <div
-                      key={prog.id}
-                      onClick={() => !prog.isFull && toggleProgrammeSelection(prog.id)}
-                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? 'bg-[#C8A86B]/20 border-[#C8A86B] shadow-md'
-                          : prog.isFull
-                          ? 'opacity-40 bg-black/5 dark:bg-white/5 border-transparent cursor-not-allowed'
-                          : 'bg-black/5 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:border-[#C8A86B]/50'
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1.5">
-                          <span>{prog.name}</span>
-                          {prog.isGroup && (
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-normal">
-                              Group
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">
-                          {prog.stage} • {prog.startTime}
-                        </div>
-                      </div>
-
-                      <div className="shrink-0 pl-2">
-                        {isSelected ? (
-                          <div className="w-5 h-5 rounded-full bg-[#C8A86B] text-[#0B0B0B] flex items-center justify-center font-bold text-xs">
-                            ✓
-                          </div>
-                        ) : (
-                          <div className="w-5 h-5 rounded-full border border-slate-400 dark:border-white/30" />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+            {/* CATEGORY-SPECIFIC GROUP PROGRAMMES */}
+            <div className="space-y-3 pt-4 border-t border-black/5 dark:border-white/5">
+              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                <Layers className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" />
+                <span>Group Programmes ({category})</span>
               </div>
+              {renderProgrammeGrid(categoryProgrammes.filter((p) => p.isGroup))}
             </div>
 
             {/* GENERAL PROGRAMMES */}
@@ -672,49 +689,7 @@ export default function RegisterPage() {
                   <Globe className="w-4 h-4 text-[#9E741D] dark:text-[#C8A86B]" />
                   <span>General Programmes (Open to All Categories)</span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {generalProgrammes.map((prog) => {
-                    const isSelected = selectedProgrammeIds.includes(prog.id);
-                    return (
-                      <div
-                        key={prog.id}
-                        onClick={() => !prog.isFull && toggleProgrammeSelection(prog.id)}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                          isSelected
-                            ? 'bg-[#C8A86B]/20 border-[#C8A86B] shadow-md'
-                            : prog.isFull
-                            ? 'opacity-40 bg-black/5 dark:bg-white/5 border-transparent cursor-not-allowed'
-                            : 'bg-black/5 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:border-[#C8A86B]/50'
-                        }`}
-                      >
-                        <div className="space-y-1">
-                          <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1.5">
-                            <span>{prog.name}</span>
-                            {prog.isGroup && (
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-normal">
-                                Group
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">
-                            {prog.stage} • {prog.startTime}
-                          </div>
-                        </div>
-
-                        <div className="shrink-0 pl-2">
-                          {isSelected ? (
-                            <div className="w-5 h-5 rounded-full bg-[#C8A86B] text-[#0B0B0B] flex items-center justify-center font-bold text-xs">
-                              ✓
-                            </div>
-                          ) : (
-                            <div className="w-5 h-5 rounded-full border border-slate-400 dark:border-white/30" />
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                {renderProgrammeGrid(generalProgrammes)}
               </div>
             )}
           </div>
