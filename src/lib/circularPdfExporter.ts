@@ -119,8 +119,8 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
 
   currentY += 16;
 
-  const coord1Name = circular.coordinator1Name || circular.coordinatorName || 'Fuad Jalali';
-  const coord1Desig = circular.coordinator1Designation || circular.coordinatorDesignation || 'Fest Convenor';
+  const coord1Name = circular.coordinator1Name || circular.coordinatorName || 'FUAD BIN ADAM';
+  const coord1Desig = circular.coordinator1Designation || circular.coordinatorDesignation || 'Programme Convener, Husnul Kamal Fest 2026';
 
   const coord2Name = circular.coordinator2Name || 'Midlaj Roshan Kamali';
   const coord2Desig = circular.coordinator2Designation || 'Coordinator';
