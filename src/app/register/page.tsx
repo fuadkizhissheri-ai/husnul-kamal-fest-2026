@@ -187,10 +187,24 @@ export default function RegisterPage() {
     if (selectedProgrammeIds.includes(id)) {
       setSelectedProgrammeIds(selectedProgrammeIds.filter((pId) => pId !== id));
     } else {
-      if (selectedProgrammeIds.length >= maxProgrammesAllowed) {
-        alert(`You can select a maximum of ${maxProgrammesAllowed} programmes per participant.`);
-        return;
+      const prog = categoryProgrammes.find(p => p.id === id) || generalProgrammes.find(p => p.id === id);
+      
+      if (prog) {
+        const isSingle = !prog.isGroup && prog.category.toLowerCase() !== 'general';
+        
+        if (isSingle) {
+          const singleItemsCount = selectedProgrammeIds.filter(pid => {
+            const p = categoryProgrammes.find(c => c.id === pid) || generalProgrammes.find(g => g.id === pid);
+            return p && !p.isGroup && p.category.toLowerCase() !== 'general';
+          }).length;
+          
+          if (singleItemsCount >= maxProgrammesAllowed) {
+            alert(`Maximum limit of ${maxProgrammesAllowed} Single items reached. Group and General items are excluded.`);
+            return;
+          }
+        }
       }
+
       setSelectedProgrammeIds([...selectedProgrammeIds, id]);
     }
   };

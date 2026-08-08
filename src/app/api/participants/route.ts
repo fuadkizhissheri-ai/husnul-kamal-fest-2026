@@ -111,9 +111,18 @@ export async function POST(request: Request) {
     const maxAllowed = maxProgSetting ? parseInt(maxProgSetting.value, 10) || 3 : 3;
 
     const selectedProgrammeIds: string[] = Array.isArray(programmeIds) ? programmeIds : [];
-    if (selectedProgrammeIds.length > maxAllowed) {
+    
+    // Fetch selected programmes to check their type
+    const selectedProgrammes = await prisma.programme.findMany({
+      where: { id: { in: selectedProgrammeIds } },
+    });
+    
+    // Count only single items (not group and not general)
+    const singleItemsCount = selectedProgrammes.filter(p => !p.isGroup && p.category.toLowerCase() !== 'general').length;
+
+    if (singleItemsCount > maxAllowed) {
       return NextResponse.json(
-        { error: `You can select a maximum of ${maxAllowed} programmes.` },
+        { error: `You can select a maximum of ${maxAllowed} Single items. Group and General items are excluded from this limit.` },
         { status: 400 }
       );
     }
@@ -283,9 +292,17 @@ export async function PUT(request: Request) {
       });
       const maxAllowed = maxProgSetting ? parseInt(maxProgSetting.value, 10) || 3 : 3;
 
-      if (programmeIds.length > maxAllowed) {
+      // Fetch selected programmes to check their type
+      const selectedProgrammes = await prisma.programme.findMany({
+        where: { id: { in: programmeIds } },
+      });
+      
+      // Count only single items (not group and not general)
+      const singleItemsCount = selectedProgrammes.filter(p => !p.isGroup && p.category.toLowerCase() !== 'general').length;
+
+      if (singleItemsCount > maxAllowed) {
         return NextResponse.json(
-          { error: `Cannot assign more than ${maxAllowed} programmes per participant.` },
+          { error: `Cannot assign more than ${maxAllowed} Single items per participant. Group and General items are excluded.` },
           { status: 400 }
         );
       }

@@ -972,7 +972,7 @@ export default function AdminSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Max Programmes Per Participant</label>
+                <label className="block text-slate-300 font-semibold mb-1">Maximum Single Items per Student</label>
                 <input
                   type="number"
                   min="1"
@@ -981,6 +981,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) => setMaxProgs(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none"
                 />
+                <p className="text-[10px] text-slate-500 mt-1 font-mono">(Group and General items are excluded)</p>
               </div>
 
               {/* DYNAMIC FEST START DATE & TIME PICKER FOR COUNTDOWN CARD */}
