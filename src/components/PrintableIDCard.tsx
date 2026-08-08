@@ -286,8 +286,8 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
 
                 {/* Madrasa */}
                 {participant.madrasa && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px', gap: '8px' }}>
-                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', minWidth: '60px', paddingTop: '1px' }}>MADRASA</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', gap: '8px' }}>
+                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', minWidth: '60px' }}>MADRASA</span>
                     <span style={{ 
                       fontSize: '9.5px', 
                       fontWeight: '700', 
@@ -307,7 +307,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
 
               {/* ── REGISTERED PROGRAMMES SECTION (UPPERCASE) ── */}
               {programmeList.length > 0 && (
-                <div style={{ width: '100%', marginTop: '8px', flexShrink: 0 }}>
+                <div style={{ width: '100%', marginTop: '8px', flexShrink: 0, textAlign: 'left' }}>
                   <div style={{
                     fontSize: '8px',
                     fontWeight: '700',
