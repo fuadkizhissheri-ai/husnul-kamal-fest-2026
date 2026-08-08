@@ -310,18 +310,18 @@ export default function AdminProgrammesPage() {
   const [bulkUploadError, setBulkUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Global Modal Registrations for hardware back button
-  useGlobalModal(isModalOpen, () => { setIsModalOpen(false); setFormError(null); }, 'add-programme-modal');
-  useGlobalModal(isBulkUploadModalOpen, () => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }, 'bulk-upload-programme-modal');
-  useGlobalModal(!!confirmDeleteId, () => setConfirmDeleteId(null), 'delete-programme-modal');
-  useGlobalModal(!!scoreCardProg, () => setScoreCardProg(null), 'score-card-modal');
-
   // Score Card Modal State
   const [scoreCardProg, setScoreCardProg] = useState<ProgrammeItem | null>(null);
   const [judgeCount, setJudgeCount] = useState<number>(3);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
   const [includeRemarks, setIncludeRemarks] = useState<boolean>(true);
   const [scoreCardGroupFilter, setScoreCardGroupFilter] = useState<string>('ALL');
+
+  // Global Modal Registrations for hardware back button
+  useGlobalModal(isModalOpen, () => { setIsModalOpen(false); setFormError(null); }, 'add-programme-modal');
+  useGlobalModal(isBulkUploadModalOpen, () => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }, 'bulk-upload-programme-modal');
+  useGlobalModal(!!confirmDeleteId, () => setConfirmDeleteId(null), 'delete-programme-modal');
+  useGlobalModal(!!scoreCardProg, () => setScoreCardProg(null), 'score-card-modal');
 
   // Form Fields
   const [name, setName] = useState('');

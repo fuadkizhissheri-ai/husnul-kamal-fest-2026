@@ -76,6 +76,7 @@ export async function POST(request: Request) {
               gender: item.gender || 'Male',
               dob: item.dob || '2010-01-01',
               madrasa: item.madrasa || 'Mifthahul Uloom Madrasa',
+              whatsapp: item.whatsapp || '',
             }
           })
         )
