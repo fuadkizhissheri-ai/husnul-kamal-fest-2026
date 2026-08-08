@@ -63,59 +63,26 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
     return popped;
   }, []);
 
-  const handleBackAction = useCallback(async (fromCapacitor = false, canGoBack = true, CapacitorApp?: any) => {
-    isBackActionInProgress.current = true;
-
-    try {
-      // 1. MODAL CHECK
-      if (modalsRef.current.length > 0) {
-        const topModal = modalsRef.current[modalsRef.current.length - 1];
-        topModal.onClose(); // This triggers unregisterModal via useEffect, but isBackActionInProgress is true
-        modalsRef.current.pop();
-        
-        if (fromCapacitor) {
-          window.history.back(); // Sync browser history since capacitor bypassed popstate
-        }
-        return true;
-      }
-
-      // 2. TAB CHECK
-      if (activeTabHistory.length > 1) {
-        popTab();
-        if (fromCapacitor) {
-           window.history.back(); 
-        }
-        return true;
-      }
-
-      // 3. PAGE CHECK
-      const isRoot = pathname === '/' || pathname === '/admin/dashboard';
-      if (!isRoot) {
-        if (canGoBack || window.history.length > 1) {
-          if (fromCapacitor) {
-            router.back();
-          }
-          return true;
-        } else {
-          if (fromCapacitor) {
-            router.push('/');
-          }
-          return true;
-        }
-      } else {
-        // 4. EXIT CHECK
-        if (fromCapacitor && CapacitorApp) {
-          CapacitorApp.exitApp();
-        }
-        return false;
-      }
-    } finally {
-      // Small timeout to allow state to settle before we consider back action done
-      setTimeout(() => {
-        isBackActionInProgress.current = false;
-      }, 100);
+  const handlePopState = useCallback((e: PopStateEvent) => {
+    // 1. MODAL CHECK
+    if (modalsRef.current.length > 0) {
+      const topModal = modalsRef.current[modalsRef.current.length - 1];
+      topModal.onClose();
+      modalsRef.current.pop();
+      return;
     }
-  }, [activeTabHistory.length, pathname, popTab, router]);
+
+    // 2. TAB CHECK
+    if (activeTabHistory.length > 1) {
+      popTab();
+      return;
+    }
+  }, [activeTabHistory.length, popTab]);
+
+  useEffect(() => {
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [handlePopState]);
 
   useEffect(() => {
     let handler: any;
@@ -126,8 +93,8 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
         const { App } = await import('@capacitor/app');
         if (!isSubscribed) return;
 
-        handler = await App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
-          // Fallback DOM check for unmanaged modals as requested by user
+        handler = await App.addListener('backButton', ({ canGoBack }) => {
+          // Fallback DOM check for unmanaged modals
           const openModal = document.querySelector('[role="dialog"]');
           if (openModal) {
             const closeBtn = openModal.querySelector('button[data-close]') as HTMLButtonElement;
@@ -137,7 +104,26 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
             }
           }
 
-          handleBackAction(true, canGoBack, App);
+          // If we have custom history (modals or tabs), tell browser to go back
+          if (modalsRef.current.length > 0 || activeTabHistory.length > 1) {
+            window.history.back();
+            return;
+          }
+
+          // If on a subpage, use router back
+          const isRoot = window.location.pathname === '/' || window.location.pathname === '/admin/dashboard';
+          if (!isRoot) {
+            if (canGoBack || window.history.length > 1) {
+              router.back();
+              return;
+            } else {
+              router.push('/');
+              return;
+            }
+          }
+
+          // If on Root/Home and no custom history, EXIT APP
+          App.exitApp();
         });
       } catch (e) {
         console.log('Capacitor App plugin not available in web mode', e);
@@ -152,15 +138,7 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
         handler.remove();
       }
     };
-  }, [handleBackAction]);
-
-  useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      handleBackAction(false, true);
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [handleBackAction]);
+  }, [activeTabHistory.length, router]);
 
   return (
     <TabNavigationContext.Provider value={{ activeTabHistory, currentTab, setActiveTab, popTab, registerModal, unregisterModal }}>
