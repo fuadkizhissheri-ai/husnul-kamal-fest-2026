@@ -403,9 +403,10 @@ export default function AdminSchedulePage() {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleOpenModal(s)}
-                          className="p-1.5 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white rounded-lg"
+                          className="w-11 h-11 flex items-center justify-center bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors"
+                          title="Edit Schedule Entry"
                         >
-                          <Edit3 className="w-3.5 h-3.5" />
+                          <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={(e) => {
@@ -413,9 +414,10 @@ export default function AdminSchedulePage() {
                             e.stopPropagation();
                             setConfirmDeleteId(s.id);
                           }}
-                          className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 rounded-lg"
+                          className="w-11 h-11 flex items-center justify-center bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 rounded-lg transition-colors"
+                          title="Delete Schedule Entry"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

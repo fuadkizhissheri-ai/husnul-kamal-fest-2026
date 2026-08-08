@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex flex-col min-h-[100dvh]">
               <AutoRefreshHandler />
               <Navbar />
-              <main className="flex-1 bg-white dark:bg-[#0B0B0B] transition-colors duration-300">
+              <main className="flex-1 bg-white dark:bg-[#0B0B0B] transition-colors duration-300 overflow-x-hidden w-full max-w-[100vw]">
                 <ErrorBoundary fallbackTitle="Page failed to load">
                   {children}
                 </ErrorBoundary>

@@ -836,31 +836,31 @@ export default function AdminProgrammesPage() {
                           />
                         </td>
                         <td className="py-4 px-5 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => {
                                 setScoreCardProg(p);
                                 setScoreCardGroupFilter('ALL');
                               }}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] text-[10px] font-bold hover:bg-[#9E741D] hover:text-white transition-all shadow-sm"
+                              className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] text-xs font-bold hover:bg-[#9E741D] hover:text-white transition-all shadow-sm"
                               title="View Delegates & Export Score Card"
                             >
-                              <Users className="w-3.5 h-3.5" />
+                              <Users className="w-4 h-4" />
                               <span>Score Card ({p.registrations?.length ?? 0})</span>
                             </button>
                             <button
                               onClick={() => handleOpenModal(p)}
-                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+                              className="w-11 h-11 flex items-center justify-center rounded-lg bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white transition-colors"
                               title="Edit Programme"
                             >
-                              <Edit3 className="w-3.5 h-3.5" />
+                              <Edit3 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(p.id)}
-                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 transition-colors"
+                              className="w-11 h-11 flex items-center justify-center rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 transition-colors"
                               title="Delete Programme"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -883,31 +883,7 @@ export default function AdminProgrammesPage() {
                 >
                   {/* Card title row */}
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm font-serif leading-snug flex-1">{p.name}</h3>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <button
-                        onClick={() => {
-                          setScoreCardProg(p);
-                          setScoreCardGroupFilter('ALL');
-                        }}
-                        className="px-2.5 py-1 rounded-lg bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] text-[10px] font-bold flex items-center gap-1"
-                      >
-                        <Users className="w-3 h-3" />
-                        <span>Score Card</span>
-                      </button>
-                      <button
-                        onClick={() => handleOpenModal(p)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-black/5 dark:bg-white/5 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => setConfirmDeleteId(p.id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 transition-all"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base font-serif leading-snug flex-1">{p.name}</h3>
                   </div>
 
                   {/* Badge row */}
@@ -931,6 +907,34 @@ export default function AdminProgrammesPage() {
                   {p.date && (
                     <div className="text-[10px] text-slate-500 font-mono">{p.date} · {p.startTime}</div>
                   )}
+
+                  {/* Actions Grid */}
+                  <div className="pt-2 mt-2 border-t border-black/5 dark:border-white/5 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setScoreCardProg(p);
+                        setScoreCardGroupFilter('ALL');
+                      }}
+                      className="col-span-2 min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] text-sm font-bold shadow-sm"
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>Score Card ({p.registrations?.length ?? 0})</span>
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(p)}
+                      className="min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-black/5 dark:bg-white/5 text-slate-700 dark:text-slate-300 font-medium text-sm"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setConfirmDeleteId(p.id)}
+                      className="min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-rose-500/10 text-rose-700 dark:text-rose-400 font-medium text-sm"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
                 </div>
               );
             })}

@@ -272,9 +272,9 @@ export default function AdminCertificatesPage() {
                             <td className="text-center">
                               <button
                                 onClick={() => setPreviewResult(r)}
-                                className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] rounded-lg text-[10px] font-bold hover:bg-[#9E741D] hover:text-white transition-all shadow-sm"
+                                className="inline-flex items-center space-x-1.5 px-4 py-2 min-h-[44px] bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] rounded-lg text-xs font-bold hover:bg-[#9E741D] hover:text-white transition-all shadow-sm"
                               >
-                                <Eye className="w-3 h-3" />
+                                <Eye className="w-4 h-4" />
                                 <span>Preview &amp; Export</span>
                               </button>
                             </td>

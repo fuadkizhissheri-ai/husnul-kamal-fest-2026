@@ -415,34 +415,36 @@ export default function AdminParticipantsPage() {
                     <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => setActiveIDCardParticipant(p)}
-                        className="btn-pill-luxury bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/10 dark:text-[#C8A86B] dark:border-[#C8A86B]/30 text-[11px] px-3 py-1 font-semibold"
+                        className="btn-pill-luxury bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/10 dark:text-[#C8A86B] dark:border-[#C8A86B]/30 text-[11px] px-3 py-2 min-h-[44px] font-semibold"
                       >
                         Generate 4K ID Pass
                       </button>
                     </td>
-                    <td className="py-3 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => openEditModal(p)}
-                        className="p-1 text-amber-500 hover:text-amber-400 inline-flex items-center"
-                        title="Edit Participant Details"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleSendWhatsAppConfirmation(p.id, p.fullName)}
-                        disabled={sendingWaId === p.id}
-                        className="p-1 text-emerald-500 hover:text-emerald-400 disabled:opacity-50 inline-flex items-center"
-                        title="Send/Resend WhatsApp Confirmation Message"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        className="p-1 text-rose-400 hover:text-rose-300 inline-flex items-center"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex flex-row items-center justify-end gap-2">
+                        <button
+                          onClick={() => openEditModal(p)}
+                          className="w-11 h-11 flex items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
+                          title="Edit Participant Details"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleSendWhatsAppConfirmation(p.id, p.fullName)}
+                          disabled={sendingWaId === p.id}
+                          className="w-11 h-11 flex items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors"
+                          title="Send/Resend WhatsApp Confirmation Message"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          className="w-11 h-11 flex items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition-colors"
+                          title="Delete Participant"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
