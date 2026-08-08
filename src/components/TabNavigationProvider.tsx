@@ -14,35 +14,51 @@ interface TabNavigationContextType {
 
 const TabNavigationContext = createContext<TabNavigationContextType | undefined>(undefined);
 
-export function useBackButtonHandler() {
+export function useHardwareBackButton(activeTab: string | null, setActiveTab: (tab: string) => void) {
   const router = useRouter();
   const pathname = usePathname();
+  const historyStack = useRef<string[]>([]);
+
+  // Maintain custom tab stack
+  useEffect(() => {
+    if (activeTab && historyStack.current[historyStack.current.length - 1] !== activeTab) {
+      historyStack.current.push(activeTab);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
-    let listener: any = null;
+    let backListener: any = null;
 
     const init = async () => {
       try {
         const { App } = await import('@capacitor/app');
-        listener = await App.addListener('backButton', (data) => {
-          // Priority 1: Modal check
-          const openModal = document.querySelector('[role="dialog"], .modal-open, [data-modal]');
+        backListener = await App.addListener('backButton', ({ canGoBack }) => {
+          // Priority 1: Dialog / Modal Close
+          const openModal = document.querySelector('[role="dialog"], .modal-open');
           if (openModal) {
-            const closeButton = openModal.querySelector('button[aria-label="Close"], button[data-close], .close-btn') as HTMLButtonElement;
-            if (closeButton) {
-              closeButton.click();
+            const closeBtn = openModal.querySelector('button[aria-label="Close"], button[data-close], .close-btn') as HTMLButtonElement;
+            if (closeBtn) {
+              closeBtn.click();
+              return;
             }
+          }
+
+          // Priority 2: Custom Tab Navigation History
+          if (historyStack.current.length > 1) {
+            historyStack.current.pop(); // remove current
+            const previousTab = historyStack.current[historyStack.current.length - 1];
+            setActiveTab(previousTab);
             return;
           }
 
-          // Priority 2: Custom History / Browser History
-          const isRoot = pathname === '/' || pathname === '/admin/dashboard';
-          if (window.history.length > 1 && !isRoot) {
-            window.history.back();
-          } else {
-            // Priority 3: Exit ONLY on root page
-            App.exitApp();
+          // Priority 3: Browser / Next.js History
+          if (pathname !== '/' && pathname !== '/admin/dashboard' && canGoBack) {
+            router.back();
+            return;
           }
+
+          // Priority 4: Exit ONLY if sitting at Home / Dashboard and history is empty
+          App.exitApp();
         });
       } catch (e) {
         console.log('Capacitor App plugin not available in web mode');
@@ -52,11 +68,15 @@ export function useBackButtonHandler() {
     init();
 
     return () => {
-      if (listener && typeof listener.remove === 'function') {
-        listener.remove();
+      if (backListener) {
+        if (typeof backListener.remove === 'function') {
+          backListener.remove();
+        } else if (typeof backListener.then === 'function') {
+          backListener.then((handler: any) => handler.remove());
+        }
       }
     };
-  }, [pathname]);
+  }, [pathname, router, setActiveTab]);
 }
 
 export function TabNavigationProvider({ children }: { children: React.ReactNode }) {
@@ -67,8 +87,6 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
   const historyRef = useRef<string[]>([]);
   const modalsRef = useRef<{ id: string; onClose: () => void }[]>([]);
   const isBackActionInProgress = useRef(false);
-
-  useBackButtonHandler();
 
   useEffect(() => {
     historyRef.current = activeTabHistory;
@@ -100,6 +118,8 @@ export function TabNavigationProvider({ children }: { children: React.ReactNode 
       return [...prev, tabId];
     });
   }, []);
+
+  useHardwareBackButton(currentTab, setActiveTab);
 
   const popTab = useCallback(() => {
     let popped = false;
