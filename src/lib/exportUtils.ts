@@ -39,7 +39,19 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
     await document.fonts.ready;
   }
 
-  // 2. Allow flexbox reflow & font rendering layout settlement
+  // 2. Pre-load all external images in the element
+  const images = Array.from(element.querySelectorAll('img'));
+  await Promise.all(
+    images.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    })
+  );
+
+  // 3. Allow flexbox reflow & font rendering layout settlement
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   // 3. Capture canvas with unscaled off-screen cloned DOM context
@@ -49,10 +61,10 @@ export async function exportElementAsImage(options: PixelAccurateExportOptions):
     allowTaint: true,
     backgroundColor: backgroundColor || undefined,
     logging: false,
-    width,
-    height,
-    windowWidth: width + 200,
-    windowHeight: height + 200,
+    width: element.offsetWidth || width,
+    height: element.offsetHeight || height,
+    windowWidth: element.scrollWidth || width,
+    windowHeight: element.scrollHeight || height,
     x: 0,
     y: 0,
     scrollX: 0,
