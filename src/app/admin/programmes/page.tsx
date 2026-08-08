@@ -1149,7 +1149,7 @@ export default function AdminProgrammesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="hk-label">Group Cap (Per House)</label>
+                  <label className="hk-label">Max Limit per Gender (Male/Female)</label>
                   <input
                     type="number"
                     min={0}

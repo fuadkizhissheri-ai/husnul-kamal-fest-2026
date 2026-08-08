@@ -36,12 +36,16 @@ export async function GET(request: Request) {
     });
 
     const formatted = programmes.map((p) => {
-      let mavaddaCount = 0;
-      let mahabbaCount = 0;
+      let mavaddaMaleCount = 0;
+      let mavaddaFemaleCount = 0;
+      let mahabbaMaleCount = 0;
+      let mahabbaFemaleCount = 0;
 
       p.registrations?.forEach((r) => {
-        if (r.participant?.group === 'MAVADDA') mavaddaCount++;
-        if (r.participant?.group === 'MAHABBA') mahabbaCount++;
+        if (r.participant?.group === 'MAVADDA' && r.participant?.gender === 'Male') mavaddaMaleCount++;
+        if (r.participant?.group === 'MAVADDA' && r.participant?.gender === 'Female') mavaddaFemaleCount++;
+        if (r.participant?.group === 'MAHABBA' && r.participant?.gender === 'Male') mahabbaMaleCount++;
+        if (r.participant?.group === 'MAHABBA' && r.participant?.gender === 'Female') mahabbaFemaleCount++;
       });
 
       const limit = p.participantLimit || 0;
@@ -49,10 +53,14 @@ export async function GET(request: Request) {
       return {
         ...p,
         registeredCount: p.registrations ? p.registrations.length : 0,
-        mavaddaCount,
-        mahabbaCount,
-        isMavaddaFull: limit > 0 ? mavaddaCount >= limit : false,
-        isMahabbaFull: limit > 0 ? mahabbaCount >= limit : false,
+        mavaddaMaleCount,
+        mavaddaFemaleCount,
+        mahabbaMaleCount,
+        mahabbaFemaleCount,
+        isMavaddaMaleFull: limit > 0 ? mavaddaMaleCount >= limit : false,
+        isMavaddaFemaleFull: limit > 0 ? mavaddaFemaleCount >= limit : false,
+        isMahabbaMaleFull: limit > 0 ? mahabbaMaleCount >= limit : false,
+        isMahabbaFemaleFull: limit > 0 ? mahabbaFemaleCount >= limit : false,
       };
     });
 

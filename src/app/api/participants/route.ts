@@ -145,13 +145,13 @@ export async function POST(request: Request) {
       }
 
       if (prog.participantLimit && prog.participantLimit > 0) {
-        const groupRegistrationCount = prog.registrations.filter(
-          (r) => r.participant?.group === group
+        const genderGroupRegistrationCount = prog.registrations.filter(
+          (r) => r.participant?.group === group && r.participant?.gender === gender
         ).length;
 
-        if (groupRegistrationCount >= prog.participantLimit) {
+        if (genderGroupRegistrationCount >= prog.participantLimit) {
           return NextResponse.json(
-            { error: `Registration full for ${group} in programme "${prog.name}" (Limit ${prog.participantLimit} per group reached).` },
+            { error: `Registration full for ${gender} candidates in ${group} for programme "${prog.name}" (Limit ${prog.participantLimit} reached).` },
             { status: 400 }
           );
         }
@@ -319,13 +319,13 @@ export async function PUT(request: Request) {
         });
 
         if (prog && prog.participantLimit > 0) {
-          const groupCount = prog.registrations.filter(
-            (r) => r.participant?.group === group && r.participantId !== id
+          const genderGroupCount = prog.registrations.filter(
+            (r) => r.participant?.group === group && r.participant?.gender === gender && r.participantId !== id
           ).length;
 
-          if (groupCount >= prog.participantLimit) {
+          if (genderGroupCount >= prog.participantLimit) {
             return NextResponse.json(
-              { error: `Programme "${prog.name}" has reached max capacity (${prog.participantLimit}) for ${group} House.` },
+              { error: `Programme "${prog.name}" has reached max capacity (${prog.participantLimit}) for ${gender} candidates in ${group} House.` },
               { status: 400 }
             );
           }

@@ -261,14 +261,19 @@ export default function RegisterPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {programmesList.map((prog) => {
           const isSelected = selectedProgrammeIds.includes(prog.id);
+          const isFull = (group === 'MAVADDA' && gender === 'Male' && prog.isMavaddaMaleFull) ||
+                         (group === 'MAVADDA' && gender === 'Female' && prog.isMavaddaFemaleFull) ||
+                         (group === 'MAHABBA' && gender === 'Male' && prog.isMahabbaMaleFull) ||
+                         (group === 'MAHABBA' && gender === 'Female' && prog.isMahabbaFemaleFull);
+
           return (
             <div
               key={prog.id}
-              onClick={() => !prog.isFull && toggleProgrammeSelection(prog.id)}
+              onClick={() => !isFull && toggleProgrammeSelection(prog.id)}
               className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                 isSelected
                   ? 'bg-[#C8A86B]/20 border-[#C8A86B] shadow-md'
-                  : prog.isFull
+                  : isFull
                   ? 'opacity-40 bg-black/5 dark:bg-white/5 border-transparent cursor-not-allowed'
                   : 'bg-black/5 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:border-[#C8A86B]/50'
               }`}
