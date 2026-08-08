@@ -20,11 +20,17 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
   const margin = 15; // 15mm as requested
-  const contentWidth = pageWidth - margin * 2;
+  const contentWidth = pageWidth - margin * 2 - 10; // Extra 10mm safety padding on right
 
-  // Strip non-ASCII characters to prevent jsPDF garbling (Arabic, emojis, zero-width spaces)
-  const safeTitle = circular.title.replace(/[^\x20-\x7E\r\n]/g, '').trim();
-  const safeBody = circular.body.replace(/[^\x20-\x7E\r\n]/g, '');
+  // Strip non-ASCII characters and explicitly handle Arabic Bismillah
+  const safeTitle = circular.title
+    .replace(/﷽/g, 'BISMILLAHIR RAHMANIR RAHIM\n\n')
+    .replace(/[^\x20-\x7E\r\n]/g, '')
+    .trim();
+
+  const safeBody = circular.body
+    .replace(/﷽/g, 'BISMILLAHIR RAHMANIR RAHIM\n')
+    .replace(/[^\x20-\x7E\r\n]/g, '');
 
   // 1. TOP HEADER BANNER (Official Letterhead Look)
   doc.setFillColor(7, 7, 9); // Dark Obsidian
@@ -100,7 +106,7 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   const bodyLines = doc.splitTextToSize(safeBody, contentWidth);
   
   bodyLines.forEach((line: string) => {
-    if (currentY > 260) {
+    if (currentY > 255) {
       doc.addPage();
       currentY = 25;
     }
@@ -109,7 +115,7 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   });
 
   // 6. SINGLE SIGNATURE BLOCK
-  if (currentY > 240) {
+  if (currentY > 230) {
     doc.addPage();
     currentY = 40;
   } else {
@@ -117,7 +123,6 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   }
 
   const activeName = circular.coordinatorName || 'FUAD BIN ADAM';
-  const activeDesig = circular.coordinatorDesignation || 'Programme Convener, Husnul Kamal Fest 2026';
 
   doc.setTextColor(71, 85, 105);
   doc.setFontSize(9);
@@ -136,7 +141,10 @@ export function downloadOfficialCircularPDF(circular: CircularData) {
   doc.setTextColor(100, 116, 139);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(activeDesig, margin, currentY);
+  doc.text('Programme Convener', margin, currentY);
+
+  currentY += 5;
+  doc.text('Husnul Kamal Fest 2026', margin, currentY);
 
   // 7. FOOTER
   const pageCount = (doc as any).internal.getNumberOfPages();
