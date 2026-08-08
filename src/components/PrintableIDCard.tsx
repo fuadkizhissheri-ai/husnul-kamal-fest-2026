@@ -271,6 +271,8 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                     padding: '2px 10px', borderRadius: '9999px',
                     fontFamily: 'Inter, sans-serif',
                     textTransform: 'uppercase',
+                    display: 'flex',
+                    alignItems: 'center'
                   }}>
                     {grp.label}
                   </span>
@@ -295,7 +297,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                       fontFamily: 'Inter, sans-serif', 
                       textAlign: 'right', 
                       textTransform: 'uppercase',
-                      lineHeight: '1.3',
+                      lineHeight: '1.25',
                       wordBreak: 'break-word',
                       flex: 1
                     }}>
@@ -315,13 +317,13 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                     color: grp.accentColor,
                     textTransform: 'uppercase',
                     fontFamily: 'Inter, sans-serif',
-                    marginBottom: '4px',
+                    marginBottom: '6px',
                   }}>
                     REGISTERED PROGRAMMES ({programmeList.length})
                   </div>
 
                   {programmeList.length <= 3 ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxHeight: '52px', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxHeight: '52px', overflow: 'hidden', marginLeft: '-2px' }}>
                       {programmeList.map((prog, idx) => (
                         <span
                           key={idx}
@@ -331,7 +333,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                             background: 'rgba(255,255,255,0.08)',
                             border: `1px solid ${grp.accentColor}35`,
                             color: 'white',
-                            padding: '2px 8px',
+                            padding: '2.5px 8px',
                             borderRadius: '9999px',
                             fontFamily: 'Inter, sans-serif',
                             whiteSpace: 'nowrap',
@@ -339,6 +341,8 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                             overflow: 'hidden',
                             maxWidth: '100%',
                             textTransform: 'uppercase',
+                            display: 'flex',
+                            alignItems: 'center'
                           }}
                         >
                           {prog}
@@ -346,7 +350,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                       ))}
                     </div>
                   ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px', maxHeight: '56px', overflow: 'hidden' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px', maxHeight: '56px', overflow: 'hidden', marginLeft: '-2px' }}>
                       {programmeList.slice(0, 4).map((prog, idx) => (
                         <span
                           key={idx}
@@ -356,7 +360,7 @@ export default function PrintableIDCard({ participant, initialSide }: PrintableI
                             background: 'rgba(255,255,255,0.08)',
                             border: `1px solid ${grp.accentColor}35`,
                             color: 'white',
-                            padding: '2px 6px',
+                            padding: '2.5px 6px',
                             borderRadius: '4px',
                             fontFamily: 'Inter, sans-serif',
                             whiteSpace: 'nowrap',
