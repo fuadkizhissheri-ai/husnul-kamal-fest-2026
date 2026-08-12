@@ -1,4 +1,5 @@
 // Prisma Schema for Husnul Kamal — Meelad Fest 2026
+// Force Vercel trigger
 
 generator client {
   provider = "prisma-client-js"
