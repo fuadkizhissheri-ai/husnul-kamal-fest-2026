@@ -103,8 +103,15 @@ export default function AdminResultsPage() {
     return matchesCategory && matchesGroup && matchesPosition && matchesSearch;
   });
 
+  const eligibleParticipants = participants.filter((p) =>
+    p.registrations?.some((r: any) => r.programmeId === programmeId)
+  );
+
   // Auto-calculate points when programme or position changes
   const handlePositionOrProgChange = (newProgId: string, newPos: string) => {
+    if (newProgId !== programmeId) {
+      setParticipantId(''); // Reset participant when programme changes
+    }
     setProgrammeId(newProgId);
     setPosition(newPos);
 
@@ -127,7 +134,7 @@ export default function AdminResultsPage() {
       const defaultPos = '1st Place';
       setEditingItem(null);
       setProgrammeId(defaultProgId);
-      setParticipantId(participants[0]?.id || '');
+      setParticipantId('');
       setPosition(defaultPos);
 
       const selectedProg = programmes.find((p) => p.id === defaultProgId);
@@ -458,9 +465,18 @@ export default function AdminResultsPage() {
                 <select
                   value={participantId}
                   onChange={(e) => setParticipantId(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none"
+                  disabled={!programmeId || eligibleParticipants.length === 0}
+                  required
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none disabled:opacity-50"
                 >
-                  {participants.map((part) => (
+                  <option value="" disabled className="bg-slate-900 text-white">
+                    {!programmeId 
+                      ? 'Please select a programme first' 
+                      : eligibleParticipants.length === 0 
+                      ? 'No participants registered for this programme' 
+                      : 'Select Participant'}
+                  </option>
+                  {eligibleParticipants.map((part) => (
                     <option key={part.id} value={part.id} className="bg-slate-900 text-white">
                       [{part.chestNumber}] {part.fullName} ({part.group} • {part.category})
                     </option>
