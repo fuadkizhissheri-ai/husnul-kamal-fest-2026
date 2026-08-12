@@ -390,17 +390,23 @@ export default function HomePage() {
                 {/* Photo Container with Gold Ring */}
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-[#D4AF37] via-[#C9A227] to-[#1F3A3A] shadow-lg shrink-0 overflow-hidden relative mb-3 group-hover:scale-105 transition-transform duration-300">
                   <div className="w-full h-full rounded-full overflow-hidden bg-[#18181B] flex items-center justify-center">
-                    {member.photoUrl ? (
+                    {member.photoUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={member.photoUrl}
                         alt={member.name}
                         className="w-full h-full object-cover rounded-full"
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <User className="w-10 h-10 text-[#C8A86B]" />
                     )}
+                    <div className={`${member.photoUrl ? 'hidden' : 'flex'} w-full h-full items-center justify-center`}>
+                      <User className="w-10 h-10 text-[#C8A86B]" />
+                    </div>
                   </div>
                 </div>
 
