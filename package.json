@@ -14,9 +14,7 @@
     "cap:android": "npx cap open android",
     "cap:ios": "npx cap open ios"
   },
-  "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
-  },
+
   "dependencies": {
     "@capacitor/android": "^6.2.0",
     "@capacitor/app": "^6.0.0",
