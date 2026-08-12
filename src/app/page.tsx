@@ -91,14 +91,19 @@ export default function HomePage() {
     }
   };
 
-  // Parse Committee Members from CMS directly without fallback
   const committeeMembers = React.useMemo(() => {
     const cacheBuster = Date.now();
     const addCacheBuster = (members: any[]) =>
-      members.map(member => ({
-        ...member,
-        photoUrl: member.photoUrl ? `${member.photoUrl}?v=${cacheBuster}` : member.photoUrl
-      }));
+      members.map(member => {
+        let finalUrl = member.photoUrl;
+        if (finalUrl && finalUrl.startsWith('http')) {
+          finalUrl = `${finalUrl}${finalUrl.includes('?') ? '&' : '?'}v=${cacheBuster}`;
+        }
+        return {
+          ...member,
+          photoUrl: finalUrl
+        };
+      });
 
     if (cms.committee_members) {
       try {
