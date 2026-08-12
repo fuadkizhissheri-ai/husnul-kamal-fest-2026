@@ -155,7 +155,7 @@ export default function AdminAnnouncementsPage() {
       a.categoryBadge,
       new Date(a.publishedAt).toLocaleDateString(),
       a.body,
-      'FUAD JALALI & MIDLAJ ROSHAN KAMALI',
+      '[Coordinator 1] & [Coordinator 2]',
     ]);
     downloadCSVReport('Husnul_Kamal_Announcements', headers, rows);
   };
@@ -171,7 +171,7 @@ export default function AdminAnnouncementsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold font-serif text-slate-900 dark:text-white">Announcements Manager</h1>
-          <p className="text-xs text-slate-600 dark:text-slate-400">Publish news circulars, export official dual-signed PDFs (Fuad Jalali & Midlaj Roshan Kamali), and manage announcements.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Publish news circulars, export official dual-signed PDFs, and manage announcements.</p>
         </div>
 
         <button
@@ -259,7 +259,7 @@ export default function AdminAnnouncementsPage() {
                 <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed line-clamp-3">{item.body}</p>
 
                 <div className="text-[10px] font-mono text-slate-500 dark:text-neutral-400 pt-1 flex items-center justify-between">
-                  <span>Signatories: {item.coordinator1Name || 'FUAD JALALI'} & {item.coordinator2Name || 'MIDLAJ ROSHAN KAMALI'}</span>
+                  <span>Signatories: {item.coordinator1Name || '[Coordinator 1]'} & {item.coordinator2Name || '[Coordinator 2]'}</span>
                   <span>{new Date(item.publishedAt).toLocaleDateString()}</span>
                 </div>
               </div>
@@ -384,7 +384,7 @@ export default function AdminAnnouncementsPage() {
                       onChange={() => setSignatoryOption('COORD1')}
                       className="accent-[#C8A86B]"
                     />
-                    <span>Fuad Jalali Only</span>
+                    <span>Coordinator 1 Only</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer text-white">
@@ -395,7 +395,7 @@ export default function AdminAnnouncementsPage() {
                       onChange={() => setSignatoryOption('COORD2')}
                       className="accent-[#C8A86B]"
                     />
-                    <span>Midlaj Roshan Only</span>
+                    <span>Coordinator 2 Only</span>
                   </label>
                 </div>
               </div>

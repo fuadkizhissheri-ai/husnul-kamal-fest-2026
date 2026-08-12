@@ -17,43 +17,7 @@ interface CommitteeMember {
   order: number;
 }
 
-const DEFAULT_COMMITTEE: CommitteeMember[] = [
-  {
-    id: 'mem_1',
-    name: 'Fuad Jalali',
-    position: 'Fest Convenor',
-    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    order: 0,
-  },
-  {
-    id: 'mem_2',
-    name: 'Midlaj Roshan Kamali',
-    position: 'Coordinator',
-    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    order: 1,
-  },
-  {
-    id: 'mem_3',
-    name: 'Husain Saqafi',
-    position: 'Chairman',
-    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-    order: 2,
-  },
-  {
-    id: 'mem_4',
-    name: 'Rashid Wafi',
-    position: 'General Secretary',
-    photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
-    order: 3,
-  },
-  {
-    id: 'mem_5',
-    name: 'Anas Al-Hasan',
-    position: 'Finance Controller',
-    photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    order: 4,
-  },
-];
+
 
 export default function AdminSettingsPage() {
   // Logo & Branding Settings
@@ -95,7 +59,7 @@ export default function AdminSettingsPage() {
 
   // Committee / Our Onboard CMS
   const [committeeSubtitle, setCommitteeSubtitle] = useState('The dedicated leadership team guiding Husnul Kamal Meelad Fest 2026.');
-  const [committeeMembers, setCommitteeMembers] = useState<CommitteeMember[]>(DEFAULT_COMMITTEE);
+  const [committeeMembers, setCommitteeMembers] = useState<CommitteeMember[]>([]);
   const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
 
   // Dates & Venue CMS

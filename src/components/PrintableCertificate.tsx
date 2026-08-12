@@ -67,10 +67,10 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
     ? new Date(result.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
     : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  const coord1Name = coordinatorSettings?.coord1Name || 'Fuad Jalali';
-  const coord1Desig = coordinatorSettings?.coord1Designation || 'Fest Convenor';
-  const coord2Name = coordinatorSettings?.coord2Name || 'Midlaj Roshan Kamali';
-  const coord2Desig = coordinatorSettings?.coord2Designation || 'Coordinator';
+  const coord1Name = coordinatorSettings?.coord1Name || '';
+  const coord1Desig = coordinatorSettings?.coord1Designation || '';
+  const coord2Name = coordinatorSettings?.coord2Name || '';
+  const coord2Desig = coordinatorSettings?.coord2Designation || '';
 
   // Format position for badge
   const positionLabel = isParticipation ? 'PARTICIPANT' : result.position.toUpperCase();

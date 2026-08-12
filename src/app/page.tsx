@@ -66,6 +66,22 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    // Clear potential legacy caches on launch
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.clear();
+        Object.keys(localStorage).forEach(key => {
+          if (
+            key.toLowerCase().includes('team') ||
+            key.toLowerCase().includes('committee') ||
+            key.toLowerCase().includes('cache') ||
+            key.toLowerCase().includes('query')
+          ) {
+            localStorage.removeItem(key);
+          }
+        });
+      } catch (e) {}
+    }
     fetchCMS();
   }, []);
 
