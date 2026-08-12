@@ -62,6 +62,7 @@ export default function AdminParticipantsPage() {
   // Bulk WhatsApp State
   const [isBulkWaModalOpen, setIsBulkWaModalOpen] = useState(false);
   const [bulkWaIndex, setBulkWaIndex] = useState(0);
+  const [bulkTarget, setBulkTarget] = useState<'FILTERED' | 'ALL'>('ALL');
 
   // Global Modals
   useGlobalModal(!!editParticipant, () => { setEditParticipant(null); setEditingProgrammes(false); }, 'edit-participant-modal');
@@ -790,59 +791,74 @@ Best wishes!
       )}
 
       {/* BULK WHATSAPP MODAL */}
-      {isBulkWaModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 p-6 rounded-3xl border border-emerald-500/30 max-w-2xl w-full flex flex-col space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-lg font-bold font-serif text-emerald-400 flex items-center space-x-2">
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Bulk WhatsApp Broadcast</span>
-                </h3>
-                <p className="text-[10px] text-slate-400">Current filter contains {filtered.length} delegates.</p>
+      {isBulkWaModalOpen && (() => {
+        const targetList = bulkTarget === 'ALL' ? participants : filtered;
+        return (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-slate-900 p-6 rounded-3xl border border-emerald-500/30 max-w-2xl w-full flex flex-col space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div>
+                  <h3 className="text-lg font-bold font-serif text-emerald-400 flex items-center space-x-2">
+                    <MessageCircle className="w-5 h-5" />
+                    <span>Bulk WhatsApp Broadcast</span>
+                  </h3>
+                  <p className="text-[10px] text-slate-400">Targeting {targetList.length} delegates.</p>
+                </div>
+                <button onClick={() => { setIsBulkWaModalOpen(false); setBulkWaIndex(0); }} className="text-slate-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button onClick={() => { setIsBulkWaModalOpen(false); setBulkWaIndex(0); }} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <div className="text-sm text-slate-300 space-y-4">
-              <p>You are about to generate individual WhatsApp messages for all <strong>{filtered.length}</strong> participants currently visible in the table.</p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => {
-                    const numbers = filtered.map(p => sanitizePhone(p.whatsapp)).filter(Boolean);
-                    navigator.clipboard.writeText(numbers.join(', '));
-                    alert(`Copied ${numbers.length} numbers to clipboard!`);
-                  }}
-                  className="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-white flex flex-col items-center justify-center text-center gap-1 transition-colors"
-                >
-                  <span className="text-base text-slate-200">Copy Phone Numbers</span>
-                  <span className="text-[10px] text-slate-400 font-normal">Export a comma-separated list of all sanitized numbers for broadcast groups.</span>
-                </button>
+              <div className="text-sm text-slate-300 space-y-4">
+                <div className="bg-black/30 p-4 rounded-xl border border-white/5 space-y-2">
+                  <span className="font-semibold text-xs text-slate-400 block mb-2">Select Target Audience:</span>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" checked={bulkTarget === 'ALL'} onChange={() => { setBulkTarget('ALL'); setBulkWaIndex(0); }} className="accent-emerald-500" />
+                    <span>All Registered Delegates <strong>({participants.length})</strong></span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" checked={bulkTarget === 'FILTERED'} onChange={() => { setBulkTarget('FILTERED'); setBulkWaIndex(0); }} className="accent-emerald-500" />
+                    <span>Currently Filtered Table Only <strong>({filtered.length})</strong></span>
+                  </label>
+                </div>
+
+                <p>You are about to generate individual WhatsApp messages for <strong>{targetList.length}</strong> participants.</p>
                 
-                <button
-                  onClick={() => {
-                    if (filtered.length === 0) return;
-                    if (bulkWaIndex >= filtered.length) {
-                      alert("You have messaged all participants in this list!");
-                      return;
-                    }
-                    const p = filtered[bulkWaIndex];
-                    handleSendWhatsAppConfirmation(p);
-                    setBulkWaIndex(bulkWaIndex + 1);
-                  }}
-                  className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold flex flex-col items-center justify-center text-center gap-1 transition-colors"
-                >
-                  <span className="text-base">Message Participant {bulkWaIndex + 1} of {filtered.length}</span>
-                  <span className="text-[10px] text-emerald-100 font-normal truncate max-w-[200px]" title={filtered[bulkWaIndex]?.fullName}>Opens WhatsApp with pre-filled message for <strong>{filtered[bulkWaIndex]?.fullName || '...'}</strong></span>
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() => {
+                      const numbers = targetList.map((p: Participant) => sanitizePhone(p.whatsapp)).filter(Boolean);
+                      navigator.clipboard.writeText(numbers.join(', '));
+                      alert(`Copied ${numbers.length} numbers to clipboard!`);
+                    }}
+                    className="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-white flex flex-col items-center justify-center text-center gap-1 transition-colors"
+                  >
+                    <span className="text-base text-slate-200">Copy Phone Numbers</span>
+                    <span className="text-[10px] text-slate-400 font-normal">Export a comma-separated list of all sanitized numbers for broadcast groups.</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      if (targetList.length === 0) return;
+                      if (bulkWaIndex >= targetList.length) {
+                        alert("You have messaged all participants in this list!");
+                        return;
+                      }
+                      const p = targetList[bulkWaIndex];
+                      handleSendWhatsAppConfirmation(p);
+                      setBulkWaIndex(bulkWaIndex + 1);
+                    }}
+                    className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold flex flex-col items-center justify-center text-center gap-1 transition-colors"
+                  >
+                    <span className="text-base">Message Participant {bulkWaIndex + 1} of {targetList.length}</span>
+                    <span className="text-[10px] text-emerald-100 font-normal truncate max-w-[200px]" title={targetList[bulkWaIndex]?.fullName}>Opens WhatsApp with pre-filled message for <strong>{targetList[bulkWaIndex]?.fullName || '...'}</strong></span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
     </div>
   );
