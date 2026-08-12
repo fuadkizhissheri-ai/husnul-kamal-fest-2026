@@ -52,6 +52,7 @@ export default function AdminResultsPage() {
   const [activeCertResult, setActiveCertResult] = useState<ResultItem | null>(null);
 
   // Form Fields
+  const [modalCategory, setModalCategory] = useState('ALL');
   const [programmeId, setProgrammeId] = useState('');
   const [participantId, setParticipantId] = useState('');
   const [position, setPosition] = useState('1st Place');
@@ -107,6 +108,17 @@ export default function AdminResultsPage() {
     p.registrations?.some((r: any) => r.programmeId === programmeId)
   );
 
+  const eligibleProgrammes = programmes.filter(
+    (p) => modalCategory === 'ALL' || p.category === modalCategory
+  );
+
+  const handleModalCategoryChange = (newCat: string) => {
+    setModalCategory(newCat);
+    setProgrammeId('');
+    setParticipantId('');
+    setPoints(0);
+  };
+
   // Auto-calculate points when programme or position changes
   const handlePositionOrProgChange = (newProgId: string, newPos: string) => {
     if (newProgId !== programmeId) {
@@ -125,24 +137,18 @@ export default function AdminResultsPage() {
   const handleOpenModal = (item?: ResultItem) => {
     if (item) {
       setEditingItem(item);
+      setModalCategory(item.programme.category);
       setProgrammeId(item.programme.id);
       setParticipantId(item.participant.id);
       setPosition(item.position);
       setPoints(item.points);
     } else {
-      const defaultProgId = programmes[0]?.id || '';
-      const defaultPos = '1st Place';
       setEditingItem(null);
-      setProgrammeId(defaultProgId);
+      setModalCategory('ALL');
+      setProgrammeId('');
       setParticipantId('');
-      setPosition(defaultPos);
-
-      const selectedProg = programmes.find((p) => p.id === defaultProgId);
-      if (selectedProg) {
-        setPoints(calculateAutoPoints(selectedProg, defaultPos, pointsSettings));
-      } else {
-        setPoints(10);
-      }
+      setPosition('1st Place');
+      setPoints(0);
     }
     setIsModalOpen(true);
   };
@@ -446,13 +452,33 @@ export default function AdminResultsPage() {
 
             <form onSubmit={handleSaveResult} className="space-y-4 text-xs">
               <div>
+                <label className="block text-slate-300 font-semibold mb-1">Select Category Filter</label>
+                <select
+                  value={modalCategory}
+                  onChange={(e) => handleModalCategoryChange(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none"
+                >
+                  <option value="ALL" className="bg-slate-900 text-white">All Categories</option>
+                  <option value="Sub Junior" className="bg-slate-900 text-white">Sub Junior</option>
+                  <option value="Junior" className="bg-slate-900 text-white">Junior</option>
+                  <option value="Senior" className="bg-slate-900 text-white">Senior</option>
+                  <option value="Super Senior" className="bg-slate-900 text-white">Super Senior</option>
+                  <option value="General" className="bg-slate-900 text-white">General</option>
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-slate-300 font-semibold mb-1">Select Programme *</label>
                 <select
                   value={programmeId}
                   onChange={(e) => handlePositionOrProgChange(e.target.value, position)}
+                  required
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none"
                 >
-                  {programmes.map((p) => (
+                  <option value="" disabled className="bg-slate-900 text-white">
+                    {eligibleProgrammes.length === 0 ? 'No programmes found' : 'Select a Programme'}
+                  </option>
+                  {eligibleProgrammes.map((p) => (
                     <option key={p.id} value={p.id} className="bg-slate-900 text-white">
                       {p.name} ({p.category}) — {p.isGroup ? 'Group Item' : 'Single Item'}
                     </option>
