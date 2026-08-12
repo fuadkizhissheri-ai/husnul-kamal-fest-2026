@@ -57,7 +57,7 @@ export default function HomePage() {
   const { logoUrl } = useLogo();
 
   const fetchCMS = (bypassCache = false) => {
-    fetch('/api/settings')
+    fetch(`/api/settings${bypassCache ? '?t=' + Date.now() : ''}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => {
         if (data?.settings) setCms(data.settings);
@@ -106,19 +106,26 @@ export default function HomePage() {
     }
   };
 
-  // Parse Committee Members from CMS or use default 5 members
+  // Parse Committee Members from CMS directly without fallback
   const committeeMembers = React.useMemo(() => {
+    const cacheBuster = Date.now();
+    const addCacheBuster = (members: any[]) =>
+      members.map(member => ({
+        ...member,
+        photoUrl: member.photoUrl ? `${member.photoUrl}?v=${cacheBuster}` : member.photoUrl
+      }));
+
     if (cms.committee_members) {
       try {
         const parsed = JSON.parse(cms.committee_members);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          return addCacheBuster(parsed);
         }
       } catch (e) {
         console.error('Failed to parse committee_members CMS:', e);
       }
     }
-    return DEFAULT_COMMITTEE;
+    return [];
   }, [cms.committee_members]);
 
   return (

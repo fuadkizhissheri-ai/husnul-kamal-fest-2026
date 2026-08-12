@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const settingsList = await prisma.setting.findMany();
@@ -14,7 +16,7 @@ export async function GET() {
       { settings: settingsMap, list: settingsList },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'Cache-Control': 'no-store, max-age=0',
         },
       }
     );
