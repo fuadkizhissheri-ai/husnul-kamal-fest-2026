@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function GET() {
   try {
@@ -12,14 +12,7 @@ export async function GET() {
     for (const item of settingsList) {
       settingsMap[item.key] = item.value;
     }
-    return NextResponse.json(
-      { settings: settingsMap, list: settingsList },
-      {
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      }
-    );
+    return NextResponse.json({ settings: settingsMap, list: settingsList });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to fetch settings' }, { status: 500 });
   }

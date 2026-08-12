@@ -50,8 +50,6 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 4000);
-    return () => clearInterval(interval);
   }, []);
 
   useRealtimeSync(() => {

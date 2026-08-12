@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import SmoothScroll from '@/components/SmoothScroll';
 import ArabicCalligraphyCanvas from '@/components/ArabicCalligraphyCanvas';
+import useSWR from 'swr';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { useLogo } from '@/lib/useLogo';
 import {
@@ -25,19 +26,14 @@ import { motion } from 'framer-motion';
 
 
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function HomePage() {
-  const [cms, setCms] = useState<Record<string, string>>({});
+  const { data, mutate } = useSWR('/api/settings', fetcher);
+  const cms = data?.settings || {};
+  
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const { logoUrl } = useLogo();
-
-  const fetchCMS = (bypassCache = false) => {
-    fetch(`/api/settings${bypassCache ? '?t=' + Date.now() : ''}`, { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.settings) setCms(data.settings);
-      })
-      .catch((err) => console.error(err));
-  };
 
   useEffect(() => {
     // Clear potential legacy caches on launch
@@ -56,12 +52,11 @@ export default function HomePage() {
         });
       } catch (e) {}
     }
-    fetchCMS();
   }, []);
 
   const handleRealtimeUpdate = useCallback(() => {
-    fetchCMS(true);
-  }, []);
+    mutate();
+  }, [mutate]);
 
   useRealtimeSync(handleRealtimeUpdate);
 

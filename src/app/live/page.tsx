@@ -237,10 +237,6 @@ export default function LiveDisplayPage() {
 
   useEffect(() => {
     fetchLiveData();
-    pollIntervalRef.current = setInterval(fetchLiveData, 5000);
-    return () => {
-      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-    };
   }, []);
 
   // 1. Instant Signal Listener (BroadcastChannel & LocalStorage)
