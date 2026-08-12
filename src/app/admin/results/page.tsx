@@ -330,21 +330,21 @@ export default function AdminResultsPage() {
             <table className="w-full min-w-[700px] text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#18181B] text-[#F5E6C4] dark:bg-[#0B0B0B] dark:text-[#C8A86B] font-mono text-[11px] uppercase tracking-wider border-b border-[#9E741D]/20">
-                  <th className="py-4 px-6 font-bold">Position</th>
-                  <th className="py-4 px-6 font-bold">Delegate Name</th>
-                  <th className="py-4 px-6 font-bold">Chest No.</th>
-                  <th className="py-4 px-6 font-bold">House Group</th>
-                  <th className="py-4 px-6 font-bold">Programme Name</th>
-                  <th className="py-4 px-6 font-bold">Category</th>
-                  <th className="py-4 px-6 font-bold text-center">Points</th>
-                  <th className="py-4 px-6 font-bold text-center">Status</th>
-                  <th className="py-4 px-6 font-bold text-right">Actions</th>
+                  <th className="py-4 px-6 font-bold text-left w-[12%]">Position</th>
+                  <th className="py-4 px-6 font-bold text-left w-[18%]">Delegate Name</th>
+                  <th className="py-4 px-6 font-bold text-left w-[10%]">Chest No.</th>
+                  <th className="py-4 px-6 font-bold text-left w-[12%]">House Group</th>
+                  <th className="py-4 px-6 font-bold text-left w-[16%]">Programme Name</th>
+                  <th className="py-4 px-6 font-bold text-left w-[10%]">Category</th>
+                  <th className="py-4 px-6 font-bold text-center w-[8%]">Points</th>
+                  <th className="py-4 px-6 font-bold text-center w-[8%]">Status</th>
+                  <th className="py-4 px-6 font-bold text-right w-[16%]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-white/10 text-slate-800 dark:text-slate-200 font-sans">
                 {filteredResults.map((r) => (
-                  <tr key={r.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                    <td className="py-3.5 px-6 font-bold font-serif">
+                  <tr key={r.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors align-middle">
+                    <td className="py-4 px-6 font-bold font-serif align-middle">
                       <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-[11px] font-bold ${
                         r.position.includes('1st')
                           ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40'
@@ -358,13 +358,13 @@ export default function AdminResultsPage() {
                         <span>{r.position}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-6 font-bold font-serif text-slate-900 dark:text-white">
+                    <td className="py-4 px-6 font-bold font-serif text-slate-900 dark:text-white align-middle">
                       {r.participant?.fullName}
                     </td>
-                    <td className="py-3.5 px-6 font-mono font-bold text-[#9E741D] dark:text-[#C8A86B]">
+                    <td className="py-4 px-6 font-mono font-bold text-[#9E741D] dark:text-[#C8A86B] align-middle">
                       {r.participant?.chestNumber}
                     </td>
-                    <td className="py-3.5 px-6 font-mono">
+                    <td className="py-4 px-6 font-mono align-middle">
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         r.participant?.group === 'MAVADDA'
                           ? 'bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300'
@@ -373,18 +373,18 @@ export default function AdminResultsPage() {
                         {r.participant?.group}
                       </span>
                     </td>
-                    <td className="py-3.5 px-6 font-medium">{r.programme?.name}</td>
-                    <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400">{r.programme?.category}</td>
-                    <td className="py-3.5 px-6 text-center font-mono font-bold text-emerald-700 dark:text-emerald-400 text-sm">
+                    <td className="py-4 px-6 font-medium align-middle">{r.programme?.name}</td>
+                    <td className="py-4 px-6 text-slate-600 dark:text-slate-400 align-middle">{r.programme?.category}</td>
+                    <td className="py-4 px-6 text-center font-mono font-bold text-emerald-700 dark:text-emerald-400 text-sm align-middle">
                       +{r.points}
                     </td>
-                    <td className="py-3.5 px-6 text-center">
+                    <td className="py-4 px-6 text-center align-middle">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${r.isPublished ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/40'}`}>
                         {r.isPublished ? 'PUBLISHED' : 'HIDDEN'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-6 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                    <td className="py-4 px-6 text-right align-middle">
+                      <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => togglePublish(r.id, r.isPublished)}
                           className={`w-11 h-11 flex items-center justify-center rounded-lg ${r.isPublished ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 dark:text-emerald-400' : 'bg-slate-500/10 text-slate-600 hover:bg-slate-500/20 dark:text-slate-400'}`}
