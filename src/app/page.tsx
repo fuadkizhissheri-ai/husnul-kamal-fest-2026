@@ -23,33 +23,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const DEFAULT_COMMITTEE = [
-  {
-    name: 'Fuad Jalali',
-    position: 'Fest Convenor',
-    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    name: 'Midlaj Roshan Kamali',
-    position: 'Coordinator',
-    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    name: 'Husain Saqafi',
-    position: 'Chairman',
-    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    name: 'Rashid Wafi',
-    position: 'General Secretary',
-    photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    name: 'Anas Al-Hasan',
-    position: 'Finance Controller',
-    photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-  },
-];
+
 
 export default function HomePage() {
   const [cms, setCms] = useState<Record<string, string>>({});
