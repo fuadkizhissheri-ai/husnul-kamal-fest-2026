@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import PrintableCertificate from '@/components/PrintableCertificate';
-import { Trophy, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, Medal, Sparkles, Award } from 'lucide-react';
+import { Trophy, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, Medal, Sparkles, Award, Eye, EyeOff } from 'lucide-react';
 import { calculateAutoPoints, PointsSettings, DEFAULT_POINTS_SETTINGS } from '@/lib/scoring';
 
 interface ResultItem {
@@ -12,6 +12,7 @@ interface ResultItem {
   position: string;
   points: number;
   certificateGenerated: boolean;
+  isPublished: boolean;
   programme: {
     id: string;
     name: string;
@@ -36,6 +37,7 @@ export default function AdminResultsPage() {
   const [participants, setParticipants] = useState<any[]>([]);
   const [pointsSettings, setPointsSettings] = useState<PointsSettings>(DEFAULT_POINTS_SETTINGS);
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Filters Before Export
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +60,7 @@ export default function AdminResultsPage() {
   const fetchResults = () => {
     setLoading(true);
     Promise.all([
-      fetch('/api/results').then((r) => r.json()),
+      fetch('/api/results?all=true').then((r) => r.json()),
       fetch('/api/programmes').then((r) => r.json()),
       fetch('/api/participants').then((r) => r.json()),
       fetch('/api/settings').then((r) => r.json()),
@@ -163,6 +165,35 @@ export default function AdminResultsPage() {
     await fetch(`/api/results?id=${id}`, { method: 'DELETE' });
     setConfirmDeleteId(null);
     fetchResults();
+  };
+
+  const togglePublish = async (id: string, currentStatus: boolean) => {
+    // Optimistic UI update
+    setResults(prev => prev.map(r => r.id === id ? { ...r, isPublished: !currentStatus } : r));
+    
+    try {
+      const res = await fetch(`/api/admin/results/${id}/toggle-publish`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: !currentStatus })
+      });
+      if (res.ok) {
+        showToast(!currentStatus ? 'Result published successfully!' : 'Result hidden successfully!');
+      } else {
+        // Revert on failure
+        setResults(prev => prev.map(r => r.id === id ? { ...r, isPublished: currentStatus } : r));
+        showToast('Failed to update publish status.');
+      }
+    } catch (error) {
+      // Revert on error
+      setResults(prev => prev.map(r => r.id === id ? { ...r, isPublished: currentStatus } : r));
+      showToast('Error updating publish status.');
+    }
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   // Exporters
@@ -306,6 +337,7 @@ export default function AdminResultsPage() {
                   <th className="py-4 px-6 font-bold">Programme Name</th>
                   <th className="py-4 px-6 font-bold">Category</th>
                   <th className="py-4 px-6 font-bold text-center">Points</th>
+                  <th className="py-4 px-6 font-bold text-center">Status</th>
                   <th className="py-4 px-6 font-bold text-right">Actions</th>
                 </tr>
               </thead>
@@ -346,8 +378,20 @@ export default function AdminResultsPage() {
                     <td className="py-3.5 px-6 text-center font-mono font-bold text-emerald-700 dark:text-emerald-400 text-sm">
                       +{r.points}
                     </td>
+                    <td className="py-3.5 px-6 text-center">
+                      <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${r.isPublished ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/40'}`}>
+                        {r.isPublished ? 'PUBLISHED' : 'HIDDEN'}
+                      </span>
+                    </td>
                     <td className="py-3.5 px-6 text-right">
                       <div className="flex items-center justify-end space-x-2">
+                        <button
+                          onClick={() => togglePublish(r.id, r.isPublished)}
+                          className={`w-11 h-11 flex items-center justify-center rounded-lg ${r.isPublished ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 dark:text-emerald-400' : 'bg-slate-500/10 text-slate-600 hover:bg-slate-500/20 dark:text-slate-400'}`}
+                          title={r.isPublished ? "Hide Result" : "Publish Result"}
+                        >
+                          {r.isPublished ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        </button>
                         <button
                           onClick={() => setActiveCertResult(r)}
                           className="px-3 py-2 min-h-[44px] rounded-lg bg-[#C8A86B]/20 text-[#9E741D] dark:text-[#C8A86B] font-bold text-xs hover:bg-[#C8A86B]/30 flex items-center space-x-1.5"
@@ -511,6 +555,13 @@ export default function AdminResultsPage() {
         </div>
       )}
 
+      {/* TOAST NOTIFICATION */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 bg-[#C8A86B] text-[#0B0B0B] font-bold px-6 py-3 rounded-2xl shadow-2xl animate-in slide-in-from-bottom-5 fade-in duration-300 z-[100] flex items-center space-x-2">
+          <Sparkles className="w-4 h-4" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -78,6 +78,7 @@ model Result {
   position             String      // 1st, 2nd, 3rd, Grade A, Grade B
   points               Int         @default(0)
   certificateGenerated Boolean     @default(true)
+  isPublished          Boolean     @default(false)
   createdAt            DateTime    @default(now())
   programme            Programme   @relation(fields: [programmeId], references: [id], onDelete: Cascade)
   participant          Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)

@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const programmeId = searchParams.get('programmeId');
     const participantId = searchParams.get('participantId');
     const query = searchParams.get('q');
+    const all = searchParams.get('all');
 
     const where: any = {};
     if (programmeId) where.programmeId = programmeId;
@@ -19,6 +20,15 @@ export async function GET(request: Request) {
 
     if (category) {
       where.programme = { category };
+    }
+
+    if (all === 'true') {
+      const session = await verifyAdminSession();
+      if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    } else {
+      where.isPublished = true;
     }
 
     if (query) {
