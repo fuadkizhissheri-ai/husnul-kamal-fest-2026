@@ -53,16 +53,20 @@ export default function AdminParticipantsPage() {
   const [editError, setEditError] = useState('');
   const [editingProgrammes, setEditingProgrammes] = useState<boolean>(false);
   
-  // Bulk Upload State
   const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
   const [bulkUploadRows, setBulkUploadRows] = useState<any[]>([]);
   const [bulkUploadError, setBulkUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  // Bulk WhatsApp State
+  const [isBulkWaModalOpen, setIsBulkWaModalOpen] = useState(false);
+  const [bulkWaIndex, setBulkWaIndex] = useState(0);
+
   // Global Modals
   useGlobalModal(!!editParticipant, () => { setEditParticipant(null); setEditingProgrammes(false); }, 'edit-participant-modal');
   useGlobalModal(isBulkUploadModalOpen, () => { setIsBulkUploadModalOpen(false); setBulkUploadRows([]); setBulkUploadError(null); }, 'bulk-upload-participant-modal');
+  useGlobalModal(isBulkWaModalOpen, () => { setIsBulkWaModalOpen(false); setBulkWaIndex(0); }, 'bulk-wa-modal');
 
   const fetchParticipants = async () => {
     setLoading(true);
@@ -89,25 +93,44 @@ export default function AdminParticipantsPage() {
     fetchProgrammes();
   }, []);
 
-  const handleSendWhatsAppConfirmation = async (participantId: string, studentName: string) => {
-    setSendingWaId(participantId);
-    try {
-      const res = await fetch('/api/notifications/whatsapp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ participantId }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        alert(`WhatsApp confirmation message sent successfully to ${studentName}! (Provider: ${data.method})`);
-      } else {
-        alert(`WhatsApp notification dispatch status for ${studentName}:\n${data.info || data.error}`);
-      }
-    } catch (err: any) {
-      alert(`Failed to send WhatsApp message: ${err.message}`);
-    } finally {
-      setSendingWaId(null);
+  const sanitizePhone = (phone: string) => {
+    if (!phone) return '';
+    let clean = phone.replace(/\D/g, '');
+    if (!clean) return '';
+    if (clean.length === 10) clean = '91' + clean;
+    if (clean.length > 10 && !clean.startsWith('91')) {
+      if (clean.startsWith('0')) clean = '91' + clean.substring(1);
     }
+    return clean;
+  };
+
+  const generateWaMessage = (p: Participant) => {
+    const progList = (p.registrations || [])
+      .map((r: any) => r.programme?.name || 'Unknown')
+      .join(', ');
+    
+    return `Assalamu Alaikum ${p.fullName},
+
+Your registration for Husnul Kamal Fest 2026 is SUCCESSFULLY REGISTERED! 🎉
+
+📌 Details:
+• Chest No: ${p.chestNumber}
+• Category: ${p.category}
+• House: ${p.group}
+• Registered Programmes: ${progList || 'None'}
+
+Best wishes!
+- Control Desk, Mifthahul Uloom`;
+  };
+
+  const handleSendWhatsAppConfirmation = (p: Participant) => {
+    const cleanPhone = sanitizePhone(p.whatsapp);
+    if (!cleanPhone) {
+      alert(`Invalid or missing WhatsApp number for ${p.fullName}.`);
+      return;
+    }
+    const text = encodeURIComponent(generateWaMessage(p));
+    window.open(`https://wa.me/${cleanPhone}?text=${text}`, '_blank');
   };
 
   const openEditModal = (p: Participant) => {
@@ -329,6 +352,13 @@ export default function AdminParticipantsPage() {
         {/* Download PDF Button & Bulk Add Button */}
         <div className="flex items-center space-x-2">
           <button
+            onClick={() => setIsBulkWaModalOpen(true)}
+            className="btn-pill-luxury bg-[#10b981] text-white font-bold text-xs px-4 py-2 flex items-center space-x-1.5 shadow-md hover:bg-[#059669]"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Bulk WhatsApp</span>
+          </button>
+          <button
             onClick={() => setIsBulkUploadModalOpen(true)}
             className="btn-pill-luxury bg-[#FAF8F3] text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-bold text-xs px-4 py-2 flex items-center space-x-1.5 shadow-md hover:bg-slate-200 dark:hover:bg-slate-700"
           >
@@ -430,10 +460,9 @@ export default function AdminParticipantsPage() {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleSendWhatsAppConfirmation(p.id, p.fullName)}
-                          disabled={sendingWaId === p.id}
-                          className="w-11 h-11 flex items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors"
-                          title="Send/Resend WhatsApp Confirmation Message"
+                          onClick={() => handleSendWhatsAppConfirmation(p)}
+                          className="w-11 h-11 flex items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                          title="Send WhatsApp Confirmation Message"
                         >
                           <MessageCircle className="w-4 h-4" />
                         </button>
@@ -756,6 +785,59 @@ export default function AdminParticipantsPage() {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      {/* BULK WHATSAPP MODAL */}
+      {isBulkWaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 p-6 rounded-3xl border border-emerald-500/30 max-w-2xl w-full flex flex-col space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-lg font-bold font-serif text-emerald-400 flex items-center space-x-2">
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Bulk WhatsApp Broadcast</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Current filter contains {filtered.length} delegates.</p>
+              </div>
+              <button onClick={() => { setIsBulkWaModalOpen(false); setBulkWaIndex(0); }} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="text-sm text-slate-300 space-y-4">
+              <p>You are about to generate individual WhatsApp messages for all <strong>{filtered.length}</strong> participants currently visible in the table.</p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => {
+                    const numbers = filtered.map(p => sanitizePhone(p.whatsapp)).filter(Boolean);
+                    navigator.clipboard.writeText(numbers.join(', '));
+                    alert(`Copied ${numbers.length} numbers to clipboard!`);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-white flex flex-col items-center justify-center text-center gap-1 transition-colors"
+                >
+                  <span className="text-base text-slate-200">Copy Phone Numbers</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Export a comma-separated list of all sanitized numbers for broadcast groups.</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    if (filtered.length === 0) return;
+                    if (bulkWaIndex >= filtered.length) {
+                      alert("You have messaged all participants in this list!");
+                      return;
+                    }
+                    const p = filtered[bulkWaIndex];
+                    handleSendWhatsAppConfirmation(p);
+                    setBulkWaIndex(bulkWaIndex + 1);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold flex flex-col items-center justify-center text-center gap-1 transition-colors"
+                >
+                  <span className="text-base">Message Participant {bulkWaIndex + 1} of {filtered.length}</span>
+                  <span className="text-[10px] text-emerald-100 font-normal truncate max-w-[200px]" title={filtered[bulkWaIndex]?.fullName}>Opens WhatsApp with pre-filled message for <strong>{filtered[bulkWaIndex]?.fullName || '...'}</strong></span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
