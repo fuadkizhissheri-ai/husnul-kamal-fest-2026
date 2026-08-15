@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { downloadPDFReport, downloadScoreCardPDF, downloadBatchScoreCardsPDF } from '@/lib/pdfExporter';
+import { downloadPDFReport, downloadScoreCardPDF, downloadBatchScoreCardsPDF, downloadProgrammeChartPDF } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import { FIXED_STAGES, getStageInfo } from '@/lib/stages';
 import {
   Sparkles, Plus, Edit3, Trash2, Download,
-  Search, Printer, FileSpreadsheet, X, Users, FilterX, RotateCcw,
+  Search, Printer, FileSpreadsheet, X, Users, FilterX, RotateCcw, FileText
 } from 'lucide-react';
 import { useGlobalModal } from '@/components/TabNavigationProvider';
 
@@ -35,6 +35,7 @@ interface ProgrammeItem {
       madrasa?: string;
       group: string;
       category?: string;
+      whatsapp?: string;
     };
   }>;
 }
@@ -586,6 +587,10 @@ export default function AdminProgrammesPage() {
     );
   };
 
+  const handleDownloadProgrammeChart = (p: ProgrammeItem) => {
+    downloadProgrammeChartPDF(p);
+  };
+
   // Batch Download Score Cards for ALL Currently Filtered Programmes
   const handleBatchScoreCards = () => {
     if (filteredProgrammes.length === 0) return;
@@ -843,13 +848,21 @@ export default function AdminProgrammesPage() {
                                 setScoreCardGroupFilter('ALL');
                               }}
                               className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg bg-[#F5E6C4] text-[#7A5600] border border-[#E5C578] dark:bg-[#C8A86B]/15 dark:border-[#C8A86B]/40 dark:text-[#C8A86B] text-xs font-bold hover:bg-[#9E741D] hover:text-white transition-all shadow-sm"
-                              title="View Delegates & Export Score Card"
-                            >
-                              <Users className="w-4 h-4" />
-                              <span>Score Card ({p.registrations?.length ?? 0})</span>
-                            </button>
-                            <button
-                              onClick={() => handleOpenModal(p)}
+                               title="View Delegates & Export Score Card"
+                             >
+                               <Users className="w-4 h-4" />
+                               <span>Score Card ({p.registrations?.length ?? 0})</span>
+                             </button>
+                             <button
+                               onClick={() => handleDownloadProgrammeChart(p)}
+                               className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:border-emerald-500/40 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                               title="Download Programme Chart (PDF)"
+                             >
+                               <FileText className="w-4 h-4" />
+                               <span>List</span>
+                             </button>
+                             <button
+                               onClick={() => handleOpenModal(p)}
                               className="w-11 h-11 flex items-center justify-center rounded-lg bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white transition-colors"
                               title="Edit Programme"
                             >
@@ -919,6 +932,13 @@ export default function AdminProgrammesPage() {
                     >
                       <Users className="w-4 h-4" />
                       <span>Score Card ({p.registrations?.length ?? 0})</span>
+                    </button>
+                    <button
+                      onClick={() => handleDownloadProgrammeChart(p)}
+                      className="col-span-2 min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:border-emerald-500/40 dark:text-emerald-300 text-sm font-bold shadow-sm"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Download Participant List (PDF)</span>
                     </button>
                     <button
                       onClick={() => handleOpenModal(p)}

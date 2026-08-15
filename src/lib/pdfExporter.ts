@@ -19,6 +19,368 @@ export interface ScoreCardParticipant {
   madrasa?: string;
   group?: string;
   category?: string;
+  whatsapp?: string;
+}
+
+export function downloadProgrammeChartPDF(
+  programme: { name: string; category: string; date?: string; startTime?: string; registrations?: any[] },
+  filename?: string
+) {
+  const doc = new jsPDF();
+
+  // Header Banner
+  doc.setFillColor(6, 78, 59); // Emerald 900
+  doc.rect(0, 0, 210, 32, 'F');
+
+  doc.setTextColor(251, 191, 36); // Amber 400
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 14);
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+
+  doc.setTextColor(245, 158, 11);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`PROGRAMME CHART: ${programme.name.toUpperCase()}`, 14, 42);
+
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(9);
+  const totalRegistrations = programme.registrations?.length || 0;
+  doc.text(
+    `Category: ${programme.category}  |  Date/Time: ${programme.date || 'TBD'} ${programme.startTime || ''}  |  Total Registrations: ${totalRegistrations}`,
+    14,
+    48
+  );
+
+  const headers = ['Sl No', 'Chest No', 'Participant Name', 'Institution/House', 'Category', 'Phone Number'];
+  
+  const validParticipants = (programme.registrations || []).map((r: any) => r.participant).filter(Boolean);
+  const sortedParticipants = [...validParticipants].sort((a: any, b: any) => {
+    const numA = parseInt((a.chestNumber || '').replace(/\D/g, '')) || 0;
+    const numB = parseInt((b.chestNumber || '').replace(/\D/g, '')) || 0;
+    return numA - numB;
+  });
+
+  const rows = sortedParticipants.map((p: any, index: number) => [
+    index + 1,
+    p.chestNumber || '-',
+    p.fullName || '-',
+    p.group || p.madrasa || '-', // house or institution
+    p.category || programme.category,
+    p.whatsapp || '-'
+  ]);
+
+  autoTable(doc, {
+    startY: 55,
+    head: [headers],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [11, 93, 59],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 10,
+    },
+    bodyStyles: {
+      fontSize: 9,
+      textColor: [30, 41, 59],
+    },
+    alternateRowStyles: {
+      fillColor: [241, 245, 249],
+    },
+    margin: { top: 55 },
+  });
+
+  // Footer Signature Space
+  const finalY = (doc as any).lastAutoTable?.finalY || 160;
+  let signatureY = finalY + 20;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  if (signatureY > pageHeight - 30) {
+    doc.addPage();
+    signatureY = 30;
+  }
+  
+  doc.setLineWidth(0.4);
+  doc.setDrawColor(100, 100, 100);
+  
+  doc.line(14, signatureY, 70, signatureY);
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 80);
+  doc.text('Controller Signature', 42, signatureY + 5, { align: 'center' });
+
+  doc.line(140, signatureY, 196, signatureY);
+  doc.text('Convener Signature', 168, signatureY + 5, { align: 'center' });
+
+  // Page Numbers
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(
+      `Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount} • Husnul Kamal Meelad Fest 2026`,
+      14,
+      288
+    );
+  }
+
+  const saveName = filename || `ProgrammeChart_${programme.name.replace(/\s+/g, '_')}_${programme.category}.pdf`;
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, saveName, 'application/pdf');
+}
+
+export interface ScoreCardParticipant {
+  chestNumber: string;
+  fullName?: string;
+  madrasa?: string;
+  group?: string;
+  category?: string;
+}
+
+export function downloadSingleProgrammeChartPDF(
+  programmeName: string,
+  category: string,
+  participants: any[],
+  filename: string
+) {
+  const doc = new jsPDF();
+  
+  // Header
+  doc.setFillColor(6, 78, 59); // Emerald 900
+  doc.rect(0, 0, 210, 32, 'F');
+  
+  doc.setTextColor(251, 191, 36); // Amber 400
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 14);
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+  
+  doc.setTextColor(245, 158, 11); // Amber 500
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`PROGRAMME: ${programmeName.toUpperCase()}`, 14, 42);
+
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(9);
+  doc.text(`Category: ${category}  |  Total Delegates: ${participants.length}`, 14, 48);
+
+  const headers = ['Sl No', 'Chest No', 'Participant Name', 'Institution/Group', 'Category'];
+  
+  const sortedParticipants = [...participants].sort((a, b) => {
+    const numA = parseInt((a.chestNumber || '').replace(/\D/g, '')) || 0;
+    const numB = parseInt((b.chestNumber || '').replace(/\D/g, '')) || 0;
+    return numA - numB;
+  });
+
+  const rows = sortedParticipants.map((p, index) => [
+    index + 1,
+    p.chestNumber || '-',
+    p.fullName?.toUpperCase() || '-',
+    p.group || p.madrasa || '-',
+    p.category || '-'
+  ]);
+
+  autoTable(doc, {
+    startY: 55,
+    head: [headers],
+    body: rows,
+    theme: 'grid',
+    headStyles: { fillColor: [11, 93, 59], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 10 },
+    bodyStyles: { fontSize: 9, textColor: [30, 41, 59] },
+    alternateRowStyles: { fillColor: [241, 245, 249] },
+  });
+
+  // Footer Signature Space
+  const finalY = (doc as any).lastAutoTable?.finalY || 160;
+  let signatureY = finalY + 20;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  if (signatureY > pageHeight - 30) {
+    doc.addPage();
+    signatureY = 30;
+  }
+  
+  doc.setLineWidth(0.4);
+  doc.setDrawColor(100, 100, 100);
+  doc.line(14, signatureY, 70, signatureY);
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 80);
+  doc.text('Controller Signature', 42, signatureY + 5, { align: 'center' });
+
+  // Page Numbers
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount}`, 14, 288);
+  }
+
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
+}
+
+export function downloadPublicFilteredViewPDF(
+  filterTitle: string,
+  participants: any[],
+  filename: string
+) {
+  const doc = new jsPDF();
+  doc.setFillColor(6, 78, 59);
+  doc.rect(0, 0, 210, 32, 'F');
+
+  doc.setTextColor(251, 191, 36);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 14);
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+
+  doc.setTextColor(245, 158, 11);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(filterTitle.toUpperCase(), 14, 42);
+
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(9);
+  doc.text(`Total Delegates: ${participants.length}`, 14, 48);
+
+  const headers = ['Sl No', 'Chest No', 'Name', 'Group/House', 'Category', 'Programmes'];
+  
+  const rows = participants.map((p, index) => [
+    index + 1,
+    p.chestNumber || '-',
+    p.fullName?.toUpperCase() || '-',
+    p.group || p.madrasa || '-',
+    p.category || '-',
+    p.registrations ? p.registrations.map((r: any) => r.programme?.name).filter(Boolean).join(', ') : '-'
+  ]);
+
+  autoTable(doc, {
+    startY: 55,
+    head: [headers],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [11, 93, 59],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 10,
+    },
+    bodyStyles: {
+      fontSize: 9,
+      textColor: [30, 41, 59],
+    },
+    alternateRowStyles: {
+      fillColor: [241, 245, 249],
+    },
+  });
+
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount}`, 14, 288);
+  }
+
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
+}
+
+export function downloadAllProgrammesChartPDF(participants: any[], filename: string) {
+  const doc = new jsPDF();
+  
+  // Header
+  doc.setFillColor(6, 78, 59);
+  doc.rect(0, 0, 210, 32, 'F');
+  doc.setTextColor(251, 191, 36);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 14);
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+  doc.setTextColor(245, 158, 11);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ALL PROGRAMMES DELEGATE CHART', 14, 42);
+
+  // Group by programme
+  const progMap = new Map<string, any[]>();
+  participants.forEach(p => {
+    (p.registrations || []).forEach((r: any) => {
+      if (r.programme?.name) {
+        if (!progMap.has(r.programme.name)) progMap.set(r.programme.name, []);
+        progMap.get(r.programme.name)!.push(p);
+      }
+    });
+  });
+
+  const headers = ['Sl No', 'Chest No', 'Name', 'Group', 'Category'];
+  let currentY = 50;
+
+  progMap.forEach((delegates, progName) => {
+    // Sort delegates numerically by chest number
+    delegates.sort((a, b) => {
+      const numA = parseInt((a.chestNumber || '').replace(/\D/g, '')) || 0;
+      const numB = parseInt((b.chestNumber || '').replace(/\D/g, '')) || 0;
+      return numA - numB;
+    });
+
+    if (currentY > 250) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setTextColor(31, 58, 58);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Programme: ${progName.toUpperCase()} (${delegates.length} Delegates)`, 14, currentY);
+    
+    const rows = delegates.map((p, index) => [
+      index + 1,
+      p.chestNumber || '-',
+      p.fullName?.toUpperCase() || '-',
+      p.group || '-',
+      p.category || '-'
+    ]);
+
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [headers],
+      body: rows,
+      theme: 'grid',
+      headStyles: { fillColor: [11, 93, 59], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
+      bodyStyles: { fontSize: 8, textColor: [30, 41, 59] },
+      alternateRowStyles: { fillColor: [241, 245, 249] },
+      margin: { top: 20 },
+    });
+    
+    currentY = (doc as any).lastAutoTable.finalY + 15;
+  });
+
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount}`, 14, 288);
+  }
+
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
 }
 
 export function downloadPDFReport(title: string, headers: string[], rows: (string | number)[][], filename: string) {
@@ -296,5 +658,82 @@ function renderSingleScoreCardPage(
 
   const pdfDataUri = doc.output('datauristring');
   const filename = `${config.programmeName.replace(/[^a-zA-Z0-9]/g, '_')}_ScoreCard.pdf`;
+  downloadFile(pdfDataUri, filename, 'application/pdf');
+}
+
+export function downloadProgrammesViewPDF(
+  title: string,
+  registrations: any[],
+  filename: string
+) {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  // Header Banner
+  doc.setFillColor(11, 11, 11);
+  doc.rect(0, 0, pageWidth, 35, 'F');
+
+  doc.setTextColor(200, 168, 107);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 15);
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+
+  doc.setTextColor(245, 230, 196);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(title.toUpperCase(), 14, 31);
+
+  const headers = ['Sl No', 'Programme Name', 'Participant', 'Chest No', 'Category', 'Group'];
+
+  const rows = registrations.map((r: any, index: number) => [
+    index + 1,
+    r.programmeName || '-',
+    r.participantName || '-',
+    r.chestNumber || '-',
+    r.category || '-',
+    r.group || '-'
+  ]);
+
+  autoTable(doc, {
+    startY: 42,
+    head: [headers],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [30, 30, 30],
+      textColor: [200, 168, 107],
+      fontStyle: 'bold',
+      fontSize: 10,
+    },
+    bodyStyles: {
+      fontSize: 9,
+      textColor: [30, 30, 30],
+    },
+    alternateRowStyles: {
+      fillColor: [248, 248, 248],
+    },
+    margin: { top: 42, left: 14, right: 14, bottom: 25 },
+  });
+
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(
+      `Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount} • Husnul Kamal Meelad Fest 2026`,
+      pageWidth / 2,
+      pageHeight - 10,
+      { align: 'center' }
+    );
+  }
+
+  const pdfDataUri = doc.output('datauristring');
   downloadFile(pdfDataUri, filename, 'application/pdf');
 }
