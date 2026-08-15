@@ -136,7 +136,7 @@ export default function ParticipantsPage() {
     }
 
     if (selectedGender !== 'ALL') {
-      result = result.filter((p) => p.gender === selectedGender);
+      result = result.filter((p) => p.gender?.toUpperCase() === selectedGender.toUpperCase());
     }
 
     if (selectedProgramme !== 'ALL') {
