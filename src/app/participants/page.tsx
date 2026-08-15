@@ -40,6 +40,7 @@ export default function ParticipantsPage() {
   // Filters State
   const [selectedGroup, setSelectedGroup] = useState('ALL');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedGender, setSelectedGender] = useState('ALL');
   const [selectedProgramme, setSelectedProgramme] = useState('ALL');
   const [selectedPDFProgramme, setSelectedPDFProgramme] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -134,6 +135,10 @@ export default function ParticipantsPage() {
       result = result.filter((p) => p.category === selectedCategory);
     }
 
+    if (selectedGender !== 'ALL') {
+      result = result.filter((p) => p.gender === selectedGender);
+    }
+
     if (selectedProgramme !== 'ALL') {
       result = result.filter((p) => p.registrations?.some((r: any) => r.programme?.name === selectedProgramme));
     }
@@ -151,7 +156,7 @@ export default function ParticipantsPage() {
 
     // Sort by Chest Number Ascending
     return result.sort((a, b) => a.chestNumber.localeCompare(b.chestNumber, undefined, { numeric: true }));
-  }, [participants, selectedGroup, selectedCategory, selectedProgramme, deferredSearchQuery]);
+  }, [participants, selectedGroup, selectedCategory, selectedGender, selectedProgramme, deferredSearchQuery]);
 
   // Derived array for "Programmes View" (flattened registrations)
   const programmesViewData = useMemo(() => {
@@ -361,7 +366,7 @@ export default function ParticipantsPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             
             {/* Search Input */}
             <div className="relative">
@@ -406,6 +411,22 @@ export default function ParticipantsPage() {
                 <option value="Junior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">JUNIOR (Classes 5, 6)</option>
                 <option value="Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SENIOR (Classes 7, 8)</option>
                 <option value="Super Senior" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">SUPER SENIOR (Classes 9-12)</option>
+              </select>
+            </div>
+
+            {/* Gender Filter Dropdown */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                Gender Filter
+              </label>
+              <select
+                value={selectedGender}
+                onChange={(e) => setSelectedGender(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+              >
+                <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL GENDERS</option>
+                <option value="MALE" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">MALE</option>
+                <option value="FEMALE" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">FEMALE</option>
               </select>
             </div>
 
@@ -460,11 +481,12 @@ export default function ParticipantsPage() {
               <span className="text-slate-500">
                 Showing <strong className="text-[#C8A86B]">{filteredParticipants.length}</strong> of {participants.length} registered delegates
               </span>
-            {(selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedProgramme !== 'ALL' || searchQuery) && (
+            {(selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedProgramme !== 'ALL' || searchQuery) && (
               <button
                 onClick={() => {
                   setSelectedGroup('ALL');
                   setSelectedCategory('ALL');
+                  setSelectedGender('ALL');
                   setSelectedProgramme('ALL');
                   setSearchQuery('');
                 }}
