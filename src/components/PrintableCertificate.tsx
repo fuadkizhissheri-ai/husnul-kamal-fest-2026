@@ -409,61 +409,29 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
               {/* 3. FOOTER ROW (EXPLICIT SPACING & ALIGNMENT) */}
               <div
                 style={{
-                  paddingTop: '16px',
+                  paddingTop: '20px',
                   borderTop: '1px solid rgba(46, 79, 79, 0.2)',
                 }}
-                className="grid grid-cols-3 items-end"
+                className="flex items-end justify-between"
               >
                 
-                {/* COLUMN 1: COORDINATOR 1 */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {/* LEFT: FEST COORDINATOR */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <div
                     style={{
-                      width: '128px',
-                      borderBottom: '1px solid rgba(31, 58, 58, 0.4)',
-                      paddingBottom: '4px',
-                      fontFamily: 'serif',
-                      fontStyle: 'italic',
-                      fontSize: '12px',
-                      lineHeight: '16px',
-                      fontWeight: 700,
-                      color: '#C9A227',
+                      width: '140px',
+                      borderBottom: '1px solid #1F3A3A',
+                      marginBottom: '4px',
+                      marginTop: '16px',
                     }}
-                  >
-                    {coord1Name}
-                  </div>
-                  <div style={{ fontSize: '11px', lineHeight: '15px', fontWeight: 700, color: '#1F3A3A' }}>{coord1Name}</div>
-                  <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>
-                    {coord1Desig}
+                  />
+                  <div style={{ fontSize: '10px', lineHeight: '14px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#1F3A3A' }}>
+                    FEST COORDINATOR
                   </div>
                 </div>
 
-                {/* COLUMN 2: COORDINATOR 2 */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                  <div
-                    style={{
-                      width: '128px',
-                      borderBottom: '1px solid rgba(31, 58, 58, 0.4)',
-                      paddingBottom: '4px',
-                      fontFamily: 'serif',
-                      fontStyle: 'italic',
-                      fontSize: '12px',
-                      lineHeight: '16px',
-                      fontWeight: 700,
-                      color: '#C9A227',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {coord2Name}
-                  </div>
-                  <div style={{ fontSize: '11px', lineHeight: '15px', fontWeight: 700, color: '#1F3A3A', textAlign: 'center' }}>{coord2Name}</div>
-                  <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B', textAlign: 'center' }}>
-                    {coord2Desig}
-                  </div>
-                </div>
-
-                {/* COLUMN 3: DATE & VERIFICATION ID */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', textAlign: 'right' }}>
+                {/* CENTER: DATE & VERIFICATION ID */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', paddingBottom: '2px' }}>
                   <div>
                     <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#1F3A3A' }}>{certDate}</div>
                     <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>ISSUE DATE</div>
@@ -471,6 +439,21 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
                   <div style={{ paddingTop: '2px' }}>
                     <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#C9A227' }}>HK-2026-CERT-{result.participant.chestNumber}</div>
                     <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>VERIFICATION ID</div>
+                  </div>
+                </div>
+
+                {/* RIGHT: SADAR MUALLIM */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div
+                    style={{
+                      width: '140px',
+                      borderBottom: '1px solid #1F3A3A',
+                      marginBottom: '4px',
+                      marginTop: '16px',
+                    }}
+                  />
+                  <div style={{ fontSize: '10px', lineHeight: '14px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#1F3A3A' }}>
+                    SADAR MUALLIM
                   </div>
                 </div>
 
