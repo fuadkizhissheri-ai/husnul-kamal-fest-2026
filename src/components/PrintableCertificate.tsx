@@ -415,11 +415,11 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
                 className="flex items-end justify-between"
               >
                 
-                {/* LEFT: FEST COORDINATOR */}
+                {/* 1. FEST COORDINATOR */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <div
                     style={{
-                      width: '140px',
+                      width: '130px',
                       borderBottom: '1px solid #1F3A3A',
                       marginBottom: '4px',
                       marginTop: '16px',
@@ -430,23 +430,11 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
                   </div>
                 </div>
 
-                {/* CENTER: DATE & VERIFICATION ID */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', paddingBottom: '2px' }}>
-                  <div>
-                    <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#1F3A3A' }}>{certDate}</div>
-                    <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>ISSUE DATE</div>
-                  </div>
-                  <div style={{ paddingTop: '2px' }}>
-                    <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#C9A227' }}>HK-2026-CERT-{result.participant.chestNumber}</div>
-                    <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>VERIFICATION ID</div>
-                  </div>
-                </div>
-
-                {/* RIGHT: SADAR MUALLIM */}
+                {/* 2. SADAR MUALLIM */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <div
                     style={{
-                      width: '140px',
+                      width: '130px',
                       borderBottom: '1px solid #1F3A3A',
                       marginBottom: '4px',
                       marginTop: '16px',
@@ -454,6 +442,33 @@ export default function PrintableCertificate({ result, coordinatorSettings }: Ce
                   />
                   <div style={{ fontSize: '10px', lineHeight: '14px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#1F3A3A' }}>
                     SADAR MUALLIM
+                  </div>
+                </div>
+
+                {/* 3. CONVENER */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div
+                    style={{
+                      width: '130px',
+                      borderBottom: '1px solid #1F3A3A',
+                      marginBottom: '4px',
+                      marginTop: '16px',
+                    }}
+                  />
+                  <div style={{ fontSize: '10px', lineHeight: '14px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#1F3A3A' }}>
+                    CONVENER
+                  </div>
+                </div>
+
+                {/* 4. DATE & VERIFICATION ID */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', textAlign: 'right', paddingBottom: '2px' }}>
+                  <div>
+                    <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#1F3A3A' }}>{certDate}</div>
+                    <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>ISSUE DATE</div>
+                  </div>
+                  <div style={{ paddingTop: '2px' }}>
+                    <div style={{ fontSize: '11px', lineHeight: '15px', fontFamily: 'monospace', fontWeight: 700, color: '#C9A227' }}>HK-2026-CERT-{result.participant.chestNumber}</div>
+                    <div style={{ fontSize: '8.5px', lineHeight: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B6B6B' }}>VERIFICATION ID</div>
                   </div>
                 </div>
 
