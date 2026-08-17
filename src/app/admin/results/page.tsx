@@ -109,7 +109,7 @@ export default function AdminResultsPage() {
   );
 
   const eligibleProgrammes = programmes.filter(
-    (p) => modalCategory === 'ALL' || p.category === modalCategory
+    (p) => modalCategory === 'ALL' || p.category === modalCategory || p.category === 'General'
   );
 
   const handleModalCategoryChange = (newCat: string) => {
