@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import SmoothScroll from '@/components/SmoothScroll';
 import PrintableCertificate from '@/components/PrintableCertificate';
-import { Trophy, Search, Download, X, Medal } from 'lucide-react';
+import { Trophy, Search, Download, X, Medal, FileText } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
+import { downloadPublishedResultsPDF } from '@/lib/pdfExporter';
 
 interface ResultItem {
   id: string;
@@ -81,6 +82,15 @@ export default function ResultsPage() {
     });
   }, [results, selectedCategory, selectedGroup, selectedPosition, deferredSearchQuery]);
 
+  const handleDownloadPDF = () => {
+    const filterTitle = `Category: ${selectedCategory} | House: ${selectedGroup} | Position: ${selectedPosition}`;
+    downloadPublishedResultsPDF(
+      filterTitle,
+      filteredResults,
+      `Husnul_Kamal_Scoreboard_Results_${new Date().toISOString().split('T')[0]}.pdf`
+    );
+  };
+
   return (
     <SmoothScroll>
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-16 space-y-10">
@@ -98,6 +108,17 @@ export default function ResultsPage() {
 
         {/* Filters Bar */}
         <div className="luxury-glass p-5 rounded-[28px] border border-[#C8A86B]/30 shadow-luxury space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <h3 className="text-sm font-bold text-[#C8A86B] uppercase tracking-widest hidden md:block">Scoreboard Filters</h3>
+            <button
+              onClick={handleDownloadPDF}
+              className="btn-pill-luxury bg-[#0B0B0B] text-[#C8A86B] dark:bg-[#C8A86B] dark:text-[#0B0B0B] text-xs px-5 py-2.5 font-bold shadow-md hover:bg-[#1A1A1A] flex items-center space-x-2 ml-auto w-full sm:w-auto justify-center"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Download Results (PDF)</span>
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-4 top-3 text-neutral-400" />
