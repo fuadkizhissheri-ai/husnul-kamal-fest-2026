@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SmoothScroll from '@/components/SmoothScroll';
 import PrintableCertificate from '@/components/PrintableCertificate';
-import { Trophy, Search, Download, X, Medal, FileText } from 'lucide-react';
+import { Trophy, Search, Download, X, Medal, FileText, Loader2 } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { downloadPublishedResultsPDF } from '@/lib/pdfExporter';
 import { sortResults } from '@/lib/scoring';
@@ -30,16 +31,53 @@ interface ResultItem {
   };
 }
 
-export default function ResultsPage() {
+function ResultsContent() {
   const [results, setResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [selectedGroup, setSelectedGroup] = useState('ALL');
-  const [selectedPosition, setSelectedPosition] = useState('ALL');
-  const [selectedGender, setSelectedGender] = useState('ALL');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  // Filters State from URL
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const selectedGroup = searchParams.get('group') || 'ALL';
+  const selectedPosition = searchParams.get('position') || 'ALL';
+  const selectedGender = searchParams.get('gender') || 'ALL';
+  const searchQuery = searchParams.get('search') || '';
+  
+  // Local state for search input (debounced to URL)
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const clearFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
+
+  const hasActiveFilters = selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedPosition !== 'ALL' || searchQuery !== '';
 
   // Certificate Modal State
   const [activeCertResult, setActiveCertResult] = useState<ResultItem | null>(null);
@@ -132,16 +170,17 @@ export default function ResultsPage() {
               <input
                 type="text"
                 placeholder="Name, Chest No..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white placeholder-neutral-400 focus:outline-none"
               />
+              {isPending && <Loader2 className="w-4 h-4 text-neutral-400 animate-spin absolute right-4 top-3" />}
             </div>
 
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
+              onChange={(e) => updateFilter('category', e.target.value)}
+              className="w-full px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs font-bold text-[#0B0B0B] dark:text-white focus:outline-none"
             >
               {categories.map((c) => (
                 <option key={c} value={c} className="bg-slate-900 text-white">
@@ -152,8 +191,8 @@ export default function ResultsPage() {
 
             <select
               value={selectedGroup}
-              onChange={(e) => setSelectedGroup(e.target.value)}
-              className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
+              onChange={(e) => updateFilter('group', e.target.value)}
+              className="w-full px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs font-bold text-[#0B0B0B] dark:text-white focus:outline-none"
             >
               {groups.map((g) => (
                 <option key={g} value={g} className="bg-slate-900 text-white">House: {g}</option>
@@ -162,8 +201,8 @@ export default function ResultsPage() {
 
             <select
               value={selectedPosition}
-              onChange={(e) => setSelectedPosition(e.target.value)}
-              className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
+              onChange={(e) => updateFilter('position', e.target.value)}
+              className="w-full px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs font-bold text-[#0B0B0B] dark:text-white focus:outline-none"
             >
               {positions.map((p) => (
                 <option key={p} value={p} className="bg-slate-900 text-white">Position: {p}</option>
@@ -172,14 +211,27 @@ export default function ResultsPage() {
 
             <select
               value={selectedGender}
-              onChange={(e) => setSelectedGender(e.target.value)}
-              className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
+              onChange={(e) => updateFilter('gender', e.target.value)}
+              className="w-full px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs font-bold text-[#0B0B0B] dark:text-white focus:outline-none"
             >
               {genders.map((g) => (
                 <option key={g} value={g} className="bg-slate-900 text-white">Gender: {g}</option>
               ))}
             </select>
           </div>
+
+          {hasActiveFilters && (
+            <div className="flex justify-end pt-2 border-t border-black/5 dark:border-white/10 mt-4">
+              <button
+                onClick={clearFilters}
+                className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-2 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Clear Filters</span>
+              </button>
+            </div>
+          )}
+
         </div>
 
         {/* Scoreboard Table */}
@@ -256,23 +308,36 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {/* Certificate Modal */}
+        {/* CERTIFICATE MODAL */}
         {activeCertResult && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <div className="relative max-w-4xl w-full luxury-glass p-8 rounded-[32px] border border-[#C8A86B]/40 shadow-2xl flex flex-col items-center space-y-4 max-h-[90vh] overflow-y-auto">
-              <button
-                onClick={() => setActiveCertResult(null)}
-                className="absolute top-6 right-6 p-2.5 text-neutral-400 hover:text-white bg-black/40 rounded-full"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <h3 className="text-xl font-heading font-bold text-[#C8A86B]">Generated Official Merit Certificate</h3>
+          <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-slate-900 p-6 rounded-3xl border border-[#C8A86B]/30 max-w-lg w-full flex flex-col items-center space-y-4">
+              <div className="w-full flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-lg font-bold font-serif text-white flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-[#C8A86B]" /> Merit Certificate
+                </h3>
+                <button onClick={() => setActiveCertResult(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
               <PrintableCertificate result={activeCertResult} />
             </div>
           </div>
         )}
-
       </div>
     </SmoothScroll>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <div className="text-center">Loading Results...</div>
+      </div>
+    }>
+      <ResultsContent />
+    </Suspense>
   );
 }

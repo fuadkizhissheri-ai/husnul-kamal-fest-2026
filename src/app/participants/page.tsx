@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SmoothScroll from '@/components/SmoothScroll';
 import TableSkeleton from '@/components/TableSkeleton';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { downloadPublicFilteredViewPDF, downloadAllProgrammesChartPDF, downloadSingleProgrammeChartPDF, downloadProgrammesViewPDF } from '@/lib/pdfExporter';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
-import { Users, Search, Download, ShieldCheck, Flame, Filter, Sparkles, AlertCircle, Lock, ShieldAlert, X, List, Grid } from 'lucide-react';
+import { Users, Search, Download, ShieldCheck, Flame, Filter, Sparkles, AlertCircle, Lock, ShieldAlert, X, List, Grid, Loader2 } from 'lucide-react';
 
 interface Participant {
   id: string;
@@ -22,7 +23,7 @@ interface Participant {
   registrations: Array<{ programme: { name: string; category?: string; stage?: string } }>;
 }
 
-export default function ParticipantsPage() {
+function ParticipantsContent() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,13 +38,55 @@ export default function ParticipantsPage() {
   const [loginSubmitting, setLoginSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // Filters State
-  const [selectedGroup, setSelectedGroup] = useState('ALL');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [selectedGender, setSelectedGender] = useState('ALL');
-  const [selectedProgramme, setSelectedProgramme] = useState('ALL');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  // Filters State from URL
+  const selectedGroup = searchParams.get('group') || 'ALL';
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const selectedGender = searchParams.get('gender') || 'ALL';
+  const selectedProgramme = searchParams.get('programme') || 'ALL';
+  const searchQuery = searchParams.get('search') || '';
+  
   const [selectedPDFProgramme, setSelectedPDFProgramme] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Local state for search input (debounced to URL)
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    // Also reset programme if category/group changes to ensure consistency
+    if (key === 'category' || key === 'group' || key === 'gender') {
+      params.delete('programme');
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const clearFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
+
+  const hasActiveFilters = selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedProgramme !== 'ALL' || searchQuery !== '';
   
   // View Toggle State
   const [viewMode, setViewMode] = useState<'delegates' | 'programmes'>('delegates');
@@ -64,12 +107,13 @@ export default function ParticipantsPage() {
     return Array.from(progs).sort();
   }, [participants, selectedGroup, selectedCategory, selectedGender]);
 
-  // Reset selected programme if it's no longer available after category/group change
+  // Note: Reset selected programme if it's no longer available is handled by updateFilter clearing it
+  // But just in case, we keep this for direct URL manipulation
   useEffect(() => {
-    if (selectedProgramme !== 'ALL' && !availableProgrammes.includes(selectedProgramme)) {
-      setSelectedProgramme('ALL');
+    if (selectedProgramme !== 'ALL' && !availableProgrammes.includes(selectedProgramme) && participants.length > 0) {
+      updateFilter('programme', 'ALL');
     }
-  }, [availableProgrammes, selectedProgramme]);
+  }, [availableProgrammes, selectedProgramme, participants.length]);
 
   // ID Pass Modal State
   const [activeIDCardParticipant, setActiveIDCardParticipant] = useState<Participant | null>(null);
@@ -386,10 +430,11 @@ export default function ParticipantsPage() {
               <input
                 type="text"
                 placeholder="Search by name, chest no, madrasa..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs text-slate-900 dark:text-white focus:outline-none"
               />
+              {isPending && <Loader2 className="w-4 h-4 text-slate-400 animate-spin absolute right-3.5 top-3.5" />}
             </div>
 
             {/* Group Filter Dropdown */}
@@ -399,7 +444,7 @@ export default function ParticipantsPage() {
               </label>
               <select
                 value={selectedGroup}
-                onChange={(e) => setSelectedGroup(e.target.value)}
+                onChange={(e) => updateFilter('group', e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL GROUPS (Mavadda + Mahabba)</option>
@@ -415,7 +460,7 @@ export default function ParticipantsPage() {
               </label>
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => updateFilter('category', e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL CATEGORIES</option>
@@ -433,7 +478,7 @@ export default function ParticipantsPage() {
               </label>
               <select
                 value={selectedGender}
-                onChange={(e) => setSelectedGender(e.target.value)}
+                onChange={(e) => updateFilter('gender', e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL GENDERS</option>
@@ -449,7 +494,7 @@ export default function ParticipantsPage() {
               </label>
               <select
                 value={selectedProgramme}
-                onChange={(e) => setSelectedProgramme(e.target.value)}
+                onChange={(e) => updateFilter('programme', e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL PROGRAMMES</option>
@@ -490,23 +535,18 @@ export default function ParticipantsPage() {
             </div>
             
             <div className="flex items-center text-xs font-mono shrink-0">
-              <span className="text-slate-500">
-                Showing <strong className="text-[#C8A86B]">{filteredParticipants.length}</strong> of {participants.length} registered delegates
+              <span className="text-slate-500 mr-3">
+                Showing <strong className="text-[#C8A86B]">{filteredParticipants.length}</strong> of {participants.length} delegates
               </span>
-            {(selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedProgramme !== 'ALL' || searchQuery) && (
-              <button
-                onClick={() => {
-                  setSelectedGroup('ALL');
-                  setSelectedCategory('ALL');
-                  setSelectedGender('ALL');
-                  setSelectedProgramme('ALL');
-                  setSearchQuery('');
-                }}
-                className="text-[#C8A86B] hover:underline font-bold text-[11px]"
-              >
-                Reset Filters
-              </button>
-            )}
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-2.5 py-1.5 rounded-lg font-bold text-[10px] flex items-center space-x-1 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                  <span>Clear Filters</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -754,5 +794,17 @@ export default function ParticipantsPage() {
 
       </div>
     </SmoothScroll>
+  );
+}
+
+export default function ParticipantsPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <TableSkeleton rows={8} cols={6} />
+      </div>
+    }>
+      <ParticipantsContent />
+    </Suspense>
   );
 }

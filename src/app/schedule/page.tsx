@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo, useDeferredValue } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useDeferredValue, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SmoothScroll from '@/components/SmoothScroll';
 import { getStageInfo, FIXED_STAGES } from '@/lib/stages';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
-import { Calendar, Search, MapPin, Clock, Radio, CheckCircle2, Hourglass, LayoutGrid, List, Download, FileSpreadsheet, Printer } from 'lucide-react';
+import { Calendar, Search, MapPin, Clock, Radio, CheckCircle2, Hourglass, LayoutGrid, List, Download, FileSpreadsheet, Printer, Loader2, X } from 'lucide-react';
 import { fetchWithCache, invalidateCache } from '@/lib/clientCache';
 
 interface ScheduleItem {
@@ -23,13 +24,50 @@ interface ScheduleItem {
   };
 }
 
-export default function SchedulePage() {
+function ScheduleContent() {
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedStage, setSelectedStage] = useState<string>('ALL');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'timeline' | 'grid'>('timeline');
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  const selectedStage = searchParams.get('stage') || 'ALL';
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const searchQuery = searchParams.get('search') || '';
+
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const clearFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
+
+  const hasActiveFilters = selectedStage !== 'ALL' || selectedCategory !== 'ALL' || searchQuery !== '';
 
   const fetchSchedule = (bypassCache = false) => {
     if (bypassCache) invalidateCache('/api/schedule');
@@ -199,7 +237,7 @@ export default function SchedulePage() {
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-4 sm:pt-8">
           <div className="flex items-center sm:justify-center overflow-x-auto whitespace-nowrap scrollbar-none gap-2 sm:gap-3 py-1">
             <button
-              onClick={() => setSelectedStage('ALL')}
+              onClick={() => updateFilter('stage', 'ALL')}
               className={`shrink-0 px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
                 selectedStage === 'ALL'
                   ? 'bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] border-transparent shadow-lg sm:scale-105'
@@ -214,7 +252,7 @@ export default function SchedulePage() {
               return (
                 <button
                   key={st.id}
-                  onClick={() => setSelectedStage(st.id)}
+                  onClick={() => updateFilter('stage', st.id)}
                   className={`shrink-0 px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all border ${
                     isActive
                       ? `${st.badgeClass} sm:scale-105 shadow-lg`
@@ -228,20 +266,20 @@ export default function SchedulePage() {
           </div>
         </section>
 
-        {/* SEARCH & CATEGORY FILTER BAR */}
+        {/* SEARCH FILTER BAR */}
         <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6">
           <div className="luxury-glass p-4 rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 flex flex-col md:flex-row items-center justify-between gap-4">
             
-            {/* Search */}
             <div className="relative w-full md:w-80">
               <Search className="w-4 h-4 absolute left-4 top-3 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search programme or stage..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
                 className="hk-input pl-11"
               />
+              {isPending && <Loader2 className="w-4 h-4 text-slate-400 animate-spin absolute right-4 top-3" />}
             </div>
 
             {/* Category Filter */}
@@ -249,7 +287,7 @@ export default function SchedulePage() {
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => updateFilter('category', cat)}
                   className={`shrink-0 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all border ${
                     selectedCategory === cat
                       ? 'bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] border-transparent shadow-md'
@@ -286,7 +324,16 @@ export default function SchedulePage() {
                 <LayoutGrid className="w-4 h-4" />
               </button>
             </div>
-
+            
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-2 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition-colors shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Clear</span>
+              </button>
+            )}
           </div>
         </section>
 
@@ -399,5 +446,17 @@ export default function SchedulePage() {
 
       </div>
     </SmoothScroll>
+  );
+}
+
+export default function SchedulePage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <div className="text-center">Loading Schedule...</div>
+      </div>
+    }>
+      <ScheduleContent />
+    </Suspense>
   );
 }

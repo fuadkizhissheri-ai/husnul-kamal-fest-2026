@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -15,10 +17,10 @@ export async function GET(request: Request) {
     if (group) where.group = group;
     if (query) {
       where.OR = [
-        { fullName: { contains: query } },
-        { registrationId: { contains: query } },
-        { chestNumber: { contains: query } },
-        { whatsapp: { contains: query } },
+        { fullName: { contains: query, mode: 'insensitive' } },
+        { registrationId: { contains: query, mode: 'insensitive' } },
+        { chestNumber: { contains: query, mode: 'insensitive' } },
+        { whatsapp: { contains: query, mode: 'insensitive' } },
       ];
     }
 

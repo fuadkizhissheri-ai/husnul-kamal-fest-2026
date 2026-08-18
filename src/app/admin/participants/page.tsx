@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PrintableIDCard from '@/components/PrintableIDCard';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { Users, Search, Download, Trash2, Edit, X, ShieldCheck, Sparkles, MessageCircle, AlertCircle, Save, Upload, Loader2, FileText } from 'lucide-react';
 import { useGlobalModal } from '@/components/TabNavigationProvider';
 import TableSkeleton from '@/components/TableSkeleton';
-import { useDebounce } from '@/hooks/useDebounce';
 
 interface Participant {
   id: string;
@@ -23,14 +23,63 @@ interface Participant {
   registrations: any[];
 }
 
-export default function AdminParticipantsPage() {
+function AdminParticipantsContent() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce(search, 300);
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [selectedGroup, setSelectedGroup] = useState('ALL');
-  const [selectedGender, setSelectedGender] = useState('ALL');
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  const search = searchParams.get('search') || '';
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const selectedGroup = searchParams.get('group') || 'ALL';
+  const selectedGender = searchParams.get('gender') || 'ALL';
+
+  const [localSearch, setLocalSearch] = useState(search);
+  const debouncedSearch = localSearch; // We rely on the 400ms timeout below for debounce
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const clearFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== search) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
+
+  const hasActiveFilters = selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || search !== '';
+
+  const filtered = participants.filter((p) => {
+    const searchLower = (debouncedSearch || '').toLowerCase();
+    const matchesSearch =
+      (p.fullName || '').toLowerCase().includes(searchLower) ||
+      (p.chestNumber || '').toLowerCase().includes(searchLower) ||
+      (p.registrationId || '').toLowerCase().includes(searchLower);
+    const matchesCat = selectedCategory === 'ALL' || p.category === selectedCategory;
+    const matchesGroup = selectedGroup === 'ALL' || p.group === selectedGroup;
+    const matchesGender = selectedGender === 'ALL' || (p.gender && p.gender.toUpperCase() === selectedGender);
+    return matchesSearch && matchesCat && matchesGroup && matchesGender;
+  });
 
   // Available Programmes for Edit
   const [programmes, setProgrammes] = useState<any[]>([]);
@@ -306,17 +355,6 @@ Best wishes!
 
   const categories = ['ALL', 'Sub Junior', 'Junior', 'Senior', 'Super Senior'];
 
-  const filtered = participants.filter((p) => {
-    const searchLower = (debouncedSearch || '').toLowerCase();
-    const matchesSearch =
-      (p.fullName || '').toLowerCase().includes(searchLower) ||
-      (p.chestNumber || '').toLowerCase().includes(searchLower) ||
-      (p.registrationId || '').toLowerCase().includes(searchLower);
-    const matchesCat = selectedCategory === 'ALL' || p.category === selectedCategory;
-    const matchesGroup = selectedGroup === 'ALL' || p.group === selectedGroup;
-    const matchesGender = selectedGender === 'ALL' || (p.gender && p.gender.toUpperCase() === selectedGender);
-    return matchesSearch && matchesCat && matchesGroup && matchesGender;
-  });
 
   const availableEditProgrammes = programmes.filter(
     (pr) => pr.category === editCategory || pr.category === 'General'
@@ -389,10 +427,11 @@ Best wishes!
             <input
               type="text"
               placeholder="Search by name, chest no..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none"
             />
+            {isPending && <Loader2 className="w-4 h-4 text-slate-400 animate-spin absolute right-3 top-2.5" />}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -401,11 +440,11 @@ Best wishes!
               {categories.map((c) => (
                 <button
                   key={c}
-                  onClick={() => setSelectedCategory(c)}
+                  onClick={() => updateFilter('category', c)}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
                     selectedCategory === c
                       ? 'bg-[#C8A86B] text-[#0B0B0B]'
-                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-[#C8A86B]/20'
                   }`}
                 >
                   {c}
@@ -422,11 +461,11 @@ Best wishes!
               {['ALL', 'MAVADDA', 'MAHABBA'].map((g) => (
                 <button
                   key={g}
-                  onClick={() => setSelectedGroup(g)}
+                  onClick={() => updateFilter('group', g)}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
                     selectedGroup === g
                       ? 'bg-[#C8A86B] text-[#0B0B0B]'
-                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-[#C8A86B]/20'
                   }`}
                 >
                   {g}
@@ -441,11 +480,11 @@ Best wishes!
               {['ALL', 'MALE', 'FEMALE'].map((g) => (
                 <button
                   key={g}
-                  onClick={() => setSelectedGender(g)}
+                  onClick={() => updateFilter('gender', g)}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                    selectedGender === g
+                    selectedGender === g.toUpperCase()
                       ? 'bg-[#C8A86B] text-[#0B0B0B]'
-                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-[#C8A86B]/20'
                   }`}
                 >
                   {g}
@@ -453,6 +492,16 @@ Best wishes!
               ))}
             </div>
           </div>
+          
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="mt-4 md:mt-0 md:ml-auto text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-1.5 rounded-lg font-bold text-xs flex items-center space-x-1 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Clear Filters</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -906,7 +955,18 @@ Best wishes!
           </div>
         );
       })()}
-
     </div>
+  );
+}
+
+export default function AdminParticipantsPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <TableSkeleton rows={8} cols={6} />
+      </div>
+    }>
+      <AdminParticipantsContent />
+    </Suspense>
   );
 }

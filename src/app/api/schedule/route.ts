@@ -5,7 +5,7 @@ import { broadcastRealtimeChange } from '@/lib/realtime';
 import { getStageInfo } from '@/lib/stages';
 import { autoSyncScheduleStatuses } from '@/lib/scheduleAutoSync';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {

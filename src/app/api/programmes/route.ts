@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {

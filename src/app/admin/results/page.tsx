@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import PrintableCertificate from '@/components/PrintableCertificate';
-import { Trophy, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, Medal, Sparkles, Award, Eye, EyeOff } from 'lucide-react';
+import { Trophy, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, Medal, Sparkles, Award, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { calculateAutoPoints, PointsSettings, DEFAULT_POINTS_SETTINGS, sortResults } from '@/lib/scoring';
 
 interface ResultItem {
@@ -32,7 +33,7 @@ interface ResultItem {
   };
 }
 
-export default function AdminResultsPage() {
+function AdminResultsContent() {
   const [results, setResults] = useState<ResultItem[]>([]);
   const [programmes, setProgrammes] = useState<any[]>([]);
   const [participants, setParticipants] = useState<any[]>([]);
@@ -40,12 +41,48 @@ export default function AdminResultsPage() {
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   // Filters Before Export
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [selectedGroup, setSelectedGroup] = useState('ALL');
-  const [selectedPosition, setSelectedPosition] = useState('ALL');
-  const [selectedGender, setSelectedGender] = useState('ALL');
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const selectedGroup = searchParams.get('group') || 'ALL';
+  const selectedPosition = searchParams.get('position') || 'ALL';
+  const selectedGender = searchParams.get('gender') || 'ALL';
+  const searchQuery = searchParams.get('search') || '';
+
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const clearFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
+
+  const hasActiveFilters = selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedPosition !== 'ALL' || searchQuery !== '';
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -279,15 +316,16 @@ export default function AdminResultsPage() {
             <input
               type="text"
               placeholder="Search delegate or programme..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
             />
+            {isPending && <Loader2 className="w-4 h-4 text-slate-400 animate-spin absolute right-4 top-3" />}
           </div>
 
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => updateFilter('category', e.target.value)}
             className="px-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
           >
             {categories.map((c) => (
@@ -299,7 +337,7 @@ export default function AdminResultsPage() {
 
           <select
             value={selectedGroup}
-            onChange={(e) => setSelectedGroup(e.target.value)}
+            onChange={(e) => updateFilter('group', e.target.value)}
             className="px-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
           >
             {groups.map((g) => (
@@ -309,7 +347,7 @@ export default function AdminResultsPage() {
 
           <select
             value={selectedPosition}
-            onChange={(e) => setSelectedPosition(e.target.value)}
+            onChange={(e) => updateFilter('position', e.target.value)}
             className="px-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
           >
             {positions.map((p) => (
@@ -319,7 +357,7 @@ export default function AdminResultsPage() {
 
           <select
             value={selectedGender}
-            onChange={(e) => setSelectedGender(e.target.value)}
+            onChange={(e) => updateFilter('gender', e.target.value)}
             className="px-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
           >
             {genders.map((g) => (
@@ -346,6 +384,18 @@ export default function AdminResultsPage() {
             </button>
           </div>
         </div>
+
+        {hasActiveFilters && (
+          <div className="flex justify-end mt-4 pt-2 border-t border-black/5 dark:border-white/10">
+            <button
+              onClick={clearFilters}
+              className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-2 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Clear Filters</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* RESULTS TABLE */}
@@ -619,5 +669,17 @@ export default function AdminResultsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <div className="text-center">Loading Admin Results...</div>
+      </div>
+    }>
+      <AdminResultsContent />
+    </Suspense>
   );
 }

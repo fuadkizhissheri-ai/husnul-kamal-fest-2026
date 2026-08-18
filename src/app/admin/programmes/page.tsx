@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useMemo, Suspense, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { downloadPDFReport, downloadScoreCardPDF, downloadBatchScoreCardsPDF, downloadProgrammeChartPDF } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import { FIXED_STAGES, getStageInfo } from '@/lib/stages';
 import {
   Sparkles, Plus, Edit3, Trash2, Download,
-  Search, Printer, FileSpreadsheet, X, Users, FilterX, RotateCcw, FileText
+  Search, Printer, FileSpreadsheet, X, Users, FilterX, RotateCcw, FileText, Loader2
 } from 'lucide-react';
 import { useGlobalModal } from '@/components/TabNavigationProvider';
 
@@ -286,18 +286,51 @@ function GroupRegBlock({
   );
 }
 
-export default function AdminProgrammesPage() {
+function AdminProgrammesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   const [programmes, setProgrammes] = useState<ProgrammeItem[]>([]);
   const [loading, setLoading] = useState(true);
   
   // 🎯 Filter States
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [selectedStageFilter, setSelectedStageFilter] = useState<string>('ALL');
-  const [selectedType, setSelectedType] = useState<string>('ALL');
-  const [selectedDate, setSelectedDate] = useState<string>('ALL');
-  const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
+  const selectedCategory = searchParams.get('category') || 'ALL';
+  const selectedStageFilter = searchParams.get('stage') || 'ALL';
+  const selectedType = searchParams.get('type') || 'ALL';
+  const selectedDate = searchParams.get('date') || 'ALL';
+  const selectedStatus = searchParams.get('status') || 'ALL';
+  const searchQuery = searchParams.get('search') || '';
+
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'ALL') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
+  const handleResetFilters = () => {
+    startTransition(() => {
+      setLocalSearch('');
+      router.replace('?', { scroll: false });
+    });
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        updateFilter('search', localSearch);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [localSearch]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -393,14 +426,6 @@ export default function AdminProgrammesPage() {
     return count;
   }, [searchQuery, selectedCategory, selectedStageFilter, selectedType, selectedDate, selectedStatus]);
 
-  const handleResetFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('ALL');
-    setSelectedStageFilter('ALL');
-    setSelectedType('ALL');
-    setSelectedDate('ALL');
-    setSelectedStatus('ALL');
-  };
 
   const handleOpenModal = (item?: ProgrammeItem) => {
     if (item) {
@@ -663,10 +688,11 @@ export default function AdminProgrammesPage() {
             <input
               type="text"
               placeholder="Search by programme name, stage, or category..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="hk-input pl-9 text-xs"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              className="hk-input pl-9 text-xs pr-8"
             />
+            {isPending && <Loader2 className="w-3.5 h-3.5 text-slate-400 animate-spin absolute right-3 top-1/2 -translate-y-1/2" />}
           </div>
 
           {/* Filter Dropdowns Grid */}
@@ -674,7 +700,7 @@ export default function AdminProgrammesPage() {
             {/* 1. Stage Filter (Aura, Legacy, Lumina, Zenith) */}
             <select
               value={selectedStageFilter}
-              onChange={(e) => setSelectedStageFilter(e.target.value)}
+              onChange={(e) => updateFilter('stage', e.target.value)}
               className="hk-select py-2 text-xs w-auto"
             >
               <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">All Stages</option>
@@ -688,7 +714,7 @@ export default function AdminProgrammesPage() {
             {/* 2. Category Filter */}
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => updateFilter('category', e.target.value)}
               className="hk-select py-2 text-xs w-auto"
             >
               <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">All Categories</option>
@@ -702,7 +728,7 @@ export default function AdminProgrammesPage() {
             {/* 3. Type Filter */}
             <select
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              onChange={(e) => updateFilter('type', e.target.value)}
               className="hk-select py-2 text-xs w-auto"
             >
               <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">All Types</option>
@@ -713,7 +739,7 @@ export default function AdminProgrammesPage() {
             {/* 4. Scheduled Date Filter */}
             <select
               value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
+              onChange={(e) => updateFilter('date', e.target.value)}
               className="hk-select py-2 text-xs w-auto"
             >
               <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">All Dates</option>
@@ -727,7 +753,7 @@ export default function AdminProgrammesPage() {
             {/* 5. Status Filter (Upcoming, Live, Completed) */}
             <select
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
+              onChange={(e) => updateFilter('status', e.target.value)}
               className="hk-select py-2 text-xs w-auto"
             >
               <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">All Statuses</option>
@@ -1336,5 +1362,17 @@ export default function AdminProgrammesPage() {
       )}
 
     </div>
+  );
+}
+
+export default function AdminProgrammesPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-6">
+        <div className="text-center">Loading Programmes...</div>
+      </div>
+    }>
+      <AdminProgrammesContent />
+    </Suspense>
   );
 }

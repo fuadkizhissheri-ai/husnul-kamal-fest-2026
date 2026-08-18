@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 import { broadcastRealtimeChange } from '@/lib/realtime';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
@@ -33,10 +33,10 @@ export async function GET(request: Request) {
 
     if (query) {
       where.OR = [
-        { position: { contains: query } },
-        { participant: { fullName: { contains: query } } },
-        { participant: { chestNumber: { contains: query } } },
-        { programme: { name: { contains: query } } },
+        { position: { contains: query, mode: 'insensitive' } },
+        { participant: { fullName: { contains: query, mode: 'insensitive' } } },
+        { participant: { chestNumber: { contains: query, mode: 'insensitive' } } },
+        { programme: { name: { contains: query, mode: 'insensitive' } } },
       ];
     }
 
