@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminSession } from '@/lib/auth';
 
+export const revalidate = 60;
+
 export async function GET() {
   try {
     const albums = await prisma.galleryAlbum.findMany({

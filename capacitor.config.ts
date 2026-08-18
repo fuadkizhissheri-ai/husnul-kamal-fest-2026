@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'out',
   bundledWebRuntime: false,
   server: {
-    url: 'https://husnul-kamal-fest-2026.vercel.app',
+    url: 'https://husnul-kamal-fest-2026-dyaiz.vercel.app',
     cleartext: true,
     androidScheme: 'https',
   },
