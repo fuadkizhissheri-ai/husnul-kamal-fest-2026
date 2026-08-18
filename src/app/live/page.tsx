@@ -470,23 +470,23 @@ export default function LiveDisplayPage() {
                 key={st.id}
                 type="button"
                 onClick={() => setCurrentSlide(st.slideIdx)}
-                className={`relative flex items-center space-x-2 whitespace-nowrap shrink-0 px-2.5 py-0.5 sm:py-1 rounded-xl transition-all ${
+                className={`relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-800 text-xs transition-all shrink-0 ${
                   isCurrentStage
-                    ? 'bg-[#9E741D]/15 dark:bg-[#C8A86B]/20 border border-[#9E741D]/40 dark:border-[#C8A86B]/40 shadow-sm'
-                    : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
+                    ? 'ring-1 ring-[#C8A86B]/50 bg-slate-800/80 shadow-sm'
+                    : 'hover:bg-slate-800'
                 }`}
               >
                 <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold font-mono border ${st.badgeClass}`}>
                   {st.label}
                 </span>
                 {liveItem ? (
-                  <span className="text-slate-900 dark:text-white font-bold font-serif text-[11px] sm:text-xs flex items-center space-x-1.5">
+                  <span className="text-slate-900 dark:text-white font-bold font-serif flex items-center space-x-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                     <span>{progName}</span>
-                    <span className="text-[9px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-semibold">({progCategory || 'General'})</span>
+                    <span className="text-[9px] font-mono text-[#C8A86B] font-semibold">({progCategory || 'General'})</span>
                   </span>
                 ) : (
-                  <span className="text-slate-400 dark:text-neutral-500 italic text-[10px]">No live item</span>
+                  <span className="text-slate-400 dark:text-neutral-500 italic">No live item</span>
                 )}
 
                 {/* Active Tab Indicator Underline */}
@@ -504,7 +504,7 @@ export default function LiveDisplayPage() {
       </div>
 
       {/* MAIN CAROUSEL SLIDES */}
-      <main className="relative z-10 flex-1 px-3 sm:px-8 py-3 sm:py-6 flex items-center justify-center max-w-7xl mx-auto w-full min-h-0 overflow-y-auto">
+      <main className="relative z-10 flex-1 px-3 sm:px-8 py-3 sm:py-6 flex flex-col items-center justify-center min-h-[70vh] max-w-7xl mx-auto w-full overflow-y-auto">
         
         {loading ? (
           <div className="text-center text-slate-500 dark:text-neutral-400 font-mono">Connecting to live score feed...</div>
@@ -583,23 +583,25 @@ export default function LiveDisplayPage() {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="space-y-1 sm:space-y-2">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 2 of 4 • Individual Performers</span>
-                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white flex items-center justify-center space-x-2 sm:space-x-3">
-                    <UserCheck className="w-6 h-6 sm:w-10 sm:h-10 text-[#9E741D] dark:text-[#C8A86B]" />
+                <div className="space-y-1 sm:space-y-2 mb-8">
+                  <span className="tracking-[0.2em] text-xs font-semibold text-amber-400/80 uppercase">Slide 2 of 4 • Individual Performers</span>
+                  <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex items-center justify-center space-x-2 sm:space-x-3">
+                    <UserCheck className="w-6 h-6 sm:w-10 sm:h-10 text-amber-400" />
                     <span>MADRASA TOP TALENTS</span>
                   </h2>
                   <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Top performing individual student per Madrasa unit</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full px-6">
                   {madrasaTalents.map((mt, i) => (
-                    <div key={i} className="luxury-glass p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] border border-slate-300 dark:border-white/10 text-left space-y-2 sm:space-y-3">
-                      <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{mt.madrasa}</div>
-                      <div className="font-serif font-bold text-base sm:text-xl text-slate-900 dark:text-white uppercase">{mt.topStudent?.fullName}</div>
-                      <div className="flex items-center justify-between text-xs text-slate-600 dark:text-neutral-400 pt-1 border-t border-slate-200 dark:border-white/10 font-mono">
-                        <span>Chest: {mt.topStudent?.chestNumber}</span>
-                        <span className="text-[#9E741D] dark:text-[#C8A86B] font-bold">{mt.topStudent?.singlePoints} Pts</span>
+                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-left space-y-4 flex flex-col justify-between">
+                      <div>
+                        <div className="text-[10px] font-mono text-amber-400 font-bold uppercase mb-1">{mt.madrasa}</div>
+                        <div className="text-2xl font-bold tracking-tight text-white uppercase">{mt.topStudent?.fullName}</div>
+                      </div>
+                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <span className="text-slate-400 text-sm font-medium">Chest: {mt.topStudent?.chestNumber}</span>
+                        <span className="bg-amber-500/20 text-amber-400 font-bold px-3 py-1 rounded-full text-sm border border-amber-500/30">{mt.topStudent?.singlePoints} Pts</span>
                       </div>
                     </div>
                   ))}
@@ -617,21 +619,22 @@ export default function LiveDisplayPage() {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="space-y-1 sm:space-y-2">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#9E741D] dark:text-[#C8A86B]">Slide 3 of 4 • Category Individual Champions</span>
-                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black text-slate-900 dark:text-white flex items-center justify-center space-x-2 sm:space-x-3">
-                    <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-[#9E741D] dark:text-[#C8A86B]" />
-                    <span>CATEGORY INDIVIDUAL CHAMPIONS</span>
+                <div className="space-y-1 sm:space-y-2 mb-8">
+                  <span className="tracking-[0.2em] text-xs font-semibold text-amber-400/80 uppercase">Slide 3 of 4 • Category Champions</span>
+                  <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex items-center justify-center space-x-2 sm:space-x-3">
+                    <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-amber-400" />
+                    <span>CATEGORY CHAMPIONS</span>
                   </h2>
+                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Top performing individual student per category</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto w-full px-6">
                   {categoryTalents.map((ct, i) => (
-                    <div key={i} className="luxury-glass p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] border border-slate-300 dark:border-white/10 text-center space-y-2 sm:space-y-3">
-                      <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{ct.category}</div>
-                      <div className="font-serif font-bold text-base sm:text-lg text-slate-900 dark:text-white uppercase">{ct.topStudent?.fullName}</div>
-                      <div className="text-xs font-mono text-slate-500 dark:text-neutral-400">Chest: {ct.topStudent?.chestNumber}</div>
-                      <div className="text-xl sm:text-2xl font-black text-[#9E741D] dark:text-[#C8A86B] font-heading">{ct.topStudent?.totalPoints} Pts</div>
+                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-center flex flex-col justify-between items-center space-y-4">
+                      <div className="text-[10px] font-mono text-amber-400 font-bold uppercase">{ct.category}</div>
+                      <div className="text-2xl font-bold tracking-tight text-white uppercase">{ct.topStudent?.fullName}</div>
+                      <div className="text-slate-400 text-sm font-medium">Chest: {ct.topStudent?.chestNumber}</div>
+                      <div className="bg-amber-500/20 text-amber-400 font-bold px-4 py-2 rounded-full text-lg border border-amber-500/30 mt-2">{ct.topStudent?.totalPoints} Pts</div>
                     </div>
                   ))}
                 </div>
