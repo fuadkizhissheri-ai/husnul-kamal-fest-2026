@@ -5,7 +5,7 @@ import { downloadPDFReport } from '@/lib/pdfExporter';
 import { downloadCSVReport } from '@/lib/csvExporter';
 import PrintableCertificate from '@/components/PrintableCertificate';
 import { Trophy, Plus, Edit3, Trash2, Download, Search, Printer, FileSpreadsheet, X, Medal, Sparkles, Award, Eye, EyeOff } from 'lucide-react';
-import { calculateAutoPoints, PointsSettings, DEFAULT_POINTS_SETTINGS } from '@/lib/scoring';
+import { calculateAutoPoints, PointsSettings, DEFAULT_POINTS_SETTINGS, sortResults } from '@/lib/scoring';
 
 interface ResultItem {
   id: string;
@@ -28,6 +28,7 @@ interface ResultItem {
     group: string;
     category: string;
     madrasa?: string;
+    gender?: string;
   };
 }
 
@@ -44,6 +45,7 @@ export default function AdminResultsPage() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
   const [selectedPosition, setSelectedPosition] = useState('ALL');
+  const [selectedGender, setSelectedGender] = useState('ALL');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,19 +92,21 @@ export default function AdminResultsPage() {
   const categories = ['ALL', 'Sub Junior', 'Junior', 'Senior', 'Super Senior'];
   const groups = ['ALL', 'MAVADDA', 'MAHABBA'];
   const positions = ['ALL', '1st Place', '2nd Place', '3rd Place', 'Grade A', 'Grade B', 'Participation'];
+  const genders = ['ALL', 'Male', 'Female'];
 
-  const filteredResults = results.filter((r) => {
+  const filteredResults = sortResults(results.filter((r) => {
     if (!r.programme || !r.participant) return false;
     const matchesCategory = selectedCategory === 'ALL' || r.programme?.category === selectedCategory;
     const matchesGroup = selectedGroup === 'ALL' || r.participant?.group === selectedGroup;
     const matchesPosition = selectedPosition === 'ALL' || r.position?.includes(selectedPosition);
+    const matchesGender = selectedGender === 'ALL' || r.participant?.gender === selectedGender;
     const matchesSearch =
       (r.participant?.fullName ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.participant?.chestNumber ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.programme?.name ?? '').toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesCategory && matchesGroup && matchesPosition && matchesSearch;
-  });
+    return matchesCategory && matchesGroup && matchesPosition && matchesGender && matchesSearch;
+  }));
 
   const eligibleParticipants = participants.filter((p) =>
     p.registrations?.some((r: any) => r.programmeId === programmeId)
@@ -269,7 +273,7 @@ export default function AdminResultsPage() {
 
       {/* FILTER PANEL BEFORE DOWNLOAD */}
       <div className="luxury-glass p-5 rounded-[28px] border border-[#9E741D]/25 dark:border-[#C8A86B]/30 shadow-luxury space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-4 top-3 text-slate-400" />
             <input
@@ -310,6 +314,16 @@ export default function AdminResultsPage() {
           >
             {positions.map((p) => (
               <option key={p} value={p} className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Position: {p}</option>
+            ))}
+          </select>
+
+          <select
+            value={selectedGender}
+            onChange={(e) => setSelectedGender(e.target.value)}
+            className="px-4 py-2.5 rounded-full bg-white dark:bg-white/10 border border-slate-300 dark:border-[#C8A86B]/30 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
+          >
+            {genders.map((g) => (
+              <option key={g} value={g} className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Gender: {g}</option>
             ))}
           </select>
 

@@ -6,6 +6,7 @@ import PrintableCertificate from '@/components/PrintableCertificate';
 import { Trophy, Search, Download, X, Medal, FileText } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { downloadPublishedResultsPDF } from '@/lib/pdfExporter';
+import { sortResults } from '@/lib/scoring';
 
 interface ResultItem {
   id: string;
@@ -25,6 +26,7 @@ interface ResultItem {
     registrationId: string;
     group: string;
     category: string;
+    gender?: string;
   };
 }
 
@@ -37,6 +39,7 @@ export default function ResultsPage() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
   const [selectedPosition, setSelectedPosition] = useState('ALL');
+  const [selectedGender, setSelectedGender] = useState('ALL');
 
   // Certificate Modal State
   const [activeCertResult, setActiveCertResult] = useState<ResultItem | null>(null);
@@ -62,15 +65,17 @@ export default function ResultsPage() {
   const categories = ['ALL', 'Sub Junior', 'Junior', 'Senior', 'Super Senior'];
   const groups = ['ALL', 'MAVADDA', 'MAHABBA'];
   const positions = ['ALL', '1st Place', '2nd Place', '3rd Place'];
+  const genders = ['ALL', 'Male', 'Female'];
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const filteredResults = useMemo(() => {
-    return results.filter((r) => {
+    const filtered = results.filter((r) => {
       if (!r.programme || !r.participant) return false;
       const matchesCategory = selectedCategory === 'ALL' || r.programme?.category === selectedCategory;
       const matchesGroup = selectedGroup === 'ALL' || r.participant?.group === selectedGroup;
       const matchesPosition = selectedPosition === 'ALL' || r.position?.includes(selectedPosition);
+      const matchesGender = selectedGender === 'ALL' || r.participant?.gender === selectedGender;
       const q = deferredSearchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
@@ -78,12 +83,14 @@ export default function ResultsPage() {
         (r.participant?.chestNumber ?? '').toLowerCase().includes(q) ||
         (r.programme?.name ?? '').toLowerCase().includes(q);
 
-      return matchesCategory && matchesGroup && matchesPosition && matchesSearch;
+      return matchesCategory && matchesGroup && matchesPosition && matchesGender && matchesSearch;
     });
-  }, [results, selectedCategory, selectedGroup, selectedPosition, deferredSearchQuery]);
+    
+    return sortResults(filtered);
+  }, [results, selectedCategory, selectedGroup, selectedPosition, selectedGender, deferredSearchQuery]);
 
   const handleDownloadPDF = () => {
-    const filterTitle = `Category: ${selectedCategory} | House: ${selectedGroup} | Position: ${selectedPosition}`;
+    const filterTitle = `Category: ${selectedCategory} | House: ${selectedGroup} | Position: ${selectedPosition} | Gender: ${selectedGender}`;
     downloadPublishedResultsPDF(
       filterTitle,
       filteredResults,
@@ -119,12 +126,12 @@ export default function ResultsPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-4 top-3 text-neutral-400" />
               <input
                 type="text"
-                placeholder="Name, Chest No, Programme..."
+                placeholder="Name, Chest No..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white placeholder-neutral-400 focus:outline-none"
@@ -138,7 +145,7 @@ export default function ResultsPage() {
             >
               {categories.map((c) => (
                 <option key={c} value={c} className="bg-slate-900 text-white">
-                  Category: {c === 'Sub Junior' ? 'Sub Junior (Classes 3, 4)' : c === 'Junior' ? 'Junior (Classes 5, 6)' : c === 'Senior' ? 'Senior (Classes 7, 8)' : c === 'Super Senior' ? 'Super Senior (Classes 9-12)' : c}
+                  Category: {c === 'Sub Junior' ? 'Sub Junior' : c === 'Junior' ? 'Junior' : c === 'Senior' ? 'Senior' : c === 'Super Senior' ? 'Super Senior' : c}
                 </option>
               ))}
             </select>
@@ -160,6 +167,16 @@ export default function ResultsPage() {
             >
               {positions.map((p) => (
                 <option key={p} value={p} className="bg-slate-900 text-white">Position: {p}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedGender}
+              onChange={(e) => setSelectedGender(e.target.value)}
+              className="px-4 py-2.5 rounded-full bg-black/5 dark:bg-white/10 border border-[#C8A86B]/30 text-xs text-[#0B0B0B] dark:text-white focus:outline-none"
+            >
+              {genders.map((g) => (
+                <option key={g} value={g} className="bg-slate-900 text-white">Gender: {g}</option>
               ))}
             </select>
           </div>

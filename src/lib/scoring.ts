@@ -82,3 +82,43 @@ export function calculateAutoPoints(
 
   return 0;
 }
+
+/**
+ * Standardized sorting logic for results:
+ * 1. Programme Name (alphabetically)
+ * 2. Position rank (1st Place, 2nd Place, 3rd Place, Grade A, Grade B, Participation)
+ */
+export function sortResults(results: any[]) {
+  const positionRank: Record<string, number> = {
+    '1st Place': 1,
+    '2nd Place': 2,
+    '3rd Place': 3,
+    'Grade A': 4,
+    'Grade B': 5,
+    'Participation': 6
+  };
+
+  return [...results].sort((a, b) => {
+    // 1. Primary sort: Programme Name
+    const progA = a.programme?.name || '';
+    const progB = b.programme?.name || '';
+    
+    if (progA !== progB) {
+      return progA.localeCompare(progB);
+    }
+
+    // 2. Secondary sort: Gender (Male first)
+    const genderA = a.participant?.gender === 'Male' ? 1 : a.participant?.gender === 'Female' ? 2 : 3;
+    const genderB = b.participant?.gender === 'Male' ? 1 : b.participant?.gender === 'Female' ? 2 : 3;
+
+    if (genderA !== genderB) {
+      return genderA - genderB;
+    }
+
+    // 3. Tertiary sort: Position rank
+    const rankA = positionRank[a.position] || 99;
+    const rankB = positionRank[b.position] || 99;
+
+    return rankA - rankB;
+  });
+}
