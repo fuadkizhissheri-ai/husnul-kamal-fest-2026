@@ -61,10 +61,6 @@ function ParticipantsContent() {
     } else {
       params.delete(key);
     }
-    // Also reset programme if category/group changes to ensure consistency
-    if (key === 'category' || key === 'group' || key === 'gender') {
-      params.delete('programme');
-    }
     startTransition(() => {
       router.replace(`?${params.toString()}`, { scroll: false });
     });
@@ -91,7 +87,6 @@ function ParticipantsContent() {
   // View Toggle State
   const [viewMode, setViewMode] = useState<'delegates' | 'programmes'>('delegates');
 
-  // Extract available programmes based on other filters
   const availableProgrammes = useMemo(() => {
     let result = [...participants];
     if (selectedGroup !== 'ALL') result = result.filter((p) => p.group === selectedGroup);
@@ -101,7 +96,15 @@ function ParticipantsContent() {
     const progs = new Set<string>();
     result.forEach(p => {
       p.registrations?.forEach((r: any) => {
-        if (r.programme?.name) progs.add(r.programme.name);
+        if (r.programme?.name) {
+          if (selectedCategory !== 'ALL') {
+            if (r.programme.category === selectedCategory) {
+              progs.add(r.programme.name);
+            }
+          } else {
+            progs.add(r.programme.name);
+          }
+        }
       });
     });
     return Array.from(progs).sort();
@@ -114,6 +117,13 @@ function ParticipantsContent() {
       updateFilter('programme', 'ALL');
     }
   }, [availableProgrammes, selectedProgramme, participants.length]);
+
+  // Reset PDF download selection if it becomes incompatible
+  useEffect(() => {
+    if (selectedPDFProgramme !== '' && !availableProgrammes.includes(selectedPDFProgramme) && participants.length > 0) {
+      setSelectedPDFProgramme('');
+    }
+  }, [availableProgrammes, selectedPDFProgramme, participants.length]);
 
   // ID Pass Modal State
   const [activeIDCardParticipant, setActiveIDCardParticipant] = useState<Participant | null>(null);
