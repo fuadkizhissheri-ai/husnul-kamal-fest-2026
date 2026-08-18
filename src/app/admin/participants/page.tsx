@@ -29,6 +29,8 @@ export default function AdminParticipantsPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 300);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedGroup, setSelectedGroup] = useState('ALL');
+  const [selectedGender, setSelectedGender] = useState('ALL');
 
   // Available Programmes for Edit
   const [programmes, setProgrammes] = useState<any[]>([]);
@@ -305,12 +307,15 @@ Best wishes!
   const categories = ['ALL', 'Sub Junior', 'Junior', 'Senior', 'Super Senior'];
 
   const filtered = participants.filter((p) => {
+    const searchLower = (debouncedSearch || '').toLowerCase();
     const matchesSearch =
-      p.fullName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      p.chestNumber.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      p.registrationId.toLowerCase().includes(debouncedSearch.toLowerCase());
+      (p.fullName || '').toLowerCase().includes(searchLower) ||
+      (p.chestNumber || '').toLowerCase().includes(searchLower) ||
+      (p.registrationId || '').toLowerCase().includes(searchLower);
     const matchesCat = selectedCategory === 'ALL' || p.category === selectedCategory;
-    return matchesSearch && matchesCat;
+    const matchesGroup = selectedGroup === 'ALL' || p.group === selectedGroup;
+    const matchesGender = selectedGender === 'ALL' || (p.gender && p.gender.toUpperCase() === selectedGender);
+    return matchesSearch && matchesCat && matchesGroup && matchesGender;
   });
 
   const availableEditProgrammes = programmes.filter(
@@ -377,34 +382,76 @@ Best wishes!
       </div>
 
       {/* Filters Bar */}
-      <div className="luxury-glass p-4 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-          <input
-            type="text"
-            placeholder="Search by name, chest no..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none"
-          />
+      <div className="luxury-glass p-4 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col gap-4 text-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              placeholder="Search by name, chest no..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <span className="text-slate-400 font-semibold">Category:</span>
+            <div className="flex flex-wrap gap-1">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setSelectedCategory(c)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    selectedCategory === c
+                      ? 'bg-[#C8A86B] text-[#0B0B0B]'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <span className="text-slate-400 font-semibold">Category:</span>
-          <div className="flex flex-wrap gap-1">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => setSelectedCategory(c)}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                  selectedCategory === c
-                    ? 'bg-[#C8A86B] text-[#0B0B0B]'
-                    : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-t border-slate-200 dark:border-white/10 pt-4">
+          <div className="flex items-center space-x-2">
+            <span className="text-slate-400 font-semibold">House:</span>
+            <div className="flex flex-wrap gap-1">
+              {['ALL', 'MAVADDA', 'MAHABBA'].map((g) => (
+                <button
+                  key={g}
+                  onClick={() => setSelectedGroup(g)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    selectedGroup === g
+                      ? 'bg-[#C8A86B] text-[#0B0B0B]'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <span className="text-slate-400 font-semibold">Gender / Section:</span>
+            <div className="flex flex-wrap gap-1">
+              {['ALL', 'MALE', 'FEMALE'].map((g) => (
+                <button
+                  key={g}
+                  onClick={() => setSelectedGender(g)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    selectedGender === g
+                      ? 'bg-[#C8A86B] text-[#0B0B0B]'
+                      : 'bg-black/5 dark:bg-white/5 text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
