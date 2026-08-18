@@ -583,25 +583,25 @@ export default function LiveDisplayPage() {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="space-y-1 sm:space-y-2 mb-8">
-                  <span className="tracking-[0.2em] text-xs font-semibold text-amber-400/80 uppercase">Slide 2 of 4 • Individual Performers</span>
-                  <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex items-center justify-center space-x-2 sm:space-x-3">
-                    <UserCheck className="w-6 h-6 sm:w-10 sm:h-10 text-amber-400" />
-                    <span>MADRASA TOP TALENTS</span>
+                <div className="space-y-1 sm:space-y-2 mb-6 sm:mb-8 text-center">
+                  <span className="tracking-[0.2em] text-[10px] sm:text-xs font-semibold text-amber-400/80 uppercase block">Slide 2 of 4 • Individual Performers</span>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                    <UserCheck className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 shrink-0" />
+                    <span className="text-center leading-tight">MADRASA TOP TALENTS</span>
                   </h2>
-                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Top performing individual student per Madrasa unit</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono mt-1 sm:mt-0">Top performing individual student per Madrasa unit</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto w-full px-4 sm:px-6">
                   {madrasaTalents.map((mt, i) => (
-                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-left space-y-4 flex flex-col justify-between">
+                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-left space-y-3 sm:space-y-4 flex flex-col justify-between">
                       <div>
-                        <div className="text-[10px] font-mono text-amber-400 font-bold uppercase mb-1">{mt.madrasa}</div>
-                        <div className="text-2xl font-bold tracking-tight text-white uppercase">{mt.topStudent?.fullName}</div>
+                        <div className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase mb-1">{mt.madrasa}</div>
+                        <div className="text-xl sm:text-2xl font-bold tracking-tight text-white uppercase leading-snug">{mt.topStudent?.fullName}</div>
                       </div>
-                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                        <span className="text-slate-400 text-sm font-medium">Chest: {mt.topStudent?.chestNumber}</span>
-                        <span className="bg-amber-500/20 text-amber-400 font-bold px-3 py-1 rounded-full text-sm border border-amber-500/30">{mt.topStudent?.singlePoints} Pts</span>
+                      <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-white/10">
+                        <span className="text-slate-400 text-xs sm:text-sm font-medium">Chest: {mt.topStudent?.chestNumber}</span>
+                        <span className="bg-amber-500/20 text-amber-400 font-bold px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-amber-500/30">{mt.topStudent?.singlePoints} Pts</span>
                       </div>
                     </div>
                   ))}
@@ -619,22 +619,22 @@ export default function LiveDisplayPage() {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-6xl space-y-4 sm:space-y-6 text-center"
               >
-                <div className="space-y-1 sm:space-y-2 mb-8">
-                  <span className="tracking-[0.2em] text-xs font-semibold text-amber-400/80 uppercase">Slide 3 of 4 • Category Champions</span>
-                  <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex items-center justify-center space-x-2 sm:space-x-3">
-                    <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-amber-400" />
-                    <span>CATEGORY CHAMPIONS</span>
+                <div className="space-y-1 sm:space-y-2 mb-6 sm:mb-8 text-center">
+                  <span className="tracking-[0.2em] text-[10px] sm:text-xs font-semibold text-amber-400/80 uppercase block">Slide 3 of 4 • Category Champions</span>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                    <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 shrink-0" />
+                    <span className="text-center leading-tight">CATEGORY CHAMPIONS</span>
                   </h2>
-                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono">Top performing individual student per category</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-neutral-400 font-mono mt-1 sm:mt-0">Top performing individual student per category</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto w-full px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto w-full px-4 sm:px-6">
                   {categoryTalents.map((ct, i) => (
-                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-center flex flex-col justify-between items-center space-y-4">
-                      <div className="text-[10px] font-mono text-amber-400 font-bold uppercase">{ct.category}</div>
-                      <div className="text-2xl font-bold tracking-tight text-white uppercase">{ct.topStudent?.fullName}</div>
-                      <div className="text-slate-400 text-sm font-medium">Chest: {ct.topStudent?.chestNumber}</div>
-                      <div className="bg-amber-500/20 text-amber-400 font-bold px-4 py-2 rounded-full text-lg border border-amber-500/30 mt-2">{ct.topStudent?.totalPoints} Pts</div>
+                    <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl transition-all duration-300 hover:border-amber-500/50 text-center flex flex-col justify-between items-center space-y-3 sm:space-y-4">
+                      <div className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase">{ct.category}</div>
+                      <div className="text-xl sm:text-2xl font-bold tracking-tight text-white uppercase leading-snug">{ct.topStudent?.fullName}</div>
+                      <div className="text-slate-400 text-xs sm:text-sm font-medium">Chest: {ct.topStudent?.chestNumber}</div>
+                      <div className="bg-amber-500/20 text-amber-400 font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-base sm:text-lg border border-amber-500/30 mt-1 sm:mt-2">{ct.topStudent?.totalPoints} Pts</div>
                     </div>
                   ))}
                 </div>
