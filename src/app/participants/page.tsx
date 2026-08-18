@@ -48,16 +48,28 @@ export default function ParticipantsPage() {
   // View Toggle State
   const [viewMode, setViewMode] = useState<'delegates' | 'programmes'>('delegates');
 
-  // Extract unique programmes
-  const uniqueProgrammes = useMemo(() => {
+  // Extract available programmes based on other filters
+  const availableProgrammes = useMemo(() => {
+    let result = [...participants];
+    if (selectedGroup !== 'ALL') result = result.filter((p) => p.group === selectedGroup);
+    if (selectedCategory !== 'ALL') result = result.filter((p) => p.category === selectedCategory);
+    if (selectedGender !== 'ALL') result = result.filter((p) => p.gender?.toUpperCase() === selectedGender.toUpperCase());
+
     const progs = new Set<string>();
-    participants.forEach(p => {
+    result.forEach(p => {
       p.registrations?.forEach((r: any) => {
         if (r.programme?.name) progs.add(r.programme.name);
       });
     });
     return Array.from(progs).sort();
-  }, [participants]);
+  }, [participants, selectedGroup, selectedCategory, selectedGender]);
+
+  // Reset selected programme if it's no longer available after category/group change
+  useEffect(() => {
+    if (selectedProgramme !== 'ALL' && !availableProgrammes.includes(selectedProgramme)) {
+      setSelectedProgramme('ALL');
+    }
+  }, [availableProgrammes, selectedProgramme]);
 
   // ID Pass Modal State
   const [activeIDCardParticipant, setActiveIDCardParticipant] = useState<Participant | null>(null);
@@ -147,9 +159,9 @@ export default function ParticipantsPage() {
       const q = deferredSearchQuery.toLowerCase().trim();
       result = result.filter(
         (p) =>
-          p.fullName.toLowerCase().includes(q) ||
-          p.chestNumber.toLowerCase().includes(q) ||
-          p.registrationId.toLowerCase().includes(q) ||
+          (p.fullName || '').toLowerCase().includes(q) ||
+          (p.chestNumber || '').toLowerCase().includes(q) ||
+          (p.registrationId || '').toLowerCase().includes(q) ||
           (p.madrasa && p.madrasa.toLowerCase().includes(q))
       );
     }
@@ -441,7 +453,7 @@ export default function ParticipantsPage() {
                 className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL" className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">ALL PROGRAMMES</option>
-                {uniqueProgrammes.map((p) => (
+                {availableProgrammes.map((p) => (
                   <option key={p} value={p} className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">{p}</option>
                 ))}
               </select>
@@ -462,7 +474,7 @@ export default function ParticipantsPage() {
                   className="flex-1 px-3.5 py-2.5 bg-black/5 dark:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
                 >
                   <option value="" disabled className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">Choose a programme...</option>
-                  {uniqueProgrammes.map((p) => (
+                  {availableProgrammes.map((p) => (
                     <option key={`pdf-${p}`} value={p} className="bg-[#FAF8F3] text-slate-900 dark:bg-slate-900 dark:text-white">{p}</option>
                   ))}
                 </select>
