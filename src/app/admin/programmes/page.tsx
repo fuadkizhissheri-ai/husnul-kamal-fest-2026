@@ -350,6 +350,9 @@ function AdminProgrammesContent() {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
   const [includeRemarks, setIncludeRemarks] = useState<boolean>(true);
   const [scoreCardGroupFilter, setScoreCardGroupFilter] = useState<string>('ALL');
+  
+  // Selected items for Batch Score Cards
+  const [selectedScoreCardProgrammes, setSelectedScoreCardProgrammes] = useState<Set<string>>(new Set());
 
   // Global Modal Registrations for hardware back button
   useGlobalModal(isModalOpen, () => { setIsModalOpen(false); setFormError(null); }, 'add-programme-modal');
@@ -616,11 +619,18 @@ function AdminProgrammesContent() {
     downloadProgrammeChartPDF(p);
   };
 
-  // Batch Download Score Cards for ALL Currently Filtered Programmes
+  // Batch Download Score Cards for Selected Programmes
   const handleBatchScoreCards = () => {
-    if (filteredProgrammes.length === 0) return;
+    const targets = selectedScoreCardProgrammes.size > 0 
+      ? filteredProgrammes.filter(p => selectedScoreCardProgrammes.has(p.id))
+      : [];
 
-    const batchItems = filteredProgrammes.map((p) => ({
+    if (targets.length === 0) {
+      alert("Please select at least one programme.");
+      return;
+    }
+
+    const batchItems = targets.map((p) => ({
       config: {
         programmeName: p.name,
         category: p.category,
@@ -628,15 +638,31 @@ function AdminProgrammesContent() {
         date: p.date,
         startTime: p.startTime,
         judgeCount,
-        orientation: 'landscape' as const,
+        orientation: 'portrait' as const, // Forced portrait for half-A4
         includeRemarks: true,
       },
       participants: (p.registrations || []).map((r) => r.participant).filter(Boolean),
     }));
 
-    const stageLabel = selectedStageFilter !== 'ALL' ? selectedStageFilter : 'Filtered';
-    const catLabel = selectedCategory !== 'ALL' ? `_${selectedCategory.replace(/\s+/g, '_')}` : '';
-    downloadBatchScoreCardsPDF(batchItems, `Batch_ScoreCards_${stageLabel}${catLabel}.pdf`);
+    downloadBatchScoreCardsPDF(batchItems, `Batch_ScoreCards_${targets.length}_Programmes.pdf`);
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedScoreCardProgrammes.size === filteredProgrammes.length && filteredProgrammes.length > 0) {
+      setSelectedScoreCardProgrammes(new Set());
+    } else {
+      setSelectedScoreCardProgrammes(new Set(filteredProgrammes.map(p => p.id)));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    const newSet = new Set(selectedScoreCardProgrammes);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedScoreCardProgrammes(newSet);
   };
 
   return (
@@ -800,6 +826,15 @@ function AdminProgrammesContent() {
             >
               <FileSpreadsheet className="w-3 h-3" /> CSV
             </button>
+            {selectedScoreCardProgrammes.size > 0 && (
+              <button
+                onClick={handleBatchScoreCards}
+                className="flex items-center gap-1 px-3 py-1 bg-[#18181B] text-[#F5E6C4] dark:bg-[#C8A86B] dark:text-[#0B0B0B] rounded-lg font-bold transition-all"
+              >
+                <Printer className="w-3 h-3" />
+                <span>Batch Score Cards ({selectedScoreCardProgrammes.size})</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -837,6 +872,14 @@ function AdminProgrammesContent() {
               <table className="hk-table">
                 <thead>
                   <tr>
+                    <th className="w-12 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedScoreCardProgrammes.size === filteredProgrammes.length && filteredProgrammes.length > 0}
+                        onChange={handleToggleSelectAll}
+                        className="w-4 h-4 accent-[#C8A86B] rounded cursor-pointer"
+                      />
+                    </th>
                     <th>Programme Name</th>
                     <th>Category</th>
                     <th>Stage Venue</th>
@@ -851,6 +894,14 @@ function AdminProgrammesContent() {
                     const hasResults = Boolean(p.results && p.results.length > 0);
                     return (
                       <tr key={p.id} className="hover:bg-slate-100/60 dark:hover:bg-white/5 transition-colors">
+                        <td className="py-4 px-3 text-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedScoreCardProgrammes.has(p.id)}
+                            onChange={() => handleToggleSelect(p.id)}
+                            className="w-4 h-4 accent-[#C8A86B] rounded cursor-pointer"
+                          />
+                        </td>
                         <td className="py-4 px-5">
                           <div className="font-bold text-slate-900 dark:text-white font-serif text-sm leading-snug">{p.name}</div>
                           <div className="text-[10px] text-slate-500 font-mono mt-0.5">{p.date} · {p.startTime} - {p.endTime}</div>

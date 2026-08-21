@@ -461,7 +461,7 @@ export function downloadScoreCardPDF(
     format: 'a4',
   });
 
-  renderSingleScoreCardPage(doc, config, participants);
+  renderSingleScoreCardPage(doc, config, participants, 0, true);
 
   const saveName = filename || `ScoreCard_${config.programmeName.replace(/\s+/g, '_')}_${config.category}.pdf`;
   doc.save(saveName);
@@ -477,16 +477,42 @@ export function downloadBatchScoreCardsPDF(
   if (items.length === 0) return;
 
   const doc = new jsPDF({
-    orientation: 'landscape',
+    orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
   });
 
-  items.forEach((item, index) => {
+  const chunkedItems = [];
+  for (let i = 0; i < items.length; i += 2) {
+    chunkedItems.push(items.slice(i, i + 2));
+  }
+
+  chunkedItems.forEach((pair, index) => {
     if (index > 0) {
-      doc.addPage('a4', 'landscape');
+      doc.addPage('a4', 'portrait');
     }
-    renderSingleScoreCardPage(doc, item.config, item.participants);
+
+    // Top half
+    renderSingleScoreCardPage(doc, pair[0].config, pair[0].participants, 0, false);
+
+    // Bottom half (if exists)
+    if (pair.length > 1) {
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const midY = 148.5; // A4 height is 297mm
+
+      // Draw subtle cutting line
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineDashPattern([2, 2], 0);
+      doc.line(10, midY, pageWidth - 10, midY);
+      doc.setLineDashPattern([], 0); // reset
+      
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 150);
+      doc.setFont('helvetica', 'italic');
+      doc.text('✂ CUT HERE FOR INDIVIDUAL PROGRAMME SHEET', pageWidth / 2, midY + 1.5, { align: 'center' });
+
+      renderSingleScoreCardPage(doc, pair[1].config, pair[1].participants, midY, false);
+    }
   });
 
   doc.save(batchFilename);
@@ -499,7 +525,9 @@ export function downloadBatchScoreCardsPDF(
 function renderSingleScoreCardPage(
   doc: jsPDF,
   config: ScoreCardConfig,
-  participants: ScoreCardParticipant[]
+  participants: ScoreCardParticipant[],
+  offsetY: number = 0,
+  isStandalone: boolean = true
 ) {
   const isLandscape = doc.internal.pageSize.getWidth() > doc.internal.pageSize.getHeight();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -507,33 +535,33 @@ function renderSingleScoreCardPage(
 
   // 1. Header Banner (Ink-friendly white with gold border)
   doc.setFillColor(250, 248, 243); // Warm cream base
-  doc.rect(10, 8, pageWidth - 20, 28, 'F');
+  doc.rect(10, 8 + offsetY, pageWidth - 20, 24, 'F');
   doc.setDrawColor(201, 162, 39); // Gold border
   doc.setLineWidth(0.6);
-  doc.rect(10, 8, pageWidth - 20, 28, 'S');
+  doc.rect(10, 8 + offsetY, pageWidth - 20, 24, 'S');
 
   // Fest Title
   doc.setTextColor(31, 58, 58); // Dark Teal
-  doc.setFontSize(14);
+  doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.text('HUSNUL KAMAL MEELAD FEST 2026', 15, 16);
+  doc.text('HUSNUL KAMAL MEELAD FEST 2026', 15, 14 + offsetY);
 
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(85, 85, 85);
-  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu Campus • Official Judge Score Sheet', 15, 22);
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu Campus • Official Judge Score Sheet', 15, 19 + offsetY);
 
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(158, 116, 29); // Bronze Gold
-  doc.text(`PROGRAMME: ${config.programmeName.toUpperCase()}`, 15, 30);
+  doc.text(`PROGRAMME: ${config.programmeName.toUpperCase()}`, 15, 27 + offsetY);
 
   // Right Metadata block
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setTextColor(31, 58, 58);
-  doc.text(`Category: ${config.category}`, pageWidth - 15, 16, { align: 'right' });
-  doc.text(`Stage Venue: ${config.stage}`, pageWidth - 15, 22, { align: 'right' });
-  doc.text(`Date/Time: ${config.date || 'Event Day'} ${config.startTime || ''}`, pageWidth - 15, 30, { align: 'right' });
+  doc.text(`Category: ${config.category}`, pageWidth - 15, 14 + offsetY, { align: 'right' });
+  doc.text(`Stage Venue: ${config.stage}`, pageWidth - 15, 19 + offsetY, { align: 'right' });
+  doc.text(`Date/Time: ${config.date || 'Event Day'} ${config.startTime || ''}`, pageWidth - 15, 27 + offsetY, { align: 'right' });
 
   // Filter out invalid items and sort participants by Chest Number numerically ascending
   const validParticipants = (participants || []).filter((p) => p && p.chestNumber);
@@ -546,19 +574,19 @@ function renderSingleScoreCardPage(
   // Handle 0-Participant Empty State
   if (sortedParticipants.length === 0) {
     doc.setFillColor(254, 242, 242);
-    doc.rect(10, 42, pageWidth - 20, 24, 'F');
+    doc.rect(10, 36 + offsetY, pageWidth - 20, 20, 'F');
     doc.setDrawColor(239, 68, 68);
     doc.setLineWidth(0.5);
-    doc.rect(10, 42, pageWidth - 20, 24, 'S');
+    doc.rect(10, 36 + offsetY, pageWidth - 20, 20, 'S');
 
     doc.setTextColor(185, 28, 28);
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('NO PARTICIPANTS REGISTERED FOR THIS PROGRAMME YET', pageWidth / 2, 54, { align: 'center' });
-    doc.setFontSize(9);
+    doc.text('NO PARTICIPANTS REGISTERED FOR THIS PROGRAMME YET', pageWidth / 2, 46 + offsetY, { align: 'center' });
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(120, 120, 120);
-    doc.text('Delegates registered for this event will auto-populate here upon next export.', pageWidth / 2, 61, { align: 'center' });
+    doc.text('Delegates registered for this event will auto-populate here upon next export.', pageWidth / 2, 52 + offsetY, { align: 'center' });
     return;
   }
 
@@ -590,7 +618,7 @@ function renderSingleScoreCardPage(
 
   // Generate Table with multi-page repeat headers and crisp gridlines
   autoTable(doc, {
-    startY: 40,
+    startY: 36 + offsetY,
     head: [headers],
     body: tableRows,
     theme: 'grid',
@@ -598,15 +626,15 @@ function renderSingleScoreCardPage(
     styles: {
       lineColor: [80, 80, 80],
       lineWidth: 0.4,
-      minCellHeight: 13,
+      minCellHeight: 11,
       valign: 'middle',
-      fontSize: 10,
+      fontSize: 8,
     },
     headStyles: {
       fillColor: [31, 58, 58],
       textColor: [248, 245, 238],
       fontStyle: 'bold',
-      fontSize: 10,
+      fontSize: 8,
       halign: 'center',
       valign: 'middle',
       lineColor: [31, 58, 58],
@@ -618,17 +646,20 @@ function renderSingleScoreCardPage(
       valign: 'middle',
     },
     columnStyles: {
-      0: { fontStyle: 'bold', halign: 'center', cellWidth: isLandscape ? 45 : 38 },
+      0: { fontStyle: 'bold', halign: 'center', cellWidth: 28 },
     },
     alternateRowStyles: {
       fillColor: [250, 252, 255],
     },
-    margin: { top: 40, left: 10, right: 10, bottom: 25 },
+    margin: { top: 36 + offsetY, left: 10, right: 10, bottom: isStandalone ? 25 : (offsetY === 0 ? 155 : 25) },
   });
 
   // Footer Signatures
-  const finalY = (doc as any).lastAutoTable?.finalY || 160;
-  const signatureY = Math.min(finalY + 16, pageHeight - 22);
+  // Footer Signatures
+  const finalY = (doc as any).lastAutoTable?.finalY || (36 + offsetY);
+  // Ensure the signature fits within the half page limit if rendering in batch (148.5 is half height)
+  const maxSignatureY = isStandalone ? pageHeight - 22 : (offsetY === 0 ? 148.5 - 15 : pageHeight - 15);
+  const signatureY = Math.min(finalY + 12, maxSignatureY);
 
   doc.setLineWidth(0.4);
   doc.setDrawColor(100, 100, 100);
@@ -637,7 +668,7 @@ function renderSingleScoreCardPage(
   for (let s = 0; s < 4; s++) {
     const sigX = 10 + s * (sigBoxWidth + 3.3);
     doc.line(sigX, signatureY, sigX + sigBoxWidth, signatureY);
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(80, 80, 80);
     const label = s < 3 ? `Judge ${s + 1} Signature` : 'Stage Controller Signature';
@@ -645,16 +676,19 @@ function renderSingleScoreCardPage(
   }
 
   // Page numbers
-  const pageCount = (doc as any).internal.getNumberOfPages();
-  const currentPage = (doc as any).internal.getCurrentPageInfo().pageNumber;
-  doc.setFontSize(8);
-  doc.setTextColor(120, 120, 120);
-  doc.text(
-    `Husnul Kamal Meelad Fest 2026 • Official Score Card • Page ${currentPage} of ${pageCount}`,
-    pageWidth / 2,
-    pageHeight - 6,
-    { align: 'center' }
-  );
+  // Page numbers (only on standalone, or if you want them on batch too)
+  if (isStandalone) {
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    const currentPage = (doc as any).internal.getCurrentPageInfo().pageNumber;
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(
+      `Husnul Kamal Meelad Fest 2026 • Official Score Card • Page ${currentPage} of ${pageCount}`,
+      pageWidth / 2,
+      pageHeight - 6,
+      { align: 'center' }
+    );
+  }
 
   const pdfDataUri = doc.output('datauristring');
   const filename = `${config.programmeName.replace(/[^a-zA-Z0-9]/g, '_')}_ScoreCard.pdf`;
