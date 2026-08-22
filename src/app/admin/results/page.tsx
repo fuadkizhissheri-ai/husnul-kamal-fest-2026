@@ -10,6 +10,7 @@ import { calculateAutoPoints, PointsSettings, DEFAULT_POINTS_SETTINGS, sortResul
 
 interface ResultItem {
   id: string;
+  groupId?: string | null;
   position: string;
   points: number;
   certificateGenerated: boolean;
@@ -93,7 +94,7 @@ function AdminResultsContent() {
   // Form Fields
   const [modalCategory, setModalCategory] = useState('ALL');
   const [programmeId, setProgrammeId] = useState('');
-  const [participantId, setParticipantId] = useState('');
+  const [participantIds, setParticipantIds] = useState<string[]>([]);
   const [position, setPosition] = useState('1st Place');
   const [points, setPoints] = useState(10);
 
@@ -145,6 +146,22 @@ function AdminResultsContent() {
     return matchesCategory && matchesGroup && matchesPosition && matchesGender && matchesSearch;
   }));
 
+  const displayResults = React.useMemo(() => {
+    const seenGroups = new Set<string>();
+    const out: any[] = [];
+    for (const r of filteredResults) {
+      if (r.groupId) {
+        if (seenGroups.has(r.groupId)) continue;
+        seenGroups.add(r.groupId);
+        const groupMembers = filteredResults.filter((x: any) => x.groupId === r.groupId);
+        out.push({ ...r, isGroupRow: true, groupMembers });
+      } else {
+        out.push({ ...r, isGroupRow: false });
+      }
+    }
+    return out;
+  }, [filteredResults]);
+
   const eligibleParticipants = participants.filter((p) =>
     p.registrations?.some((r: any) => r.programmeId === programmeId)
   );
@@ -156,14 +173,14 @@ function AdminResultsContent() {
   const handleModalCategoryChange = (newCat: string) => {
     setModalCategory(newCat);
     setProgrammeId('');
-    setParticipantId('');
+    setParticipantIds([]);
     setPoints(0);
   };
 
   // Auto-calculate points when programme or position changes
   const handlePositionOrProgChange = (newProgId: string, newPos: string) => {
     if (newProgId !== programmeId) {
-      setParticipantId(''); // Reset participant when programme changes
+      setParticipantIds([]); // Reset participants when programme changes
     }
     setProgrammeId(newProgId);
     setPosition(newPos);
@@ -180,14 +197,24 @@ function AdminResultsContent() {
       setEditingItem(item);
       setModalCategory(item.programme.category);
       setProgrammeId(item.programme.id);
-      setParticipantId(item.participant.id);
       setPosition(item.position);
       setPoints(item.points);
+
+      // Populate participantIds
+      if (item.groupId) {
+        const groupMemberIds = results
+          .filter(r => r.groupId === item.groupId)
+          .map(r => r.participant.id);
+        setParticipantIds(groupMemberIds);
+      } else {
+        setParticipantIds([item.participant.id]);
+      }
+
     } else {
       setEditingItem(null);
       setModalCategory('ALL');
       setProgrammeId('');
-      setParticipantId('');
+      setParticipantIds([]);
       setPosition('1st Place');
       setPoints(0);
     }
@@ -196,10 +223,14 @@ function AdminResultsContent() {
 
   const handleSaveResult = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (participantIds.length === 0) {
+      alert("Please select at least one participant");
+      return;
+    }
     const payload = {
       id: editingItem?.id,
       programmeId,
-      participantId,
+      participantIds,
       position,
       points,
     };
@@ -419,7 +450,7 @@ function AdminResultsContent() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-white/10 text-slate-800 dark:text-slate-200 font-sans">
-                {filteredResults.map((r) => (
+                {displayResults.map((r: any) => (
                   <tr key={r.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors align-middle">
                     <td className="py-4 px-6 font-bold font-serif align-middle">
                       <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-[11px] font-bold ${
@@ -435,11 +466,15 @@ function AdminResultsContent() {
                         <span>{r.position}</span>
                       </span>
                     </td>
-                    <td className="py-4 px-6 font-bold font-serif text-slate-900 dark:text-white align-middle">
-                      {r.participant?.fullName}
+                    <td className="py-4 px-6 font-bold font-serif text-slate-900 dark:text-white align-middle whitespace-normal min-w-[200px]">
+                      {r.isGroupRow 
+                        ? r.groupMembers.map((m: any) => m.participant?.fullName).join(', ') 
+                        : r.participant?.fullName}
                     </td>
-                    <td className="py-4 px-6 font-mono font-bold text-[#9E741D] dark:text-[#C8A86B] align-middle">
-                      {r.participant?.chestNumber}
+                    <td className="py-4 px-6 font-mono font-bold text-[#9E741D] dark:text-[#C8A86B] align-middle whitespace-normal max-w-[120px]">
+                      {r.isGroupRow 
+                        ? r.groupMembers.map((m: any) => m.participant?.chestNumber).join(', ') 
+                        : r.participant?.chestNumber}
                     </td>
                     <td className="py-4 px-6 font-mono align-middle">
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -551,27 +586,47 @@ function AdminResultsContent() {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Select Participant Delegate *</label>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Select Participant(s) * 
+                  {eligibleProgrammes.find(p => p.id === programmeId)?.isGroup && ' (Use Cmd/Ctrl+Click to select multiple)'}
+                </label>
                 <select
-                  value={participantId}
-                  onChange={(e) => setParticipantId(e.target.value)}
+                  multiple={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General'}
+                  value={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General' ? participantIds : participantIds[0] || ''}
+                  onChange={(e) => {
+                    const isMulti = eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General';
+                    if (isMulti) {
+                      const options = e.target.options;
+                      const selected = [];
+                      for (let i = 0; i < options.length; i++) {
+                        if (options[i].selected) selected.push(options[i].value);
+                      }
+                      setParticipantIds(selected);
+                    } else {
+                      setParticipantIds([e.target.value]);
+                    }
+                  }}
                   disabled={!programmeId || eligibleParticipants.length === 0}
                   required
+                  size={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General' ? 5 : 1}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none disabled:opacity-50"
                 >
-                  <option value="" disabled className="bg-slate-900 text-white">
-                    {!programmeId 
-                      ? 'Please select a programme first' 
-                      : eligibleParticipants.length === 0 
-                      ? 'No participants registered for this programme' 
-                      : 'Select Participant'}
-                  </option>
+                  {(!programmeId || eligibleParticipants.length === 0) && (
+                    <option value="" disabled className="bg-slate-900 text-white">
+                      {!programmeId 
+                        ? 'Please select a programme first' 
+                        : 'No participants registered for this programme'}
+                    </option>
+                  )}
                   {eligibleParticipants.map((part) => (
-                    <option key={part.id} value={part.id} className="bg-slate-900 text-white">
+                    <option key={part.id} value={part.id} className="bg-slate-900 text-white checked:bg-amber-600">
                       [{part.chestNumber}] {part.fullName} ({part.group} • {part.category})
                     </option>
                   ))}
                 </select>
+                {(eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General') && participantIds.length > 0 && (
+                  <p className="text-emerald-400 mt-2 text-[10px]">{participantIds.length} participant(s) selected</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

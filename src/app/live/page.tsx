@@ -24,6 +24,8 @@ interface ResultItem {
   id: string;
   position: string;
   points: number;
+  groupId?: string | null;
+  certificateGenerated: boolean;
   createdAt: string;
   programme: {
     name: string;
@@ -122,8 +124,13 @@ export default function LiveDisplayPage() {
         // Calculate House Totals
         let mavaddaPoints = 0;
         let mahabbaPoints = 0;
+        const processedGroups = new Set<string>();
 
         resultsList.forEach((r) => {
+          if (r.groupId) {
+            if (processedGroups.has(r.groupId)) return;
+            processedGroups.add(r.groupId);
+          }
           if (r.participant?.group === 'MAVADDA') mavaddaPoints += r.points;
           if (r.participant?.group === 'MAHABBA') mahabbaPoints += r.points;
         });

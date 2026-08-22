@@ -76,6 +76,8 @@ model Result {
   id                   String      @id @default(uuid())
   programmeId          String
   participantId        String
+  groupId              String?
+
   position             String      // 1st, 2nd, 3rd, Grade A, Grade B
   points               Int         @default(0)
   certificateGenerated Boolean     @default(true)

@@ -63,30 +63,46 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { programmeId, participantId, position, points, certificateGenerated } = body;
+    const { programmeId, participantIds, participantId, position, points, certificateGenerated } = body;
 
-    if (!programmeId || !participantId || !position) {
-      return NextResponse.json({ error: 'Programme, Participant, and Position are required.' }, { status: 400 });
+    const idsToProcess = Array.isArray(participantIds) && participantIds.length > 0 
+      ? participantIds 
+      : (participantId ? [participantId] : []);
+
+    if (!programmeId || idsToProcess.length === 0 || !position) {
+      return NextResponse.json({ error: 'Programme, Participant(s), and Position are required.' }, { status: 400 });
     }
 
-    const result = await prisma.result.create({
-      data: {
-        programmeId,
-        participantId,
-        position,
-        points: points ? parseInt(points, 10) : 0,
-        certificateGenerated: certificateGenerated ?? true,
-      },
-      include: {
-        programme: true,
-        participant: true,
-      },
-    });
+    const isGroupResult = idsToProcess.length > 1;
+    // crypto.randomUUID() generates a v4 UUID
+    const groupId = isGroupResult ? crypto.randomUUID() : null;
+    const pointsInt = points ? parseInt(points, 10) : 0;
+
+    // We create a result record for EACH participant.
+    // If it's a group, they share the same groupId and the same points.
+    const createdResults = await prisma.$transaction(
+      idsToProcess.map((id: string) =>
+        prisma.result.create({
+          data: {
+            programmeId,
+            participantId: id,
+            position,
+            points: pointsInt,
+            certificateGenerated: certificateGenerated ?? true,
+            groupId,
+          },
+          include: {
+            programme: true,
+            participant: true,
+          },
+        })
+      )
+    );
 
     // Broadcast instant real-time event to all connected clients & TV screens
-    broadcastRealtimeChange('RESULTS_UPDATED', result);
+    createdResults.forEach(r => broadcastRealtimeChange('RESULTS_UPDATED', r));
 
-    return NextResponse.json({ success: true, result });
+    return NextResponse.json({ success: true, result: createdResults[0], count: createdResults.length });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to add result' }, { status: 500 });
   }
@@ -106,25 +122,49 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Result ID is required.' }, { status: 400 });
     }
 
-    const updated = await prisma.result.update({
-      where: { id },
-      data: {
-        programmeId,
-        participantId,
-        position,
-        points: points !== undefined ? parseInt(points, 10) : undefined,
-        certificateGenerated,
-      },
-      include: {
-        programme: true,
-        participant: true,
-      },
-    });
+    const existingResult = await prisma.result.findUnique({ where: { id } });
+    if (!existingResult) {
+      return NextResponse.json({ error: 'Result not found.' }, { status: 404 });
+    }
 
-    // Broadcast instant real-time event
-    broadcastRealtimeChange('RESULTS_UPDATED', updated);
+    const updatedData = {
+      programmeId,
+      position,
+      points: points !== undefined ? parseInt(points, 10) : undefined,
+      certificateGenerated,
+    };
 
-    return NextResponse.json({ success: true, result: updated });
+    if (existingResult.groupId) {
+      // If it's part of a group, we shouldn't change the participantId here, but we should update points/position for all
+      await prisma.result.updateMany({
+        where: { groupId: existingResult.groupId },
+        data: updatedData,
+      });
+
+      // Refetch the specific one we were editing to return it
+      const updated = await prisma.result.findUnique({
+        where: { id },
+        include: { programme: true, participant: true },
+      });
+
+      broadcastRealtimeChange('RESULTS_UPDATED', updated);
+      return NextResponse.json({ success: true, result: updated });
+    } else {
+      const updated = await prisma.result.update({
+        where: { id },
+        data: {
+          ...updatedData,
+          participantId,
+        },
+        include: {
+          programme: true,
+          participant: true,
+        },
+      });
+
+      broadcastRealtimeChange('RESULTS_UPDATED', updated);
+      return NextResponse.json({ success: true, result: updated });
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to update result' }, { status: 500 });
   }
@@ -144,12 +184,24 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Result ID is required.' }, { status: 400 });
     }
 
-    await prisma.result.delete({
-      where: { id },
-    });
+    const resultToDelete = await prisma.result.findUnique({ where: { id } });
+    if (!resultToDelete) {
+      return NextResponse.json({ error: 'Result not found.' }, { status: 404 });
+    }
 
-    // Broadcast instant real-time event
-    broadcastRealtimeChange('RESULTS_UPDATED', { deletedId: id });
+    if (resultToDelete.groupId) {
+      await prisma.result.deleteMany({
+        where: { groupId: resultToDelete.groupId },
+      });
+      // Broadcast instant real-time event for the group delete
+      broadcastRealtimeChange('RESULTS_UPDATED', { deletedGroupId: resultToDelete.groupId });
+    } else {
+      await prisma.result.delete({
+        where: { id },
+      });
+      // Broadcast instant real-time event
+      broadcastRealtimeChange('RESULTS_UPDATED', { deletedId: id });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
