@@ -24,9 +24,20 @@ const inter = Inter({
   weight: ['400', '500', '600', '700', '800'],
 });
 
-const siteUrl =
+let siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://husnul-kamal-fest-2026.vercel.app');
+
+if (siteUrl === '[SENSITIVE]') {
+  siteUrl = 'https://husnul-kamal-fest-2026.vercel.app';
+}
+
+let metadataBase;
+try {
+  metadataBase = new URL(siteUrl);
+} catch (e) {
+  metadataBase = new URL('https://husnul-kamal-fest-2026.vercel.app');
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -41,7 +52,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase,
   title: 'Husnul Kamal Meelad Fest 2026 | Mifthahul Uloom Madrasa',
   description:
     'Mifthahul Uloom Madrasa Ullisherikkunnu proudly presents Husnul Kamal Meelad Fest 2026.',
