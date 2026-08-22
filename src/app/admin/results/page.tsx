@@ -585,49 +585,71 @@ function AdminResultsContent() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-semibold mb-1">
-                  Select Participant(s) * 
-                  {eligibleProgrammes.find(p => p.id === programmeId)?.isGroup && ' (Use Cmd/Ctrl+Click to select multiple)'}
-                </label>
-                <select
-                  multiple={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General'}
-                  value={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General' ? participantIds : participantIds[0] || ''}
-                  onChange={(e) => {
-                    const isMulti = eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General';
-                    if (isMulti) {
-                      const options = e.target.options;
-                      const selected = [];
-                      for (let i = 0; i < options.length; i++) {
-                        if (options[i].selected) selected.push(options[i].value);
-                      }
-                      setParticipantIds(selected);
-                    } else {
-                      setParticipantIds([e.target.value]);
-                    }
-                  }}
-                  disabled={!programmeId || eligibleParticipants.length === 0}
-                  required
-                  size={eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General' ? 5 : 1}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none disabled:opacity-50"
-                >
-                  {(!programmeId || eligibleParticipants.length === 0) && (
-                    <option value="" disabled className="bg-slate-900 text-white">
-                      {!programmeId 
-                        ? 'Please select a programme first' 
-                        : 'No participants registered for this programme'}
-                    </option>
-                  )}
-                  {eligibleParticipants.map((part) => (
-                    <option key={part.id} value={part.id} className="bg-slate-900 text-white checked:bg-amber-600">
-                      [{part.chestNumber}] {part.fullName} ({part.group} • {part.category})
-                    </option>
-                  ))}
-                </select>
-                {(eligibleProgrammes.find(p => p.id === programmeId)?.isGroup || eligibleProgrammes.find(p => p.id === programmeId)?.category === 'General') && participantIds.length > 0 && (
-                  <p className="text-emerald-400 mt-2 text-[10px]">{participantIds.length} participant(s) selected</p>
-                )}
-              </div>
+              {(() => {
+                const selectedProg = eligibleProgrammes.find(p => p.id === programmeId);
+                const isMulti = selectedProg ? (selectedProg.isGroup || selectedProg.category === 'General') : false;
+
+                return (
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-2">
+                      Select Participant(s) * 
+                      {isMulti && ' (Select all that apply)'}
+                    </label>
+
+                    {!programmeId ? (
+                      <div className="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-500 font-semibold text-center">
+                        Please select a programme first
+                      </div>
+                    ) : eligibleParticipants.length === 0 ? (
+                      <div className="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-500 font-semibold text-center">
+                        No participants registered for this programme
+                      </div>
+                    ) : isMulti ? (
+                      <div className="w-full max-h-48 overflow-y-auto bg-slate-950 border border-slate-700 rounded-xl p-2 space-y-1">
+                        {eligibleParticipants.map((part) => (
+                          <label key={part.id} className="flex items-center space-x-3 p-2 hover:bg-slate-900 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-800">
+                            <input
+                              type="checkbox"
+                              checked={participantIds.includes(part.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setParticipantIds([...participantIds, part.id]);
+                                } else {
+                                  setParticipantIds(participantIds.filter(id => id !== part.id));
+                                }
+                              }}
+                              className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/50"
+                            />
+                            <span className="text-white font-medium">
+                              <span className="text-amber-500 font-mono mr-2">[{part.chestNumber}]</span>
+                              {part.fullName}
+                              <span className="text-slate-400 ml-1">({part.group} • {part.category})</span>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <select
+                        value={participantIds[0] || ''}
+                        onChange={(e) => setParticipantIds([e.target.value])}
+                        required
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:outline-none"
+                      >
+                        <option value="" disabled className="bg-slate-900 text-white">Select Participant</option>
+                        {eligibleParticipants.map((part) => (
+                          <option key={part.id} value={part.id} className="bg-slate-900 text-white">
+                            [{part.chestNumber}] {part.fullName} ({part.group} • {part.category})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    {isMulti && participantIds.length > 0 && (
+                      <p className="text-emerald-400 mt-2 text-[10px] font-bold">{participantIds.length} participant(s) selected</p>
+                    )}
+                  </div>
+                );
+              })()}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
