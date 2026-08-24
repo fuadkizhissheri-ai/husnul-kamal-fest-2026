@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { Trophy, Play, Pause, Maximize, Flame, Award, Sparkles, Volume2, VolumeX, Radio, Medal, Clock, MapPin, Building2, Crown, UserCheck, Star, Power, XCircle, AlertCircle, LogOut } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { getStageInfo } from '@/lib/stages';
-import { calculateCategoryTalents, calculateMadrasaTalents } from '@/lib/scoring';
+import { calculateCategoryTalents, calculateMadrasaTalents, isSingleItemResult } from '@/lib/scoring';
 
 // ── Lazy-load heavy canvas + framer-motion animations ──
 // Deferred so the live scoreboard data renders first.
@@ -601,7 +601,14 @@ export default function LiveDisplayPage() {
                   {latestResults.slice(0, 4).map((res) => (
                     <div key={res.id} className="luxury-glass p-4 rounded-[20px] sm:rounded-[28px] border border-slate-300 dark:border-white/10 text-left flex items-center justify-between">
                       <div>
-                        <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase">{res.programme?.name}</div>
+                        <div className="text-[10px] font-mono text-[#9E741D] dark:text-[#C8A86B] font-bold uppercase flex items-center gap-1.5 flex-wrap">
+                          <span>{res.programme?.name}</span>
+                          {!isSingleItemResult(res) && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                              GROUP ITEM
+                            </span>
+                          )}
+                        </div>
                         <div className="font-serif font-bold text-sm sm:text-base text-slate-900 dark:text-white uppercase">{res.participant?.fullName}</div>
                         <div className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">Chest: {res.participant?.chestNumber} • House: {res.participant?.group}</div>
                       </div>

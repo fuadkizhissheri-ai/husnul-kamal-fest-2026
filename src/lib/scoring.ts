@@ -184,6 +184,43 @@ export function compareTalentStudents(a: TalentStudent, b: TalentStudent): numbe
 }
 
 /**
+ * Helper to strictly check if a result belongs to a SINGLE / INDIVIDUAL item.
+ * Excludes:
+ * - Results with a groupId (multiple participants in a team/group result)
+ * - Programmes with isGroup === true
+ * - Programmes whose name contains group keywords ('group', 'duet', 'trio', 'team', 'expo', 'munaqasha')
+ * - Programmes in the 'General' category
+ */
+export function isSingleItemResult(r: any): boolean {
+  if (!r) return false;
+
+  // 1. Check if result has a groupId (multiple participants share a group result)
+  if (r.groupId) return false;
+
+  // 2. Check if programme is explicitly flagged as isGroup
+  if (r.programme?.isGroup) return false;
+
+  // 3. Check if programme name contains group item keywords
+  const progName = (r.programme?.name || '').trim().toLowerCase();
+  if (
+    progName.includes('group') ||
+    progName.includes('duet') ||
+    progName.includes('trio') ||
+    progName.includes('team') ||
+    progName.includes('expo') ||
+    progName.includes('munaqasha')
+  ) {
+    return false;
+  }
+
+  // 4. Check if programme category is General
+  const progCategory = normalizeCategory(r.programme?.category);
+  if (progCategory === 'General') return false;
+
+  return true;
+}
+
+/**
  * Calculates Category Champions and Individual Leaderboards across all categories.
  * Excludes Group programmes (isGroup) and General programmes.
  */
@@ -191,10 +228,9 @@ export function calculateCategoryTalents(results: any[]): CategoryTalentResult[]
   const studentMap: Record<string, TalentStudent> = {};
 
   (results || []).forEach((r) => {
-    if (r.programme?.isGroup) return;
-    const progCategory = normalizeCategory(r.programme?.category);
-    if (progCategory === 'General') return;
+    if (!isSingleItemResult(r)) return;
 
+    const progCategory = normalizeCategory(r.programme?.category);
     const p = r.participant;
     if (!p) return;
 
@@ -269,10 +305,9 @@ export function calculateMadrasaTalents(results: any[]): MadrasaSingleTalentResu
   const studentMap: Record<string, TalentStudent> = {};
 
   (results || []).forEach((r) => {
-    if (r.programme?.isGroup) return;
-    const progCategory = normalizeCategory(r.programme?.category);
-    if (progCategory === 'General') return;
+    if (!isSingleItemResult(r)) return;
 
+    const progCategory = normalizeCategory(r.programme?.category);
     const p = r.participant;
     if (!p) return;
 
