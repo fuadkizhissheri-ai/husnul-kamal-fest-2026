@@ -4,10 +4,10 @@ import React, { useState, useEffect, useMemo, useDeferredValue, Suspense, useTra
 import { useRouter, useSearchParams } from 'next/navigation';
 import SmoothScroll from '@/components/SmoothScroll';
 import PrintableCertificate from '@/components/PrintableCertificate';
-import { Trophy, Search, Download, X, Medal, FileText, Loader2 } from 'lucide-react';
+import { Trophy, Search, Download, X, Medal, FileText, Loader2, Crown, Sparkles, Award } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
-import { downloadPublishedResultsPDF } from '@/lib/pdfExporter';
-import { sortResults } from '@/lib/scoring';
+import { downloadPublishedResultsPDF, downloadCategoryTalentsPDF } from '@/lib/pdfExporter';
+import { sortResults, calculateCategoryTalents, TalentStudent } from '@/lib/scoring';
 
 interface ResultItem {
   id: string;
@@ -79,8 +79,17 @@ function ResultsContent() {
 
   const hasActiveFilters = selectedGroup !== 'ALL' || selectedCategory !== 'ALL' || selectedGender !== 'ALL' || selectedPosition !== 'ALL' || searchQuery !== '';
 
-  // Certificate Modal State
+  // Certificate & Talent Student Modal State
   const [activeCertResult, setActiveCertResult] = useState<ResultItem | null>(null);
+  const [activeTalentStudent, setActiveTalentStudent] = useState<TalentStudent | null>(null);
+
+  const categoryTalents = useMemo(() => {
+    return calculateCategoryTalents(results);
+  }, [results]);
+
+  const handleDownloadCategoryTalentsPDF = () => {
+    downloadCategoryTalentsPDF(results);
+  };
 
   const fetchResults = () => {
     fetch('/api/results')
@@ -149,6 +158,90 @@ function ResultsContent() {
           <p className="max-w-2xl mx-auto text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-sans">
             Official scoreboard records. Search by delegate name or chest number to download official JPEG merit certificates.
           </p>
+        </div>
+
+        {/* CATEGORY TALENTS SHOWCASE SECTION */}
+        <div className="luxury-glass p-6 sm:p-8 rounded-[32px] border border-[#C8A86B]/40 shadow-luxury space-y-6 bg-gradient-to-b from-amber-500/5 to-transparent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#C8A86B]/20 pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-[#C8A86B]/15 border border-[#C8A86B]/30 rounded-2xl text-[#C8A86B]">
+                <Crown className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-heading font-extrabold text-[#0B0B0B] dark:text-white flex items-center gap-2">
+                  <span>Category Talents & Individual Champions</span>
+                  <Sparkles className="w-5 h-5 text-[#C8A86B] animate-pulse" />
+                </h2>
+                <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                  Individual toppers calculated across Sub Junior, Junior, Senior & Super Senior categories.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleDownloadCategoryTalentsPDF}
+              className="btn-pill-luxury bg-[#C8A86B] text-[#0B0B0B] text-xs px-5 py-2.5 font-bold shadow-lg hover:bg-amber-400 flex items-center space-x-2 w-full sm:w-auto justify-center shrink-0"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Download Category Talents (PDF)</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {categoryTalents.map((ct) => {
+              const top = ct.topStudent;
+              return (
+                <div
+                  key={ct.category}
+                  className="bg-black/5 dark:bg-white/5 border border-[#C8A86B]/30 rounded-2xl p-5 hover:border-[#C8A86B] transition-all flex flex-col justify-between space-y-4 relative overflow-hidden"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#C8A86B] border border-[#C8A86B]/30">
+                      {ct.category}
+                    </span>
+                    <Trophy className="w-4 h-4 text-[#C8A86B]" />
+                  </div>
+
+                  {top ? (
+                    <div className="space-y-2">
+                      <h3 className="text-base font-bold text-[#0B0B0B] dark:text-white leading-tight uppercase">
+                        {top.fullName}
+                      </h3>
+                      <div className="flex items-center space-x-2 text-xs font-mono">
+                        <span className="text-[#C8A86B] font-bold">{top.chestNumber}</span>
+                        <span className="text-neutral-400">•</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#C8A86B]/15 text-[#C8A86B]">
+                          {top.group}
+                        </span>
+                      </div>
+
+                      <div className="pt-2 flex items-center justify-between border-t border-black/5 dark:border-white/10">
+                        <span className="text-lg font-bold font-mono text-[#C8A86B]">
+                          {top.totalPoints} Pts
+                        </span>
+                        <span className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400">
+                          1st: {top.firstPlaceCount} | 2nd: {top.secondPlaceCount}
+                        </span>
+                      </div>
+
+                      {top.wonProgrammes && top.wonProgrammes.length > 0 && (
+                        <button
+                          onClick={() => setActiveTalentStudent(top)}
+                          className="mt-2 w-full text-center text-[11px] font-bold text-[#C8A86B] hover:underline bg-[#C8A86B]/10 py-1.5 rounded-xl border border-[#C8A86B]/20 transition-colors"
+                        >
+                          View Won Items ({top.wonProgrammes.length})
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-xs text-neutral-500 italic">
+                      Awaiting published results...
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Filters Bar */}
@@ -322,6 +415,43 @@ function ResultsContent() {
               </div>
 
               <PrintableCertificate result={activeCertResult} />
+            </div>
+          </div>
+        )}
+
+        {/* TALENT STUDENT WON PROGRAMMES MODAL */}
+        {activeTalentStudent && (
+          <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-slate-900 p-6 rounded-3xl border border-[#C8A86B]/30 max-w-md w-full flex flex-col space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center space-x-2 text-white">
+                  <Crown className="w-5 h-5 text-[#C8A86B]" />
+                  <h3 className="text-base font-bold font-heading">{activeTalentStudent.fullName}</h3>
+                </div>
+                <button onClick={() => setActiveTalentStudent(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-1 text-xs">
+                <p className="text-slate-400">Chest No: <strong className="text-amber-400">{activeTalentStudent.chestNumber}</strong></p>
+                <p className="text-slate-400">Category: <strong className="text-white">{activeTalentStudent.category}</strong></p>
+                <p className="text-slate-400">House: <strong className="text-amber-400">{activeTalentStudent.group}</strong></p>
+                <p className="text-slate-400">Total Individual Points: <strong className="text-emerald-400">{activeTalentStudent.totalPoints} Pts</strong></p>
+              </div>
+
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <h4 className="text-xs font-bold text-[#C8A86B] uppercase tracking-wider">Won Items & Achievements</h4>
+                {activeTalentStudent.wonProgrammes.map((item, idx) => (
+                  <div key={idx} className="bg-slate-800/70 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
+                    <div>
+                      <div className="font-bold text-white">{item.name}</div>
+                      <div className="text-[10px] text-amber-400">{item.position}</div>
+                    </div>
+                    <div className="font-mono font-bold text-emerald-400">+{item.points} pts</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

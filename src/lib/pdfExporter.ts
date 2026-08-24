@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { downloadFile } from '@/lib/fileDownloader';
+import { calculateCategoryTalents } from '@/lib/scoring';
 
 export interface ScoreCardConfig {
   programmeName: string;
@@ -872,3 +873,155 @@ export function downloadPublishedResultsPDF(
   const pdfDataUri = doc.output('datauristring');
   downloadFile(pdfDataUri, filename, 'application/pdf');
 }
+
+export function downloadCategoryTalentsPDF(
+  results: any[],
+  filename = `Category_Talents_Individual_Champions_${new Date().toISOString().split('T')[0]}.pdf`
+) {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+
+  const categoryTalents = calculateCategoryTalents(results);
+
+  // Header Banner
+  doc.setFillColor(11, 11, 11);
+  doc.rect(0, 0, 210, 35, 'F');
+
+  doc.setTextColor(200, 168, 107);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Husnul Kamal — Meelad Fest 2026', 14, 14);
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mifthahul Uloom Madrasa, Ullisherikkunnu', 14, 22);
+
+  doc.setTextColor(200, 168, 107);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CATEGORY TALENTS & INDIVIDUAL CHAMPIONS REPORT', 14, 30);
+
+  // Summary Table of Category Champions
+  const summaryHeaders = ['Category', 'Individual Champion (1st Rank)', 'Chest No', 'House', 'Points', 'Wins (1st/2nd/3rd/A)'];
+  const summaryRows = categoryTalents.map((ct) => {
+    const top = ct.topStudent;
+    if (!top) return [ct.category, 'No participant calculated', '-', '-', '0 Pts', '-'];
+    return [
+      ct.category,
+      top.fullName.toUpperCase(),
+      top.chestNumber,
+      top.group,
+      `${top.totalPoints} Pts`,
+      `${top.firstPlaceCount}W / ${top.secondPlaceCount}S / ${top.thirdPlaceCount}T / ${top.gradeACount}A`
+    ];
+  });
+
+  autoTable(doc, {
+    startY: 42,
+    head: [summaryHeaders],
+    body: summaryRows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [30, 30, 30],
+      textColor: [200, 168, 107],
+      fontStyle: 'bold',
+      fontSize: 9,
+    },
+    bodyStyles: {
+      fontSize: 9,
+      textColor: [30, 30, 30],
+    },
+    alternateRowStyles: {
+      fillColor: [248, 248, 248],
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  let currentY = (doc as any).lastAutoTable?.finalY || 100;
+
+  // Detailed Leaderboards for each category
+  categoryTalents.forEach((ct) => {
+    if (currentY + 55 > pageHeight) {
+      doc.addPage();
+      currentY = 20;
+    } else {
+      currentY += 10;
+    }
+
+    doc.setTextColor(11, 93, 59);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`INDIVIDUAL LEADERBOARD: ${ct.category.toUpperCase()}`, 14, currentY);
+
+    const leaderHeaders = ['Rank', 'Participant Name', 'Chest No', 'House', 'Total Points', 'Wins (1st/2nd/3rd)', 'Grade A/B'];
+    const leaderRows = ct.leaderboard.slice(0, 10).map((st, idx) => [
+      `#${idx + 1}`,
+      st.fullName.toUpperCase(),
+      st.chestNumber,
+      st.group,
+      `${st.totalPoints} Pts`,
+      `1st: ${st.firstPlaceCount} | 2nd: ${st.secondPlaceCount} | 3rd: ${st.thirdPlaceCount}`,
+      `A: ${st.gradeACount} | B: ${st.gradeBCount}`
+    ]);
+
+    autoTable(doc, {
+      startY: currentY + 4,
+      head: [leaderHeaders],
+      body: leaderRows.length > 0 ? leaderRows : [['-', 'No results in this category', '-', '-', '-', '-', '-']],
+      theme: 'grid',
+      headStyles: {
+        fillColor: [11, 93, 59],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 8,
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: [30, 30, 30],
+      },
+      alternateRowStyles: {
+        fillColor: [245, 247, 250],
+      },
+      margin: { left: 14, right: 14 },
+    });
+
+    currentY = (doc as any).lastAutoTable?.finalY || currentY + 30;
+  });
+
+  // Footer Signatures & Page Numbers
+  let signatureY = currentY + 20;
+  if (signatureY > pageHeight - 35) {
+    doc.addPage();
+    signatureY = 30;
+  }
+
+  doc.setLineWidth(0.4);
+  doc.setDrawColor(100, 100, 100);
+  doc.line(14, signatureY, 70, signatureY);
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 80);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Fest Controller Signature', 42, signatureY + 5, { align: 'center' });
+
+  doc.line(140, signatureY, 196, signatureY);
+  doc.text('Convener Signature', 168, signatureY + 5, { align: 'center' });
+
+  const pageCount = (doc as any).internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(
+      `Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount} • Husnul Kamal Meelad Fest 2026`,
+      pageWidth / 2,
+      pageHeight - 10,
+      { align: 'center' }
+    );
+  }
+
+  const pdfDataUri = doc.output('datauristring');
+  downloadFile(pdfDataUri, filename, 'application/pdf');
+}
+

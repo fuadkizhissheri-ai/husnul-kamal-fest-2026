@@ -122,3 +122,233 @@ export function sortResults(results: any[]) {
     return rankA - rankB;
   });
 }
+
+export interface TalentStudent {
+  id: string;
+  fullName: string;
+  chestNumber: string;
+  registrationId?: string;
+  group: string; // MAVADDA / MAHABBA
+  category: string; // Sub Junior, Junior, Senior, Super Senior
+  gender?: string;
+  madrasa: string;
+  photoUrl?: string | null;
+  totalPoints: number;
+  singlePoints: number;
+  firstPlaceCount: number;
+  secondPlaceCount: number;
+  thirdPlaceCount: number;
+  gradeACount: number;
+  gradeBCount: number;
+  wonProgrammes: Array<{
+    name: string;
+    position: string;
+    points: number;
+    category?: string;
+  }>;
+}
+
+export interface CategoryTalentResult {
+  category: string;
+  topStudent: TalentStudent | null;
+  leaderboard: TalentStudent[];
+}
+
+export interface MadrasaSingleTalentResult {
+  madrasa: string;
+  topStudent: TalentStudent | null;
+  leaderboard: TalentStudent[];
+}
+
+export const STANDARD_CATEGORIES = ['Sub Junior', 'Junior', 'Senior', 'Super Senior'];
+
+export function normalizeCategory(cat?: string): string {
+  if (!cat) return '';
+  const c = cat.trim().toLowerCase().replace(/[-_]/g, ' ');
+  if (c.includes('sub') && c.includes('junior')) return 'Sub Junior';
+  if (c.includes('super') && c.includes('senior')) return 'Super Senior';
+  if (c.includes('junior')) return 'Junior';
+  if (c.includes('senior')) return 'Senior';
+  if (c.includes('general')) return 'General';
+  return cat.trim();
+}
+
+export function compareTalentStudents(a: TalentStudent, b: TalentStudent): number {
+  if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+  if (b.firstPlaceCount !== a.firstPlaceCount) return b.firstPlaceCount - a.firstPlaceCount;
+  if (b.secondPlaceCount !== a.secondPlaceCount) return b.secondPlaceCount - a.secondPlaceCount;
+  if (b.thirdPlaceCount !== a.thirdPlaceCount) return b.thirdPlaceCount - a.thirdPlaceCount;
+  if (b.gradeACount !== a.gradeACount) return b.gradeACount - a.gradeACount;
+  if (b.gradeBCount !== a.gradeBCount) return b.gradeBCount - a.gradeBCount;
+  return a.fullName.localeCompare(b.fullName);
+}
+
+/**
+ * Calculates Category Champions and Individual Leaderboards across all categories.
+ * Excludes Group programmes (isGroup) and General programmes.
+ */
+export function calculateCategoryTalents(results: any[]): CategoryTalentResult[] {
+  const studentMap: Record<string, TalentStudent> = {};
+
+  (results || []).forEach((r) => {
+    if (r.programme?.isGroup) return;
+    const progCategory = normalizeCategory(r.programme?.category);
+    if (progCategory === 'General') return;
+
+    const p = r.participant;
+    if (!p) return;
+
+    const pCat = normalizeCategory(p.category) || progCategory || 'Sub Junior';
+
+    if (!studentMap[p.id]) {
+      studentMap[p.id] = {
+        id: p.id,
+        fullName: p.fullName || 'Unknown Participant',
+        chestNumber: p.chestNumber || '-',
+        registrationId: p.registrationId,
+        group: p.group || 'MAVADDA',
+        category: pCat,
+        gender: p.gender,
+        madrasa: p.madrasa || 'Mifthahul Uloom Central',
+        photoUrl: p.photoUrl,
+        totalPoints: 0,
+        singlePoints: 0,
+        firstPlaceCount: 0,
+        secondPlaceCount: 0,
+        thirdPlaceCount: 0,
+        gradeACount: 0,
+        gradeBCount: 0,
+        wonProgrammes: [],
+      };
+    }
+
+    const st = studentMap[p.id];
+    const points = Number(r.points) || 0;
+    st.totalPoints += points;
+    st.singlePoints += points;
+
+    const normPos = (r.position || '').trim().toLowerCase();
+    if (normPos.includes('1st') || normPos.includes('first') || normPos === '1') {
+      st.firstPlaceCount += 1;
+    } else if (normPos.includes('2nd') || normPos.includes('second') || normPos === '2') {
+      st.secondPlaceCount += 1;
+    } else if (normPos.includes('3rd') || normPos.includes('third') || normPos === '3') {
+      st.thirdPlaceCount += 1;
+    } else if (normPos.includes('grade a') || normPos === 'a') {
+      st.gradeACount += 1;
+    } else if (normPos.includes('grade b') || normPos === 'b') {
+      st.gradeBCount += 1;
+    }
+
+    st.wonProgrammes.push({
+      name: r.programme?.name || 'Programme',
+      position: r.position || '-',
+      points,
+      category: progCategory,
+    });
+  });
+
+  const studentsList = Object.values(studentMap);
+
+  return STANDARD_CATEGORIES.map((cat) => {
+    const catStudents = studentsList.filter((st) => st.category === cat);
+    catStudents.sort(compareTalentStudents);
+
+    return {
+      category: cat,
+      topStudent: catStudents.length > 0 ? catStudents[0] : null,
+      leaderboard: catStudents,
+    };
+  });
+}
+
+/**
+ * Calculates Madrasa Single Talent Champions per institution.
+ */
+export function calculateMadrasaTalents(results: any[]): MadrasaSingleTalentResult[] {
+  const studentMap: Record<string, TalentStudent> = {};
+
+  (results || []).forEach((r) => {
+    if (r.programme?.isGroup) return;
+    const progCategory = normalizeCategory(r.programme?.category);
+    if (progCategory === 'General') return;
+
+    const p = r.participant;
+    if (!p) return;
+
+    const pCat = normalizeCategory(p.category) || progCategory;
+
+    if (!studentMap[p.id]) {
+      studentMap[p.id] = {
+        id: p.id,
+        fullName: p.fullName || 'Unknown Participant',
+        chestNumber: p.chestNumber || '-',
+        registrationId: p.registrationId,
+        group: p.group || 'MAVADDA',
+        category: pCat,
+        gender: p.gender,
+        madrasa: p.madrasa || 'Mifthahul Uloom Central',
+        photoUrl: p.photoUrl,
+        totalPoints: 0,
+        singlePoints: 0,
+        firstPlaceCount: 0,
+        secondPlaceCount: 0,
+        thirdPlaceCount: 0,
+        gradeACount: 0,
+        gradeBCount: 0,
+        wonProgrammes: [],
+      };
+    }
+
+    const st = studentMap[p.id];
+    const points = Number(r.points) || 0;
+    st.totalPoints += points;
+    st.singlePoints += points;
+
+    const normPos = (r.position || '').trim().toLowerCase();
+    if (normPos.includes('1st') || normPos.includes('first') || normPos === '1') {
+      st.firstPlaceCount += 1;
+    } else if (normPos.includes('2nd') || normPos.includes('second') || normPos === '2') {
+      st.secondPlaceCount += 1;
+    } else if (normPos.includes('3rd') || normPos.includes('third') || normPos === '3') {
+      st.thirdPlaceCount += 1;
+    } else if (normPos.includes('grade a') || normPos === 'a') {
+      st.gradeACount += 1;
+    } else if (normPos.includes('grade b') || normPos === 'b') {
+      st.gradeBCount += 1;
+    }
+
+    st.wonProgrammes.push({
+      name: r.programme?.name || 'Programme',
+      position: r.position || '-',
+      points,
+      category: progCategory,
+    });
+  });
+
+  const madrasaGroups: Record<string, TalentStudent[]> = {};
+  Object.values(studentMap).forEach((st) => {
+    const mName = st.madrasa || 'Mifthahul Uloom Central';
+    if (!madrasaGroups[mName]) madrasaGroups[mName] = [];
+    madrasaGroups[mName].push(st);
+  });
+
+  const resultsArr: MadrasaSingleTalentResult[] = [];
+  Object.entries(madrasaGroups).forEach(([mName, students]) => {
+    students.sort(compareTalentStudents);
+    resultsArr.push({
+      madrasa: mName,
+      topStudent: students.length > 0 ? students[0] : null,
+      leaderboard: students,
+    });
+  });
+
+  resultsArr.sort((a, b) => {
+    const ptsA = a.topStudent?.totalPoints || 0;
+    const ptsB = b.topStudent?.totalPoints || 0;
+    return ptsB - ptsA;
+  });
+
+  return resultsArr;
+}
+

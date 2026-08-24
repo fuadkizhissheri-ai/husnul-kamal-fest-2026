@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { Trophy, Play, Pause, Maximize, Flame, Award, Sparkles, Volume2, VolumeX, Radio, Medal, Clock, MapPin, Building2, Crown, UserCheck, Star, Power, XCircle, AlertCircle, LogOut } from 'lucide-react';
 import { useRealtimeSync } from '@/components/useRealtimeSync';
 import { getStageInfo } from '@/lib/stages';
+import { calculateCategoryTalents, calculateMadrasaTalents } from '@/lib/scoring';
 
 // ── Lazy-load heavy canvas + framer-motion animations ──
 // Deferred so the live scoreboard data renders first.
@@ -137,96 +138,24 @@ export default function LiveDisplayPage() {
         setGroupScores({ MAVADDA: mavaddaPoints, MAHABBA: mahabbaPoints });
 
         // MADRASA TALENT CALCULATION (Individual Items)
-        const singleResults = resultsList.filter((r) => !r.programme?.isGroup && r.programme?.category !== 'General');
-        const studentSingleMap: { [pId: string]: any } = {};
-
-        singleResults.forEach((r) => {
-          const p = r.participant;
-          if (!p) return;
-          if (!studentSingleMap[p.id]) {
-            studentSingleMap[p.id] = {
-              ...p,
-              madrasa: p.madrasa || 'Mifthahul Uloom Central',
-              singlePoints: 0,
-              firstPlaceCount: 0,
-              wonProgrammes: [],
-            };
-          }
-          studentSingleMap[p.id].singlePoints += r.points;
-          if (r.position.includes('1st')) studentSingleMap[p.id].firstPlaceCount += 1;
-          studentSingleMap[p.id].wonProgrammes.push({
-            name: r.programme.name,
-            position: r.position,
-            points: r.points,
-          });
-        });
-
-        const madrasaGroups: { [mName: string]: any[] } = {};
-        Object.values(studentSingleMap).forEach((st: any) => {
-          if (!madrasaGroups[st.madrasa]) madrasaGroups[st.madrasa] = [];
-          madrasaGroups[st.madrasa].push(st);
-        });
-
-        const calculatedMadrasaTalents: MadrasaSingleTalent[] = [];
-        Object.entries(madrasaGroups).forEach(([mName, students]) => {
-          students.sort((a, b) => {
-            if (b.singlePoints !== a.singlePoints) return b.singlePoints - a.singlePoints;
-            return b.firstPlaceCount - a.firstPlaceCount;
-          });
-          if (students.length > 0) {
-            calculatedMadrasaTalents.push({
-              madrasa: mName,
-              topStudent: students[0],
-            });
-          }
-        });
-
-        calculatedMadrasaTalents.sort((a, b) => b.topStudent.singlePoints - a.topStudent.singlePoints);
-        setMadrasaTalents(calculatedMadrasaTalents);
+        const madrasaRes = calculateMadrasaTalents(resultsList);
+        const calculatedMadrasaTalents = madrasaRes
+          .filter((m) => m.topStudent !== null)
+          .map((m) => ({
+            madrasa: m.madrasa,
+            topStudent: m.topStudent!,
+          }));
+        setMadrasaTalents(calculatedMadrasaTalents as any);
 
         // CATEGORY TALENT CALCULATION
-        const categoriesList = ['Sub Junior', 'Junior', 'Senior', 'Super Senior'];
-        const studentCatMap: { [pId: string]: any } = {};
-
-        resultsList.forEach((r) => {
-          if (r.programme?.isGroup || r.programme?.category === 'General') return;
-          
-          const p = r.participant;
-          if (!p) return;
-          if (!studentCatMap[p.id]) {
-            studentCatMap[p.id] = {
-              ...p,
-              madrasa: p.madrasa || 'Mifthahul Uloom Central',
-              totalPoints: 0,
-              firstPlaceCount: 0,
-              wonProgrammes: [],
-            };
-          }
-          studentCatMap[p.id].totalPoints += r.points;
-          if (r.position.includes('1st')) studentCatMap[p.id].firstPlaceCount += 1;
-          studentCatMap[p.id].wonProgrammes.push({
-            name: r.programme.name,
-            position: r.position,
-            points: r.points,
-          });
-        });
-
-        const calculatedCatTalents: CategoryTalent[] = [];
-        categoriesList.forEach((cat) => {
-          const catStudents = Object.values(studentCatMap).filter((st: any) => st.category === cat);
-          catStudents.sort((a: any, b: any) => {
-            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-            return b.firstPlaceCount - a.firstPlaceCount;
-          });
-          if (catStudents.length > 0) {
-            calculatedCatTalents.push({
-              category: cat,
-              topStudent: catStudents[0],
-            });
-          }
-        });
-
-        setCategoryTalents(calculatedCatTalents);
+        const catRes = calculateCategoryTalents(resultsList);
+        const calculatedCatTalents = catRes
+          .filter((c) => c.topStudent !== null)
+          .map((c) => ({
+            category: c.category,
+            topStudent: c.topStudent!,
+          }));
+        setCategoryTalents(calculatedCatTalents as any);
 
         // Detect New Breaking Result
         if (resultsList.length > 0) {
