@@ -137,7 +137,7 @@ export default function LiveDisplayPage() {
         setGroupScores({ MAVADDA: mavaddaPoints, MAHABBA: mahabbaPoints });
 
         // MADRASA TALENT CALCULATION (Individual Items)
-        const singleResults = resultsList.filter((r) => !r.programme?.isGroup);
+        const singleResults = resultsList.filter((r) => !r.programme?.isGroup && r.programme?.category !== 'General');
         const studentSingleMap: { [pId: string]: any } = {};
 
         singleResults.forEach((r) => {
@@ -189,6 +189,8 @@ export default function LiveDisplayPage() {
         const studentCatMap: { [pId: string]: any } = {};
 
         resultsList.forEach((r) => {
+          if (r.programme?.isGroup || r.programme?.category === 'General') return;
+          
           const p = r.participant;
           if (!p) return;
           if (!studentCatMap[p.id]) {
@@ -608,7 +610,7 @@ export default function LiveDisplayPage() {
                       </div>
                       <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-white/10">
                         <span className="text-slate-400 text-xs sm:text-sm font-medium">Chest: {mt.topStudent?.chestNumber}</span>
-                        <span className="bg-amber-500/20 text-amber-400 font-bold px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-amber-500/30">{mt.topStudent?.singlePoints} Pts</span>
+                        <span className="bg-amber-500/20 text-amber-400 font-bold px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-amber-500/30">{mt.topStudent?.singlePoints} Individual Pts</span>
                       </div>
                     </div>
                   ))}
@@ -641,7 +643,7 @@ export default function LiveDisplayPage() {
                       <div className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase">{ct.category}</div>
                       <div className="text-xl sm:text-2xl font-bold tracking-tight text-white uppercase leading-snug">{ct.topStudent?.fullName}</div>
                       <div className="text-slate-400 text-xs sm:text-sm font-medium">Chest: {ct.topStudent?.chestNumber}</div>
-                      <div className="bg-amber-500/20 text-amber-400 font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-base sm:text-lg border border-amber-500/30 mt-1 sm:mt-2">{ct.topStudent?.totalPoints} Pts</div>
+                      <div className="bg-amber-500/20 text-amber-400 font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-base sm:text-lg border border-amber-500/30 mt-1 sm:mt-2">{ct.topStudent?.totalPoints} Individual Pts</div>
                     </div>
                   ))}
                 </div>
